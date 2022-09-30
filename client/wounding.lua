@@ -6,7 +6,18 @@ local painkillerAmount = 0
 
 local function DoBleedAlert()
     if not isDead and tonumber(isBleeding) > 0 then
-        QBCore.Functions.Notify(Lang:t('info.bleed_alert', {bleedstate = Config.BleedingStates[tonumber(isBleeding)].label}), "error", 5000)
+        lib.notify({
+            id = "bleed_alert",
+            title = Lang:t('info.bleed_alert'),
+            description = Config.BleedingStates[tonumber(isBleeding)].label,
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'droplet',
+            iconColor = '#C0392B'
+        })
     end
 end
 
@@ -36,16 +47,24 @@ end
 
 RegisterNetEvent('hospital:client:UseIfaks', function()
     local ped = PlayerPedId()
-    QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.ifaks'), 3000, false, true, {
-        disableMovement = false,
-        disableCarMovement = false,
-		disableMouse = false,
-		disableCombat = true,
-    }, {
-		animDict = "mp_suicide",
-		anim = "pill",
-		flags = 49,
-    }, {}, {}, function() -- Done
+    if lib.progressCircle({
+        duration = 3000,
+        position = 'bottom',
+        label = Lang:t('progress.ifaks'),
+        useWhileDead = false,
+        canCancel = true,
+        disable = {
+            move = false,
+            car = false,
+            combat = true,
+            mouse = false,
+        },
+        anim = {
+            dict = "mp_suicide",
+            clip = "pill",
+        },
+    })
+    then
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         TriggerServerEvent("hospital:server:removeIfaks")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["ifaks"], "remove")
@@ -58,24 +77,42 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
         if math.random(1, 100) < 50 then
             RemoveBleed(1)
         end
-    end, function() -- Cancel
+    else
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
-    end)
+        lib.notify({
+            id = "cancelled",
+            title = Lang:t('error.canceled'),
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'xmark',
+            iconColor = '#C0392B'
+        })
+    end
 end)
 
 RegisterNetEvent('hospital:client:UseBandage', function()
     local ped = PlayerPedId()
-    QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.bandage'), 4000, false, true, {
-        disableMovement = false,
-        disableCarMovement = false,
-		disableMouse = false,
-		disableCombat = true,
-    }, {
-		animDict = "anim@amb@business@weed@weed_inspecting_high_dry@",
-		anim = "weed_inspecting_high_base_inspector",
-		flags = 49,
-    }, {}, {}, function() -- Done
+    if lib.progressCircle({
+        duration = 4000,
+        position = 'bottom',
+        label = Lang:t('progress.bandage'),
+        useWhileDead = false,
+        canCancel = true,
+        disable = {
+            move = false,
+            car = false,
+            combat = true,
+            mouse = false,
+        },
+        anim = {
+            dict = "mp_suicide",
+            clip = "pill",
+        },
+    })
+    then
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
         TriggerServerEvent("hospital:server:removeBandage")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["bandage"], "remove")
@@ -86,24 +123,42 @@ RegisterNetEvent('hospital:client:UseBandage', function()
         if math.random(1, 100) < 7 then
             ResetPartial()
         end
-    end, function() -- Cancel
+    else
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
-    end)
+        lib.notify({
+            id = "cancelled",
+            title = Lang:t('error.canceled'),
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'xmark',
+            iconColor = '#C0392B'
+        })
+    end
 end)
 
 RegisterNetEvent('hospital:client:UsePainkillers', function()
     local ped = PlayerPedId()
-    QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.painkillers'), 3000, false, true, {
-        disableMovement = false,
-        disableCarMovement = false,
-		disableMouse = false,
-		disableCombat = true,
-    }, {
-		animDict = "mp_suicide",
-		anim = "pill",
-		flags = 49,
-    }, {}, {}, function() -- Done
+    if lib.progressCircle({
+        duration = 3000,
+        position = 'bottom',
+        label = Lang:t('progress.painkillers'),
+        useWhileDead = false,
+        canCancel = true,
+        disable = {
+            move = false,
+            car = false,
+            combat = true,
+            mouse = false,
+        },
+        anim = {
+            dict = "mp_suicide",
+            clip = "pill",
+        },
+    })
+    then
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         TriggerServerEvent("hospital:server:removePainkillers")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["painkillers"], "remove")
@@ -111,10 +166,20 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
         if painkillerAmount < 3 then
             painkillerAmount = painkillerAmount + 1
         end
-    end, function() -- Cancel
+    else
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
-    end)
+        lib.notify({
+            id = "cancelled",
+            title = Lang:t('error.canceled'),
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'xmark',
+            iconColor = '#C0392B'
+        })
+    end
 end)
 
 -- Threads
@@ -136,20 +201,20 @@ CreateThread(function()
 end)
 
 CreateThread(function()
-	while true do
-		if #injured > 0 then
-			local level = 0
-			for _, v in pairs(injured) do
-				if v.severity > level then
-					level = v.severity
-				end
-			end
-			SetPedMoveRateOverride(PlayerPedId(), Config.MovementRate[level])
-			Wait(5)
-		else
-			Wait(1000)
-		end
-	end
+    while true do
+        if #injured > 0 then
+            local level = 0
+            for _, v in pairs(injured) do
+                if v.severity > level then
+                    level = v.severity
+                end
+            end
+            SetPedMoveRateOverride(PlayerPedId(), Config.MovementRate[level])
+            Wait(5)
+        else
+            Wait(1000)
+        end
+    end
 end)
 
 CreateThread(function()
@@ -173,7 +238,8 @@ CreateThread(function()
 
                                 if not IsPedRagdoll(player) and IsPedOnFoot(player) and not IsPedSwimming(player) then
                                     ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
-                                    SetPedToRagdollWithFall(player, 7500, 9000, 1, GetEntityForwardVector(player), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+                                    SetPedToRagdollWithFall(player, 7500, 9000, 1, GetEntityForwardVector(player), 1.0,
+                                  0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
                                 end
 
                                 Wait(1500)
@@ -205,7 +271,8 @@ CreateThread(function()
                         local randX = math.random() + math.random(-1, 1)
                         local randY = math.random() + math.random(-1, 1)
                         local coords = GetOffsetFromEntityInWorldCoords(player, randX, randY, 0)
-                        TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid, QBCore.Functions.GetPlayerData().metadata["bloodtype"], coords)
+                        TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid
+                            , QBCore.Functions.GetPlayerData().metadata["bloodtype"], coords)
 
                         if advanceBleedTimer >= Config.AdvanceBleedTimer then
                             ApplyBleed(1)

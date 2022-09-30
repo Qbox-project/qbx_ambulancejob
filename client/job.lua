@@ -160,7 +160,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
                 for k, v in pairs(result) do
                     if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
                         statusChecks[#statusChecks + 1] = { bone = Config.BoneIndexes[k],
-                            label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
+                   label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
                     elseif result["WEAPONWOUNDS"] then
                         for _, v2 in pairs(result["WEAPONWOUNDS"]) do
                             TriggerEvent('chat:addMessage', {
@@ -177,7 +177,17 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
                                 Lang:t('info.is_status', { status = Config.BleedingStates[v].label }) }
                         })
                     else
-                        QBCore.Functions.Notify(Lang:t('success.healthy_player'), 'success')
+                        lib.notify({
+                            id = 'healthy_player',
+                            title = Lang:t('success.healthy_player'),
+                            duration = 2500,
+                            style = {
+                                backgroundColor = '#141517',
+                                color = '#ffffff'
+                            },
+                            icon = 'heal',
+                            iconColor = '#27ae60'
+                        })
                     end
                 end
                 isStatusChecking = true
@@ -185,7 +195,17 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
             end
         end, playerId)
     else
-        QBCore.Functions.Notify(Lang:t('error.no_player'), 'error')
+        lib.notify({
+            id = 'no_player',
+            title = Lang:t('error.no_player'),
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'xmark',
+            iconColor = '#C0392B'
+        })
     end
 end)
 
@@ -195,28 +215,76 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
-                QBCore.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), 5000, false, true, {
-                    disableMovement = false,
-                    disableCarMovement = false,
-                    disableMouse = false,
-                    disableCombat = true,
-                }, {
-                    animDict = healAnimDict,
-                    anim = healAnim,
-                    flags = 16,
-                }, {}, {}, function() -- Done
+                if lib.progressCircle({
+                    duration = 5000,
+                    position = 'bottom',
+                    label = Lang:t('progress.revive'),
+                    useWhileDead = false,
+                    canCancel = true,
+                    disable = {
+                        move = false,
+                        car = false,
+                        combat = true,
+                        mouse = false,
+                    },
+                    anim = {
+                        dict = healAnimDict,
+                        clip = healAnim,
+                    },
+                })
+                then
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    QBCore.Functions.Notify(Lang:t('success.revived'), 'success')
+                    lib.notify({
+                        id = 'revived',
+                        title = Lang:t('success.revived'),
+                        duration = 2500,
+                        style = {
+                            backgroundColor = '#141517',
+                            color = '#27ae606'
+                        },
+                        icon = 'kit-medical',
+                        iconColor = '#C0392B'
+                    })
                     TriggerServerEvent("hospital:server:RevivePlayer", playerId)
-                end, function() -- Cancel
+                else
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
-                end)
+                    lib.notify({
+                        id = 'canceled',
+                        title = Lang:t('error.canceled'),
+                        duration = 2500,
+                        style = {
+                            backgroundColor = '#141517',
+                            color = '#ffffff'
+                        },
+                        icon = 'xmark',
+                        iconColor = '#C0392B'
+                    })
+                end
             else
-                QBCore.Functions.Notify(Lang:t('error.no_player'), "error")
+                lib.notify({
+                    id = 'no_player',
+                    title = Lang:t('error.no_player'),
+                    duration = 2500,
+                    style = {
+                        backgroundColor = '#141517',
+                        color = '#ffffff'
+                    },
+                    icon = 'xmark',
+                    iconColor = '#C0392B'
+                })
             end
         else
-            QBCore.Functions.Notify(Lang:t('error.no_firstaid'), "error")
+            lib.notify({
+                id = 'no_firstaid',
+                title = Lang:t('error.no_firstaid'),
+                duration = 2500,
+                style = {
+                    backgroundColor = '#141517',
+                    color = '#ffffff'
+                },
+                icon = 'xmark',
+                iconColor = '#C0392B'
+            })
         end
     end, 'firstaid')
 end)
@@ -227,28 +295,76 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
-                QBCore.Functions.Progressbar("hospital_healwounds", Lang:t('progress.healing'), 5000, false, true, {
-                    disableMovement = false,
-                    disableCarMovement = false,
-                    disableMouse = false,
-                    disableCombat = true,
-                }, {
-                    animDict = healAnimDict,
-                    anim = healAnim,
-                    flags = 16,
-                }, {}, {}, function() -- Done
+                if lib.progressCircle({
+                    duration = 5000,
+                    position = 'bottom',
+                    label = Lang:t('progress.healing'),
+                    useWhileDead = false,
+                    canCancel = true,
+                    disable = {
+                        move = false,
+                        car = false,
+                        combat = true,
+                        mouse = false,
+                    },
+                    anim = {
+                        dict = healAnimDict,
+                        clip = healAnim,
+                    },
+                })
+                then
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    QBCore.Functions.Notify(Lang:t('success.helped_player'), 'success')
+                    lib.notify({
+                        id = 'helped_player',
+                        title = Lang:t('success.helped_player'),
+                        duration = 2500,
+                        style = {
+                            backgroundColor = '#141517',
+                            color = '#27ae60'
+                        },
+                        icon = 'bandage',
+                        iconColor = '#C0392B'
+                    })
                     TriggerServerEvent("hospital:server:TreatWounds", playerId)
-                end, function() -- Cancel
+                else
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
-                end)
+                    lib.notify({
+                        id = 'canceled',
+                        title = Lang:t('error.canceled'),
+                        duration = 2500,
+                        style = {
+                            backgroundColor = '#141517',
+                            color = '#ffffff'
+                        },
+                        icon = 'xmark',
+                        iconColor = '#C0392B'
+                    })
+                end
             else
-                QBCore.Functions.Notify(Lang:t('error.no_player'), "error")
+                lib.notify({
+                    id = 'no_player',
+                    title = Lang:t('error.no_player'),
+                    duration = 2500,
+                    style = {
+                        backgroundColor = '#141517',
+                        color = '#ffffff'
+                    },
+                    icon = 'xmark',
+                    iconColor = '#C0392B'
+                })
             end
         else
-            QBCore.Functions.Notify(Lang:t('error.no_bandage'), "error")
+            lib.notify({
+                id = 'no_bandage',
+                title = Lang:t('error.no_bandage'),
+                duration = 2500,
+                style = {
+                    backgroundColor = '#141517',
+                    color = '#ffffff'
+                },
+                icon = 'xmark',
+                iconColor = '#C0392B'
+            })
         end
     end, 'bandage')
 end)
@@ -284,7 +400,7 @@ end
 RegisterNetEvent('qb-ambulancejob:stash', function()
     if onDuty then
         TriggerServerEvent("inventory:server:OpenInventory", "stash",
-            "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
+           "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
         TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
     end
 end)
@@ -394,43 +510,74 @@ RegisterNetEvent('EMSToggle:Duty', function()
     TriggerServerEvent("police:server:UpdateBlips")
 end)
 
+
 CreateThread(function()
     for k, v in pairs(Config.Locations["vehicle"]) do
-        local boxZone = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 5, 5, {
-            name = "vehicle" .. k,
-            debugPoly = false,
-            heading = 70,
-            minZ = v.z - 2,
-            maxZ = v.z + 2,
-        })
-        boxZone:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" and onDuty then
-                exports['qb-core']:DrawText(Lang:t('text.veh_button'), 'left')
+        local function inVehicleZone()
+            if PlayerJob.name == "ambulance" and onDuty then
+                lib.showTextUI(Lang:t('text.veh_button'), {
+                    position = "top-center",
+                    icon = "fa-solid fa-truck-medical",
+                    style = {
+                        borderRadius = 5,
+                        backgroundColor = '#141517',
+                        color = 'white'
+                    }
+                })
                 EMSVehicle(k)
             else
                 CheckVehicle = false
-                exports['qb-core']:HideText()
+                lib.hideTextUI()
             end
-        end)
+        end
+
+        local function outVehicleZone()
+            CheckVehicle = false
+            lib.hideTextUI()
+        end
+
+        lib.zones.box({
+            coords = vec3(v.x, v.y, v.z),
+            size = vec3(5, 5, 2),
+            rotation = v.w,
+            debug = false,
+            inside = inVehicleZone,
+            onExit = outVehicleZone
+        })
     end
 
     for k, v in pairs(Config.Locations["helicopter"]) do
-        local boxZone = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 5, 5, {
-            name = "helicopter" .. k,
-            debugPoly = false,
-            heading = 70,
-            minZ = v.z - 2,
-            maxZ = v.z + 2,
-        })
-        boxZone:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" and onDuty then
-                exports['qb-core']:DrawText(Lang:t('text.heli_button'), 'left')
+        local function inHeliZone()
+            if PlayerJob.name == "ambulance" and onDuty then
+                lib.showTextUI(Lang:t('text.veh_button'), {
+                    position = "top-center",
+                    icon = "fa-solid fa-helicopter",
+                    style = {
+                        borderRadius = 5,
+                        backgroundColor = '#141517',
+                        color = 'white'
+                    }
+                })
                 EMSHelicopter(k)
             else
                 CheckHeli = false
-                exports['qb-core']:HideText()
+                lib.hideTextUI()
             end
-        end)
+        end
+
+        local function outHeliZone()
+            CheckHeli = false
+            lib.hideTextUI()
+        end
+
+        lib.zones.box({
+            coords = vec3(v.x, v.y, v.z),
+            size = vec3(5, 5, 2),
+            rotation = v.w,
+            debug = false,
+            inside = inHeliZone,
+            onExit = outHeliZone
+        })
     end
 end)
 
@@ -438,233 +585,287 @@ end)
 if Config.UseTarget then
     CreateThread(function()
         for k, v in pairs(Config.Locations["duty"]) do
-            exports['qb-target']:AddBoxZone("duty" .. k, vector3(v.x, v.y, v.z), 1.5, 1, {
+            exports.ox_target:addBoxZone({
                 name = "duty" .. k,
-                debugPoly = false,
-                heading = -20,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
-            }, {
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(1.5, 1, 2),
+                rotation = 71,
+                debug = false,
                 options = {
                     {
                         type = "client",
                         event = "EMSToggle:Duty",
                         icon = "fa fa-clipboard",
-                        label = "Sign In/Off duty",
-                        job = "ambulance"
+                        label = Lang:t('text.duty'),
+                        distance = 2,
+                        groups = "ambulance",
                     }
-                },
-                distance = 1.5
+                }
             })
         end
         for k, v in pairs(Config.Locations["stash"]) do
-            exports['qb-target']:AddBoxZone("stash" .. k, vector3(v.x, v.y, v.z), 1, 1, {
+            exports.ox_target:addBoxZone({
                 name = "stash" .. k,
-                debugPoly = false,
-                heading = -20,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
-            }, {
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(1, 1, 2),
+                rotation = -20,
+                debug = false,
                 options = {
                     {
                         type = "client",
                         event = "qb-ambulancejob:stash",
-                        icon = "fa fa-hand",
-                        label = "Open Stash",
-                        job = "ambulance"
+                        icon = "fa fa-clipboard",
+                        label = Lang:t('text.pstash'),
+                        distance = 2,
+                        groups = "ambulance",
                     }
-                },
-                distance = 1.5
+                }
             })
         end
         for k, v in pairs(Config.Locations["armory"]) do
-            exports['qb-target']:AddBoxZone("armory" .. k, vector3(v.x, v.y, v.z), 1, 1, {
+            exports.ox_target:addBoxZone({
                 name = "armory" .. k,
-                debugPoly = false,
-                heading = -20,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
-            }, {
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(1, 1, 2),
+                rotation = -20,
+                debug = false,
                 options = {
                     {
                         type = "client",
                         event = "qb-ambulancejob:armory",
-                        icon = "fa fa-hand",
-                        label = "Open Armory",
-                        job = "ambulance"
+                        icon = "fa fa-clipboard",
+                        label = Lang:t('text.armory'),
+                        distance = 1.5,
+                        groups = "ambulance",
                     }
-                },
-                distance = 1.5
+                }
             })
         end
         for k, v in pairs(Config.Locations["roof"]) do
-            exports['qb-target']:AddBoxZone("roof" .. k, vector3(v.x, v.y, v.z), 2, 2, {
+            exports.ox_target:addBoxZone({
                 name = "roof" .. k,
-                debugPoly = false,
-                heading = -20,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
-            }, {
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(1, 2, 2),
+                rotation = -20,
+                debug = false,
                 options = {
                     {
                         type = "client",
                         event = "qb-ambulancejob:elevator_roof",
                         icon = "fas fa-hand-point-up",
-                        label = "Take Elevator",
-                        job = "ambulance"
-                    },
-                },
-                distance = 8
+                        label = Lang:t('text.el_roof'),
+                        distance = 1.5,
+                        groups = "ambulance",
+                    }
+                }
             })
         end
         for k, v in pairs(Config.Locations["main"]) do
-            exports['qb-target']:AddBoxZone("main" .. k, vector3(v.x, v.y, v.z), 1.5, 1.5, {
+            exports.ox_target:addBoxZone({
                 name = "main" .. k,
-                debugPoly = false,
-                heading = -20,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
-            }, {
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(2, 1, 2),
+                rotation = -20,
+                debug = false,
                 options = {
                     {
                         type = "client",
                         event = "qb-ambulancejob:elevator_main",
                         icon = "fas fa-hand-point-up",
-                        label = "Take Elevator",
-                        job = "ambulance"
-                    },
-                },
-                distance = 8
+                        label = Lang:t('text.el_roof'),
+                        distance = 1.5,
+                        groups = "ambulance",
+                    }
+                }
             })
         end
     end)
 else
     CreateThread(function()
-        local signPoly = {}
-        for k, v in pairs(Config.Locations["duty"]) do
-            signPoly[#signPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1, {
-                name = "sign" .. k,
-                debugPoly = false,
-                heading = -20,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
-            })
-        end
-
-        local signCombo = ComboZone:Create(signPoly, { name = "signcombo", debugPoly = false })
-        signCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" then
+        for _, v in pairs(Config.Locations["duty"]) do
+            local function EnteredSignInZone()
                 if not onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.onduty_button'), 'left')
+                    lib.showTextUI(Lang:t('text.onduty_button'), {
+                        position = "top-center",
+                        icon = "fa-solid fa-clipboard",
+                        style = {
+                            borderRadius = 2,
+                            backgroundColor = '#141517',
+                            color = 'white'
+                        }
+                    })
                     EMSControls("sign")
                 else
-                    exports['qb-core']:DrawText(Lang:t('text.offduty_button'), 'left')
+                    lib.showTextUI(Lang:t('text.offduty_button'), {
+                        position = "top-center",
+                        icon = "fa-solid fa-clipboard",
+                        style = {
+                            borderRadius = 2,
+                            backgroundColor = '#141517',
+                            color = 'white'
+                        }
+                    })
                     EMSControls("sign")
                 end
-            else
-                check = false
-                exports['qb-core']:HideText()
             end
-        end)
 
-        local stashPoly = {}
-        for k, v in pairs(Config.Locations["stash"]) do
-            stashPoly[#stashPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
-                name = "stash" .. k,
-                debugPoly = false,
-                heading = -20,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
+            local function outSignInZone()
+                check = false
+                lib.hideTextUI()
+            end
+
+            lib.zones.box({
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(1, 1, 2),
+                rotation = -20,
+                debug = false,
+                onEnter = EnteredSignInZone,
+                onExit = outSignInZone
             })
         end
 
-        local stashCombo = ComboZone:Create(stashPoly, { name = "stashCombo", debugPoly = false })
-        stashCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" then
+        for _, v in pairs(Config.Locations["stash"]) do
+            local function EnteredStashZone()
                 if onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.pstash_button'), 'left')
+                    lib.showTextUI(Lang:t('text.pstash_button'), {
+                        position = "top-center",
+                        icon = "fa-solid fa-breifcase",
+                        style = {
+                            borderRadius = 2,
+                            backgroundColor = '#141517',
+                            color = 'white'
+                        }
+                    })
                     EMSControls("stash")
                 end
-            else
-                check = false
-                exports['qb-core']:HideText()
             end
-        end)
 
-        local armoryPoly = {}
-        for k, v in pairs(Config.Locations["armory"]) do
-            armoryPoly[#armoryPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
-                name = "armory" .. k,
-                debugPoly = false,
-                heading = 70,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
+            local function outStashZone()
+                check = false
+                lib.hideTextUI()
+            end
+
+            lib.zones.box({
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(1, 1, 2),
+                rotation = -20,
+                debug = false,
+                onEnter = EnteredStashZone,
+                onExit = outStashZone
             })
         end
 
-        local armoryCombo = ComboZone:Create(armoryPoly, { name = "armoryCombo", debugPoly = false })
-        armoryCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" then
+        for _, v in pairs(Config.Locations["armory"]) do
+            local function EnteredArmoryZone()
                 if onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.armory_button'), 'left')
+                    lib.showTextUI(Lang:t('text.armory_button'), {
+                        position = "top-center",
+                        icon = "fa-solid fa-lock",
+                        style = {
+                            borderRadius = 2,
+                            backgroundColor = '#141517',
+                            color = 'white'
+                        }
+                    })
                     EMSControls("armory")
                 end
-            else
-                check = false
-                exports['qb-core']:HideText()
             end
-        end)
 
-        local roofPoly = {}
-        for k, v in pairs(Config.Locations["roof"]) do
-            roofPoly[#roofPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 2, 2, {
-                name = "roof" .. k,
-                debugPoly = false,
-                heading = 70,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
+            local function outArmoryZone()
+                check = false
+                lib.hideTextUI()
+            end
+
+            lib.zones.box({
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(1, 1, 2),
+                rotation = -20,
+                debug = false,
+                onEnter = EnteredArmoryZone,
+                onExit = outArmoryZone
             })
         end
 
-        local roofCombo = ComboZone:Create(roofPoly, { name = "roofCombo", debugPoly = false })
-        roofCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" then
+        for _, v in pairs(Config.Locations["roof"]) do
+            local function EnteredRoofZone()
                 if onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.elevator_main'), 'left')
+                    lib.showTextUI(Lang:t('text.elevator_main'), {
+                        position = "top-center",
+                        icon = "fa-solid fa-hospital",
+                        style = {
+                            borderRadius = 2,
+                            backgroundColor = '#141517',
+                            color = 'white'
+                        }
+                    })
                     EMSControls("main")
                 else
-                    exports['qb-core']:DrawText(Lang:t('error.not_ems'), 'left')
+                    lib.showTextUI(Lang:t('error.not_ems'), {
+                        position = "top-center",
+                        icon = "fa-solid fa-ban",
+                        style = {
+                            borderRadius = 2,
+                            backgroundColor = '#141517',
+                            color = 'white'
+                        }
+                    })
                 end
-            else
-                check = false
-                exports['qb-core']:HideText()
             end
-        end)
 
-        local mainPoly = {}
-        for k, v in pairs(Config.Locations["main"]) do
-            mainPoly[#mainPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1.5, {
-                name = "main" .. k,
-                debugPoly = false,
-                heading = 70,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
+            local function outRoofZone()
+                check = false
+                lib.hideTextUI()
+            end
+
+            lib.zones.box({
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(1, 1, 2),
+                rotation = -20,
+                debug = false,
+                onEnter = EnteredRoofZone,
+                onExit = outRoofZone
             })
         end
 
-        local mainCombo = ComboZone:Create(mainPoly, { name = "mainPoly", debugPoly = false })
-        mainCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" then
+        for _, v in pairs(Config.Locations["main"]) do
+            local function EnteredMainZone()
                 if onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.elevator_roof'), 'left')
+                    lib.showTextUI(Lang:t('text.elevator_roof'), {
+                        position = "top-center",
+                        icon = "fa-solid fa-hospital",
+                        style = {
+                            borderRadius = 2,
+                            backgroundColor = '#141517',
+                            color = 'white'
+                        }
+                    })
                     EMSControls("roof")
                 else
-                    exports['qb-core']:DrawText(Lang:t('error.not_ems'), 'left')
+                    lib.showTextUI(Lang:t('error.not_ems'), {
+                        position = "top-center",
+                        icon = "fa-solid fa-ban",
+                        style = {
+                            borderRadius = 2,
+                            backgroundColor = '#141517',
+                            color = 'white'
+                        }
+                    })
                 end
-            else
-                check = false
-                exports['qb-core']:HideText()
             end
-        end)
+
+            local function outMainZone()
+                check = false
+                lib.hideTextUI()
+            end
+
+            lib.zones.box({
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(1, 1, 2),
+                rotation = -20,
+                debug = false,
+                onEnter = EnteredMainZone,
+                onExit = outMainZone
+            })
+        end
     end)
 end

@@ -85,13 +85,13 @@ local function DrawTxt(x, y, width, height, scale, text, r, g, b, a, _)
     SetTextProportional(0)
     SetTextScale(scale, scale)
     SetTextColour(r, g, b, a)
-    SetTextDropShadow(0, 0, 0, 0,255)
+    SetTextDropShadow(0, 0, 0, 0, 255)
     SetTextEdge(2, 0, 0, 0, 255)
     SetTextDropShadow()
     SetTextOutline()
     SetTextEntry("STRING")
     AddTextComponentString(text)
-    DrawText(x - width/2, y - height/2 + 0.005)
+    DrawText(x - width / 2, y - height / 2 + 0.005)
 end
 
 -- Damage Handler
@@ -106,12 +106,19 @@ AddEventHandler('gameEventTriggered', function(event, data)
             elseif InLaststand and not isDead then
                 SetLaststand(false)
                 local playerid = NetworkGetPlayerIndexFromPed(victim)
-                local playerName = GetPlayerName(playerid) .. " " .. "("..GetPlayerServerId(playerid)..")" or Lang:t('info.self_death')
+                local playerName = GetPlayerName(playerid) .. " " .. "(" .. GetPlayerServerId(playerid) .. ")" or
+                 Lang:t('info.self_death')
                 local killerId = NetworkGetPlayerIndexFromPed(attacker)
-                local killerName = GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or Lang:t('info.self_death')
+                local killerName = GetPlayerName(killerId) .. " " .. "(" .. GetPlayerServerId(killerId) .. ")" or
+               Lang:t('info.self_death')
                 local weaponLabel = QBCore.Shared.Weapons[weapon].label or 'Unknown'
                 local weaponName = QBCore.Shared.Weapons[weapon].name or 'Unknown'
-                TriggerServerEvent("qb-log:server:CreateLog", "death", Lang:t('logs.death_log_title', {playername = playerName, playerid = GetPlayerServerId(playerid)}), "red", Lang:t('logs.death_log_message', {killername = killerName, playername = playerName, weaponlabel = weaponLabel, weaponname = weaponName}))
+                TriggerServerEvent("qb-log:server:CreateLog", "death",
+             Lang:t('logs.death_log_title', { playername = playerName, playerid = GetPlayerServerId(playerid) }),
+           "red",
+         Lang:t('logs.death_log_message',
+       { killername = killerName, playername = playerName, weaponlabel = weaponLabel,
+                  weaponname = weaponName }))
                 deathTime = Config.DeathTime
                 OnDeath()
                 DeathTimer()
@@ -125,15 +132,15 @@ end)
 emsNotified = false
 
 CreateThread(function()
-	while true do
+    while true do
         local sleep = 1000
-		if isDead or InLaststand then
+        if isDead or InLaststand then
             sleep = 5
             local ped = PlayerPedId()
             DisableAllControlActions(0)
             EnableControlAction(0, 1, true)
-			EnableControlAction(0, 2, true)
-			EnableControlAction(0, 245, true)
+            EnableControlAction(0, 2, true)
+            EnableControlAction(0, 245, true)
             EnableControlAction(0, 38, true)
             EnableControlAction(0, 0, true)
             EnableControlAction(0, 322, true)
@@ -146,9 +153,12 @@ CreateThread(function()
             if isDead then
                 if not isInHospitalBed then
                     if deathTime > 0 then
-                        DrawTxt(0.93, 1.44, 1.0,1.0,0.6, Lang:t('info.respawn_txt', {deathtime = math.ceil(deathTime)}), 255, 255, 255, 255)
+                        DrawTxt(0.93, 1.44, 1.0, 1.0, 0.6,
+                          Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), 255, 255, 255, 255)
                     else
-                        DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', {holdtime = hold, cost = Config.BillCost}), 255, 255, 255, 255)
+                        DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6,
+                Lang:t('info.respawn_revive', { holdtime = hold, cost = Config.BillCost }), 255, 255, 255,
+     255)
                     end
                 end
 
@@ -176,9 +186,11 @@ CreateThread(function()
                 sleep = 5
 
                 if LaststandTime > Laststand.MinimumRevive then
-                    DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', {time = math.ceil(LaststandTime)}), 255, 255, 255, 255)
+                    DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', { time = math.ceil(LaststandTime) }), 255
+                        , 255, 255, 255)
                 else
-                    DrawTxt(0.845, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out_help', {time = math.ceil(LaststandTime)}), 255, 255, 255, 255)
+                    DrawTxt(0.845, 1.44, 1.0, 1.0, 0.6,
+                       Lang:t('info.bleed_out_help', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
                     if not emsNotified then
                         DrawTxt(0.91, 1.40, 1.0, 1.0, 0.6, Lang:t('info.request_help'), 255, 255, 255, 255)
                     else
@@ -217,7 +229,7 @@ CreateThread(function()
                     end
                 end
             end
-		end
+        end
         Wait(sleep)
-	end
+    end
 end)
