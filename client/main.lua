@@ -326,7 +326,7 @@ local function LeaveBed()
     ClearPedTasks(player)
     TriggerServerEvent('hospital:server:LeaveBed', bedOccupying)
     FreezeEntityPosition(bedObject, true)
-    RenderScriptCams(true, true, 200, true, true)
+    RenderScriptCams(false, true, 200, true, true)
     DestroyCam(cam, false)
 
     bedOccupying = nil
