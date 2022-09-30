@@ -204,7 +204,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
                 color = '#ffffff'
             },
             icon = 'xmark',
-            iconColor = '#C53030'
+            iconColor = '#C0392B'
         })
     end
 end)
@@ -243,7 +243,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                             color = '#27ae606'
                         },
                         icon = 'kit-medical',
-                        iconColor = '#C53030'
+                        iconColor = '#C0392B'
                     })
                     TriggerServerEvent("hospital:server:RevivePlayer", playerId)
                 else
@@ -257,7 +257,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                             color = '#ffffff'
                         },
                         icon = 'xmark',
-                        iconColor = '#C53030'
+                        iconColor = '#C0392B'
                     })
                 end
             else
@@ -270,7 +270,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                         color = '#ffffff'
                     },
                     icon = 'xmark',
-                    iconColor = '#C53030'
+                    iconColor = '#C0392B'
                 })
             end
         else
@@ -283,7 +283,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                     color = '#ffffff'
                 },
                 icon = 'xmark',
-                iconColor = '#C53030'
+                iconColor = '#C0392B'
             })
         end
     end, 'firstaid')
@@ -323,7 +323,7 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
                             color = '#27ae60'
                         },
                         icon = 'bandage',
-                        iconColor = '#C53030'
+                        iconColor = '#C0392B'
                     })
                     TriggerServerEvent("hospital:server:TreatWounds", playerId)
                 else
@@ -337,7 +337,7 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
                             color = '#ffffff'
                         },
                         icon = 'xmark',
-                        iconColor = '#C53030'
+                        iconColor = '#C0392B'
                     })
                 end
             else
@@ -350,7 +350,7 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
                         color = '#ffffff'
                     },
                     icon = 'xmark',
-                    iconColor = '#C53030'
+                    iconColor = '#C0392B'
                 })
             end
         else
@@ -363,7 +363,7 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
                     color = '#ffffff'
                 },
                 icon = 'xmark',
-                iconColor = '#C53030'
+                iconColor = '#C0392B'
             })
         end
     end, 'bandage')

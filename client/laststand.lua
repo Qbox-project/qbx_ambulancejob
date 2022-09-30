@@ -90,7 +90,7 @@ function SetLaststand(bool)
                             color = '#ffffff'
                         },
                         icon = 'droplet',
-                        iconColor = '#C53030'
+                        iconColor = '#C0392B'
                     })
                     SetLaststand(false)
                     local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
@@ -155,7 +155,7 @@ RegisterNetEvent('hospital:client:UseFirstAid', function()
                 color = '#ffffff'
             },
             icon = 'face-angry',
-            iconColor = '#C53030'
+            iconColor = '#C0392B'
         })
     end
 end)
@@ -216,7 +216,7 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
                 color = '#ffffff'
             },
             icon = 'xmark',
-            iconColor = '#C53030'
+            iconColor = '#C0392B'
         })
     end
 end)

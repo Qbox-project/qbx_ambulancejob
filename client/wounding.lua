@@ -16,7 +16,7 @@ local function DoBleedAlert()
                 color = '#ffffff'
             },
             icon = 'droplet',
-            iconColor = '#C53030'
+            iconColor = '#C0392B'
         })
     end
 end
@@ -88,7 +88,7 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
                 color = '#ffffff'
             },
             icon = 'xmark',
-            iconColor = '#C53030'
+            iconColor = '#C0392B'
         })
     end
 end)
@@ -134,7 +134,7 @@ RegisterNetEvent('hospital:client:UseBandage', function()
                 color = '#ffffff'
             },
             icon = 'xmark',
-            iconColor = '#C53030'
+            iconColor = '#C0392B'
         })
     end
 end)
@@ -177,7 +177,7 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
                 color = '#ffffff'
             },
             icon = 'xmark',
-            iconColor = '#C53030'
+            iconColor = '#C0392B'
         })
     end
 end)

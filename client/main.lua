@@ -120,7 +120,7 @@ local function DoLimbAlert()
                     color = '#ffffff'
                 },
                 icon = 'xmark',
-                iconColor = '#C53030'
+                iconColor = '#C0392B'
             })
         end
     end
@@ -138,7 +138,7 @@ local function DoBleedAlert()
                 color = '#ffffff'
             },
             icon = 'droplet-slash',
-            iconColor = '#0F52BA'
+            iconColor = '#2980B9'
         })
     end
 end
@@ -582,7 +582,7 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
             color = '#ffffff'
         },
         icon = 'circle-exclamation',
-        iconColor = '#C53030'
+        iconColor = '#C0392B'
     })
     PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
     local transG = 250
@@ -655,7 +655,7 @@ RegisterNetEvent('hospital:client:Revive', function()
             color = '#ffffff'
         },
         icon = 'heart-pulse',
-        iconColor = '#0F52BA'
+        iconColor = '#2980B9'
     })
 end)
 
@@ -979,7 +979,7 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
                         color = '#ffffff'
                     },
                     icon = 'bed',
-                    iconColor = '#C53030'
+                    iconColor = '#C0392B'
                 })
             end
         else
@@ -993,7 +993,7 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
                     color = '#ffffff'
                 },
                 icon = 'xmark',
-                iconColor = '#C53030'
+                iconColor = '#C0392B'
             })
         end
     end
@@ -1012,7 +1012,7 @@ RegisterNetEvent('qb-ambulancejob:beds', function()
                 color = '#ffffff'
             },
             icon = 'bed',
-            iconColor = '#C53030'
+            iconColor = '#C0392B'
         })
     end
 end)

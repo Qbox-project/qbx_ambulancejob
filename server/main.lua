@@ -48,7 +48,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 							color = '#ffffff'
 						},
 						icon = 'person-circle-xmark',
-						iconColor = '#C53030'
+						iconColor = '#C0392B'
 					})
 				end
 				Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
@@ -72,7 +72,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 					color = '#ffffff'
 				},
 				icon = 'person-circle-xmark',
-				iconColor = '#C53030'
+				iconColor = '#C0392B'
 			})
 		end
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
@@ -95,7 +95,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 							color = '#ffffff'
 						},
 						icon = 'person-circle-xmark',
-						iconColor = '#C53030'
+						iconColor = '#C0392B'
 					})
 				end
 				Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
@@ -119,7 +119,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 					color = '#ffffff'
 				},
 				icon = 'person-circle-xmark',
-				iconColor = '#C53030'
+				iconColor = '#C0392B'
 			})
 		end
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
@@ -248,7 +248,7 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 						color = '#ffffff'
 					},
 					icon = 'money-check-dollar',
-					iconColor = '#C53030'
+					iconColor = '#C0392B'
 				})
 			end
 		else
@@ -275,7 +275,7 @@ RegisterNetEvent('hospital:server:SendDoctorAlert', function()
 						color = '#ffffff'
 					},
 					icon = 'user-doctor',
-					iconColor = '#0F52BA'
+					iconColor = '#2980B9'
 				})
 			end
 		end
@@ -292,7 +292,7 @@ RegisterNetEvent('hospital:server:SendDoctorAlert', function()
 				color = '#ffffff'
 			},
 			icon = 'user-doctor',
-			iconColor = '#0F52BA'
+			iconColor = '#2980B9'
 		})
 	end
 end)
@@ -319,7 +319,7 @@ RegisterNetEvent('hospital:server:CanHelp', function(helperId, canHelp)
 				color = '#ffffff'
 			},
 			icon = 'x-mark',
-			iconColor = '#C53030'
+			iconColor = '#C0392B'
 		})
 	end
 end)
@@ -437,7 +437,7 @@ QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(s
 				color = '#ffffff'
 			},
 			icon = 'x-mark',
-			iconColor = '#C53030'
+			iconColor = '#C0392B'
 		})
 	end
 end)
@@ -457,7 +457,7 @@ QBCore.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(sour
 				color = '#ffffff'
 			},
 			icon = 'x-mark',
-			iconColor = '#C53030'
+			iconColor = '#C0392B'
 		})
 	end
 end)
@@ -477,7 +477,7 @@ QBCore.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function
 				color = '#ffffff'
 			},
 			icon = 'x-mark',
-			iconColor = '#C53030'
+			iconColor = '#C0392B'
 		})
 	end
 end)
@@ -499,7 +499,7 @@ QBCore.Commands.Add("revive", Lang:t('info.revive_player_a'), { { name = "id", h
 						color = '#ffffff'
 					},
 					icon = 'signal',
-					iconColor = '#C53030'
+					iconColor = '#C0392B'
 				})
 			end
 		else
@@ -524,7 +524,7 @@ QBCore.Commands.Add("setpain", Lang:t('info.pain_level'), { { name = "id", help 
 						color = '#ffffff'
 					},
 					icon = 'signal',
-					iconColor = '#C53030'
+					iconColor = '#C0392B'
 				})
 			end
 		else
@@ -549,7 +549,7 @@ QBCore.Commands.Add("kill", Lang:t('info.kill'), { { name = "id", help = Lang:t(
 						color = '#ffffff'
 					},
 					icon = 'signal',
-					iconColor = '#C53030'
+					iconColor = '#C0392B'
 				})
 			end
 		else
@@ -574,7 +574,7 @@ QBCore.Commands.Add('aheal', Lang:t('info.heal_player_a'), { { name = 'id', help
 						color = '#ffffff'
 					},
 					icon = 'signal',
-					iconColor = '#C53030'
+					iconColor = '#C0392B'
 				})
 			end
 		else
