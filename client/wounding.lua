@@ -47,16 +47,24 @@ end
 
 RegisterNetEvent('hospital:client:UseIfaks', function()
     local ped = PlayerPedId()
-    QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.ifaks'), 3000, false, true, {
-        disableMovement = false,
-        disableCarMovement = false,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = "mp_suicide",
-        anim = "pill",
-        flags = 49,
-    }, {}, {}, function() -- Done
+    if lib.progressCircle({
+        duration = 3000,
+        position = 'bottom',
+        label = Lang:t('progress.ifaks'),
+        useWhileDead = false,
+        canCancel = true,
+        disable = {
+            move = false,
+            car = false,
+            combat = true,
+            mouse = false,
+        },
+        anim = {
+            dict = "mp_suicide",
+            clip = "pill",
+        },
+    })
+    then
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         TriggerServerEvent("hospital:server:removeIfaks")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["ifaks"], "remove")
@@ -69,7 +77,7 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
         if math.random(1, 100) < 50 then
             RemoveBleed(1)
         end
-    end, function() -- Cancel
+    else
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         lib.notify({
             id = "cancelled",
@@ -82,21 +90,29 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
             icon = 'xmark',
             iconColor = '#C53030'
         })
-    end)
+    end
 end)
 
 RegisterNetEvent('hospital:client:UseBandage', function()
     local ped = PlayerPedId()
-    QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.bandage'), 4000, false, true, {
-        disableMovement = false,
-        disableCarMovement = false,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = "anim@amb@business@weed@weed_inspecting_high_dry@",
-        anim = "weed_inspecting_high_base_inspector",
-        flags = 49,
-    }, {}, {}, function() -- Done
+    if lib.progressCircle({
+        duration = 4000,
+        position = 'bottom',
+        label = Lang:t('progress.bandage'),
+        useWhileDead = false,
+        canCancel = true,
+        disable = {
+            move = false,
+            car = false,
+            combat = true,
+            mouse = false,
+        },
+        anim = {
+            dict = "mp_suicide",
+            clip = "pill",
+        },
+    })
+    then
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
         TriggerServerEvent("hospital:server:removeBandage")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["bandage"], "remove")
@@ -107,7 +123,7 @@ RegisterNetEvent('hospital:client:UseBandage', function()
         if math.random(1, 100) < 7 then
             ResetPartial()
         end
-    end, function() -- Cancel
+    else
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
         lib.notify({
             id = "cancelled",
@@ -120,21 +136,29 @@ RegisterNetEvent('hospital:client:UseBandage', function()
             icon = 'xmark',
             iconColor = '#C53030'
         })
-    end)
+    end
 end)
 
 RegisterNetEvent('hospital:client:UsePainkillers', function()
     local ped = PlayerPedId()
-    QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.painkillers'), 3000, false, true, {
-        disableMovement = false,
-        disableCarMovement = false,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = "mp_suicide",
-        anim = "pill",
-        flags = 49,
-    }, {}, {}, function() -- Done
+    if lib.progressCircle({
+        duration = 3000,
+        position = 'bottom',
+        label = Lang:t('progress.painkillers'),
+        useWhileDead = false,
+        canCancel = true,
+        disable = {
+            move = false,
+            car = false,
+            combat = true,
+            mouse = false,
+        },
+        anim = {
+            dict = "mp_suicide",
+            clip = "pill",
+        },
+    })
+    then
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         TriggerServerEvent("hospital:server:removePainkillers")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["painkillers"], "remove")
@@ -142,7 +166,7 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
         if painkillerAmount < 3 then
             painkillerAmount = painkillerAmount + 1
         end
-    end, function() -- Cancel
+    else
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         lib.notify({
             id = "cancelled",
@@ -155,7 +179,7 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
             icon = 'xmark',
             iconColor = '#C53030'
         })
-    end)
+    end
 end)
 
 -- Threads

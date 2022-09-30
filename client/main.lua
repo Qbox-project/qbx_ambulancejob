@@ -947,12 +947,24 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
         TriggerServerEvent("hospital:server:SendDoctorAlert")
     else
         TriggerEvent('animations:client:EmoteCommandStart', { "notepad" })
-        QBCore.Functions.Progressbar("hospital_checkin", Lang:t('progress.checking_in'), 2000, false, true, {
-            disableMovement = true,
-            disableCarMovement = true,
-            disableMouse = false,
-            disableCombat = true,
-        }, {}, {}, {}, function() -- Done
+        if lib.progressCircle({
+            duration = 2000,
+            position = 'bottom',
+            label = Lang:t('progress.checking_in'),
+            useWhileDead = false,
+            canCancel = true,
+            disable = {
+                move = false,
+                car = false,
+                combat = true,
+                mouse = false,
+            },
+            anim = {
+                dict = healAnimDict,
+                clip = healAnim,
+            },
+        })
+        then
             TriggerEvent('animations:client:EmoteCommandStart', { "c" })
             local bedId = GetAvailableBed()
             if bedId then
@@ -970,7 +982,7 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
                     iconColor = '#C53030'
                 })
             end
-        end, function() -- Cancel
+        else
             TriggerEvent('animations:client:EmoteCommandStart', { "c" })
             lib.notify({
                 id = "cancelled",
@@ -983,7 +995,7 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
                 icon = 'xmark',
                 iconColor = '#C53030'
             })
-        end)
+        end
     end
 end)
 

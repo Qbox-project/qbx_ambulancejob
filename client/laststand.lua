@@ -174,31 +174,38 @@ end)
 
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     local ped = PlayerPedId()
-    QBCore.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), math.random(30000, 60000), false, true,
-    {
-            disableMovement = false,
-            disableCarMovement = false,
-            disableMouse = false,
-            disableCombat = true,
-        }, {
-            animDict = healAnimDict,
-            anim = healAnim,
-            flags = 1,
-        }, {}, {}, function() -- Done
-            ClearPedTasks(ped)
-            lib.notify({
-                id = 'revived',
-                title = Lang:t('success.revived'),
-                duration = 2500,
-                style = {
-                    backgroundColor = '#141517',
-                    color = '#ffffff'
-                },
-                icon = 'kit-medical',
-                iconColor = '#07c70d'
-            })
-            TriggerServerEvent("hospital:server:RevivePlayer", targetId)
-        end, function() -- Cancel
+    if lib.progressCircle({
+        duration = math.random(30000, 60000),
+        position = 'bottom',
+        label = Lang:t('progress.revive'),
+        useWhileDead = false,
+        canCancel = true,
+        disable = {
+            move = false,
+            car = false,
+            combat = true,
+            mouse = false,
+        },
+        anim = {
+            dict = healAnimDict,
+            clip = healAnim,
+        },
+    })
+    then
+        ClearPedTasks(ped)
+        lib.notify({
+            id = 'revived',
+            title = Lang:t('success.revived'),
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'kit-medical',
+            iconColor = '#07c70d'
+        })
+        TriggerServerEvent("hospital:server:RevivePlayer", targetId)
+    else
         ClearPedTasks(ped)
         lib.notify({
             id = 'canceled',
@@ -211,5 +218,5 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
             icon = 'xmark',
             iconColor = '#C53030'
         })
-    end)
+    end
 end)

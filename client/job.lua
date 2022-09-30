@@ -215,16 +215,24 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
-                QBCore.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), 5000, false, true, {
-                    disableMovement = false,
-                    disableCarMovement = false,
-                    disableMouse = false,
-                    disableCombat = true,
-                }, {
-                    animDict = healAnimDict,
-                    anim = healAnim,
-                    flags = 16,
-                }, {}, {}, function()
+                if lib.progressCircle({
+                    duration = 5000,
+                    position = 'bottom',
+                    label = Lang:t('progress.revive'),
+                    useWhileDead = false,
+                    canCancel = true,
+                    disable = {
+                        move = false,
+                        car = false,
+                        combat = true,
+                        mouse = false,
+                    },
+                    anim = {
+                        dict = healAnimDict,
+                        clip = healAnim,
+                    },
+                })
+                then
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                     lib.notify({
                         id = 'revived',
@@ -238,7 +246,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                         iconColor = '#C53030'
                     })
                     TriggerServerEvent("hospital:server:RevivePlayer", playerId)
-                end, function() -- Cancel
+                else
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                     lib.notify({
                         id = 'canceled',
@@ -251,7 +259,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                         icon = 'xmark',
                         iconColor = '#C53030'
                     })
-                end)
+                end
             else
                 lib.notify({
                     id = 'no_player',
@@ -287,16 +295,24 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
-                QBCore.Functions.Progressbar("hospital_healwounds", Lang:t('progress.healing'), 5000, false, true, {
-                    disableMovement = false,
-                    disableCarMovement = false,
-                    disableMouse = false,
-                    disableCombat = true,
-                }, {
-                    animDict = healAnimDict,
-                    anim = healAnim,
-                    flags = 16,
-                }, {}, {}, function() -- Done
+                if lib.progressCircle({
+                    duration = 5000,
+                    position = 'bottom',
+                    label = Lang:t('progress.healing'),
+                    useWhileDead = false,
+                    canCancel = true,
+                    disable = {
+                        move = false,
+                        car = false,
+                        combat = true,
+                        mouse = false,
+                    },
+                    anim = {
+                        dict = healAnimDict,
+                        clip = healAnim,
+                    },
+                })
+                then
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                     lib.notify({
                         id = 'helped_player',
@@ -310,7 +326,7 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
                         iconColor = '#C53030'
                     })
                     TriggerServerEvent("hospital:server:TreatWounds", playerId)
-                end, function() -- Cancel
+                else
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                     lib.notify({
                         id = 'canceled',
@@ -323,7 +339,7 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
                         icon = 'xmark',
                         iconColor = '#C53030'
                     })
-                end)
+                end
             else
                 lib.notify({
                     id = 'no_player',
