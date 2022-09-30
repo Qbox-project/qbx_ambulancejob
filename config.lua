@@ -35,8 +35,8 @@ Config.AlertShowInfo = 2 -- How many injuries a player must have before being al
 
 Config.Locations = { -- Edit the various interaction points for players or create new ones
     ["checking"] = {
-	    [1] = vector3(308.19, -595.35, 43.29),
-	    [2] = vector3(-254.54, 6331.78, 32.43), -- paleto
+        [1] = vector3(308.19, -595.35, 43.29),
+        [2] = vector3(-254.54, 6331.78, 32.43),
     },
     ["duty"] = {
         [1] = vector3(311.18, -599.25, 43.29),
@@ -55,61 +55,61 @@ Config.Locations = { -- Edit the various interaction points for players or creat
         [2] = vector3(-245.13, 6315.71, 32.82),
     },
     ["roof"] = {
-        [1] = vector4(338.5, -583.85, 74.16, 245.5),
+        [1] = vector3(338.54, -583.88, 74.17),
     },
     ["main"] = {
-        [1] = vector3(298.74, -599.33, 43.29),
+        [1] = vector3(298.62, -599.66, 43.29),
     },
     ["stash"] = {
         [1] = vector3(309.78, -596.6, 43.29),
     },
     ["beds"] = {
-        [1] = {coords = vector4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868},
-        [2] = {coords = vector4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868},
-        [3] = {coords = vector4(354.12, -593.12, 43.1, 336.32), taken = false, model = 2117668672},
-        [4] = {coords = vector4(350.79, -591.8, 43.1, 336.32), taken = false, model = 2117668672},
-        [5] = {coords = vector4(346.99, -590.48, 43.1, 336.32), taken = false, model = 2117668672},
-        [6] = {coords = vector4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327},
-        [7] = {coords = vector4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327},
-        [8] = {coords = vector4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327},
-	--- paleto
-	    [9] = {coords = vector4(-252.43, 6312.25, 32.34, 313.48), taken = false, model = 2117668672},
-        [10] = {coords = vector4(-247.04, 6317.95, 32.34, 134.64), taken = false, model = 2117668672},
-        [11] = {coords = vector4(-255.98, 6315.67, 32.34, 313.91), taken = false, model = 2117668672},
+        [1] = { coords = vector4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868 },
+        [2] = { coords = vector4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868 },
+        [3] = { coords = vector4(354.12, -593.12, 43.1, 336.32), taken = false, model = 2117668672 },
+        [4] = { coords = vector4(350.79, -591.8, 43.1, 336.32), taken = false, model = 2117668672 },
+        [5] = { coords = vector4(346.99, -590.48, 43.1, 336.32), taken = false, model = 2117668672 },
+        [6] = { coords = vector4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327 },
+        [7] = { coords = vector4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327 },
+        [8] = { coords = vector4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327 },
+        --- paleto
+        [9] = { coords = vector4(-252.43, 6312.25, 32.34, 313.48), taken = false, model = 2117668672 },
+        [10] = { coords = vector4(-247.04, 6317.95, 32.34, 134.64), taken = false, model = 2117668672 },
+        [11] = { coords = vector4(-255.98, 6315.67, 32.34, 313.91), taken = false, model = 2117668672 },
     },
     ["jailbeds"] = {
-        [1] = {coords = vector4(1761.96, 2597.74, 45.66, 270.14), taken = false, model = 2117668672},
-        [2] = {coords = vector4(1761.96, 2591.51, 45.66, 269.8), taken = false, model = 2117668672},
-        [3] = {coords = vector4(1771.8, 2598.02, 45.66, 89.05), taken = false, model = 2117668672},
-        [4] = {coords = vector4(1771.85, 2591.85, 45.66, 91.51), taken = false, model = 2117668672},
+        [1] = { coords = vector4(1761.96, 2597.74, 45.66, 270.14), taken = false, model = 2117668672 },
+        [2] = { coords = vector4(1761.96, 2591.51, 45.66, 269.8), taken = false, model = 2117668672 },
+        [3] = { coords = vector4(1771.8, 2598.02, 45.66, 89.05), taken = false, model = 2117668672 },
+        [4] = { coords = vector4(1771.85, 2591.85, 45.66, 91.51), taken = false, model = 2117668672 },
     },
     ["stations"] = {
-        [1] = {label = Lang:t('info.pb_hospital'), coords = vector4(304.27, -600.33, 43.28, 272.249)}
+        [1] = { label = Lang:t('info.pb_hospital'), coords = vector4(304.27, -600.33, 43.28, 272.249) }
     }
 }
 
 Config.AuthorizedVehicles = { -- Vehicles players can use based on their ambulance job grade level
-	-- Grade 0
-	[0] = {
-		["ambulance"] = "Ambulance",
-	},
-	-- Grade 1
-	[1] = {
-		["ambulance"] = "Ambulance",
+    -- Grade 0
+    [0] = {
+        ["ambulance"] = "Ambulance",
+    },
+    -- Grade 1
+    [1] = {
+        ["ambulance"] = "Ambulance",
 
-	},
-	-- Grade 2
-	[2] = {
-		["ambulance"] = "Ambulance",
-	},
-	-- Grade 3
-	[3] = {
-		["ambulance"] = "Ambulance",
-	},
-	-- Grade 4
-	[4] = {
-		["ambulance"] = "Ambulance",
-	}
+    },
+    -- Grade 2
+    [2] = {
+        ["ambulance"] = "Ambulance",
+    },
+    -- Grade 3
+    [3] = {
+        ["ambulance"] = "Ambulance",
+    },
+    -- Grade 4
+    [4] = {
+        ["ambulance"] = "Ambulance",
+    }
 }
 
 Config.Items = { -- Items found in the ambulance shop for players with the ambulance job to purchase
@@ -235,10 +235,10 @@ Config.WoundStates = { -- Translate wound alerts
 }
 
 Config.BleedingStates = { -- Translate bleeding alerts
-    [1] = {label = Lang:t('states.little_bleed')},
-    [2] = {label = Lang:t('states.bleed')},
-    [3] = {label = Lang:t('states.lot_bleed')},
-    [4] = {label = Lang:t('states.big_bleed')},
+    [1] = { label = Lang:t('states.little_bleed') },
+    [2] = { label = Lang:t('states.bleed') },
+    [3] = { label = Lang:t('states.lot_bleed') },
+    [4] = { label = Lang:t('states.big_bleed') },
 }
 
 Config.MovementRate = { -- Set the player movement rate based on the level of damage they have
@@ -264,16 +264,16 @@ Config.Bones = { -- Correspond bone hash numbers to their label
     [45509] = 'LARM',
     [61163] = 'LARM',
     [18905] = 'LHAND',
-    [4089] = 'LFINGER',
-    [4090] = 'LFINGER',
-    [4137] = 'LFINGER',
-    [4138] = 'LFINGER',
-    [4153] = 'LFINGER',
-    [4154] = 'LFINGER',
-    [4169] = 'LFINGER',
-    [4170] = 'LFINGER',
-    [4185] = 'LFINGER',
-    [4186] = 'LFINGER',
+    [4089]  = 'LFINGER',
+    [4090]  = 'LFINGER',
+    [4137]  = 'LFINGER',
+    [4138]  = 'LFINGER',
+    [4153]  = 'LFINGER',
+    [4154]  = 'LFINGER',
+    [4169]  = 'LFINGER',
+    [4170]  = 'LFINGER',
+    [4185]  = 'LFINGER',
+    [4186]  = 'LFINGER',
     [26610] = 'LFINGER',
     [26611] = 'LFINGER',
     [26612] = 'LFINGER',
@@ -281,7 +281,7 @@ Config.Bones = { -- Correspond bone hash numbers to their label
     [26614] = 'LFINGER',
     [58271] = 'LLEG',
     [63931] = 'LLEG',
-    [2108] = 'LFOOT',
+    [2108]  = 'LFOOT',
     [14201] = 'LFOOT',
     [40269] = 'RARM',
     [28252] = 'RARM',
@@ -369,7 +369,7 @@ Config.BoneIndexes = { -- Correspond bone labels to their hash number
 Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_STUNGUN`] = Config.WeaponClasses['NONE'],
     [`WEAPON_STUNGUN_MP`] = Config.WeaponClasses['NONE'],
-    --[[ Small Caliber ]]--
+    --[[ Small Caliber ]] --
     [`WEAPON_PISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
     [`WEAPON_COMBATPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
     [`WEAPON_APPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
@@ -382,7 +382,7 @@ Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_SNSPISTOL_MK2`] = Config.WeaponClasses['SMALL_CALIBER'],
     [`WEAPON_VINTAGEPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
 
-    --[[ Medium Caliber ]]--
+    --[[ Medium Caliber ]] --
     [`WEAPON_ADVANCEDRIFLE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
     [`WEAPON_ASSAULTSMG`] = Config.WeaponClasses['MEDIUM_CALIBER'],
     [`WEAPON_BULLPUPRIFLE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
@@ -402,7 +402,7 @@ Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_SPECIALCARBINE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
     [`WEAPON_SPECIALCARBINE_MK2`] = Config.WeaponClasses['MEDIUM_CALIBER'],
 
-    --[[ High Caliber ]]--
+    --[[ High Caliber ]] --
     [`WEAPON_ASSAULTRIFLE`] = Config.WeaponClasses['HIGH_CALIBER'],
     [`WEAPON_ASSAULTRIFLE_MK2`] = Config.WeaponClasses['HIGH_CALIBER'],
     [`WEAPON_COMBATMG`] = Config.WeaponClasses['HIGH_CALIBER'],
@@ -417,7 +417,7 @@ Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_RAILGUN`] = Config.WeaponClasses['HIGH_CALIBER'],
     [`WEAPON_HEAVYRIFLE`] = Config.WeaponClasses['HIGH_CALIBER'],
 
-    --[[ Shotguns ]]--
+    --[[ Shotguns ]] --
     [`WEAPON_ASSAULTSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
     [`WEAPON_BULLUPSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
     [`WEAPON_DBSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
@@ -427,12 +427,12 @@ Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_SAWNOFFSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
     [`WEAPON_SWEEPERSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
 
-    --[[ Animals ]]--
+    --[[ Animals ]] --
     [`WEAPON_ANIMAL`] = Config.WeaponClasses['WILDLIFE'], -- Animal
     [`WEAPON_COUGAR`] = Config.WeaponClasses['WILDLIFE'], -- Cougar
     [`WEAPON_BARBED_WIRE`] = Config.WeaponClasses['WILDLIFE'], -- Barbed Wire
 
-    --[[ Cutting Weapons ]]--
+    --[[ Cutting Weapons ]] --
     [`WEAPON_BATTLEAXE`] = Config.WeaponClasses['CUTTING'],
     [`WEAPON_BOTTLE`] = Config.WeaponClasses['CUTTING'],
     [`WEAPON_DAGGER`] = Config.WeaponClasses['CUTTING'],
@@ -441,10 +441,10 @@ Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_MACHETE`] = Config.WeaponClasses['CUTTING'],
     [`WEAPON_SWITCHBLADE`] = Config.WeaponClasses['CUTTING'],
 
-    --[[ Light Impact ]]--
+    --[[ Light Impact ]] --
     [`WEAPON_KNUCKLE`] = Config.WeaponClasses['LIGHT_IMPACT'],
 
-    --[[ Heavy Impact ]]--
+    --[[ Heavy Impact ]] --
     [`WEAPON_BAT`] = Config.WeaponClasses['HEAVY_IMPACT'],
     [`WEAPON_CROWBAR`] = Config.WeaponClasses['HEAVY_IMPACT'],
     [`WEAPON_FIREEXTINGUISHER`] = Config.WeaponClasses['HEAVY_IMPACT'],
@@ -457,7 +457,7 @@ Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_RAMMED_BY_CAR`] = Config.WeaponClasses['HEAVY_IMPACT'],
     [`WEAPON_RUN_OVER_BY_CAR`] = Config.WeaponClasses['HEAVY_IMPACT'],
 
-    --[[ Explosives ]]--
+    --[[ Explosives ]] --
     [`WEAPON_EXPLOSION`] = Config.WeaponClasses['EXPLOSIVE'],
     [`WEAPON_GRENADE`] = Config.WeaponClasses['EXPLOSIVE'],
     [`WEAPON_COMPACTLAUNCHER`] = Config.WeaponClasses['EXPLOSIVE'],
@@ -469,18 +469,18 @@ Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_HELI_CRASH`] = Config.WeaponClasses['EXPLOSIVE'],
     [`WEAPON_EMPLAUNCHER`] = Config.WeaponClasses['EXPLOSIVE'],
 
-    --[[ Other ]]--
+    --[[ Other ]] --
     [`WEAPON_FALL`] = Config.WeaponClasses['OTHER'], -- Fall
     [`WEAPON_HIT_BY_WATER_CANNON`] = Config.WeaponClasses['OTHER'], -- Water Cannon
 
-    --[[ Fire ]]--
+    --[[ Fire ]] --
     [`WEAPON_ELECTRIC_FENCE`] = Config.WeaponClasses['FIRE'],
     [`WEAPON_FIRE`] = Config.WeaponClasses['FIRE'],
     [`WEAPON_MOLOTOV`] = Config.WeaponClasses['FIRE'],
     [`WEAPON_FLARE`] = Config.WeaponClasses['FIRE'],
     [`WEAPON_FLAREGUN`] = Config.WeaponClasses['FIRE'],
 
-    --[[ Suffocate ]]--
+    --[[ Suffocate ]] --
     [`WEAPON_DROWNING`] = Config.WeaponClasses['SUFFOCATING'], -- Drowning
     [`WEAPON_DROWNING_IN_VEHICLE`] = Config.WeaponClasses['SUFFOCATING'], -- Drowning Veh
     [`WEAPON_EXHAUSTION`] = Config.WeaponClasses['SUFFOCATING'], -- Exhaust

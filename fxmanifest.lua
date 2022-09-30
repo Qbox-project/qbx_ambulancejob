@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'QB-AmbulanceJob'
-version '1.0.0'
+description 'https://github.com/QBCore-Remastered'
+version '1.0.1'
 
 shared_scripts {
 	'@qb-core/shared/locale.lua',
@@ -18,9 +18,6 @@ client_scripts {
 	'client/laststand.lua',
 	'client/job.lua',
 	'client/dead.lua',
-	'@PolyZone/client.lua',
-	'@PolyZone/BoxZone.lua',
-	'@PolyZone/ComboZone.lua'
 }
 
 server_scripts {

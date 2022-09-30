@@ -16,7 +16,7 @@ local function GetClosestPlayer()
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
 
-    for i=1, #closestPlayers, 1 do
+    for i = 1, #closestPlayers, 1 do
         if closestPlayers[i] ~= PlayerId() then
             local pos = GetEntityCoords(GetPlayerPed(closestPlayers[i]))
             local distance = #(pos - coords)
@@ -26,9 +26,9 @@ local function GetClosestPlayer()
                 closestDistance = distance
             end
         end
-	end
+    end
 
-	return closestPlayer, closestDistance
+    return closestPlayer, closestDistance
 end
 
 local function LoadAnimation(dict)
@@ -81,13 +81,25 @@ function SetLaststand(bool)
                     LaststandTime = LaststandTime - 1
                     Config.DeathTime = LaststandTime
                 elseif LaststandTime - 1 <= 0 then
-                    QBCore.Functions.Notify(Lang:t('error.bled_out'), "error")
+                    lib.notify({
+                        id = 'bled_out',
+                        title = Lang:t('error.bled_out'),
+                        duration = 2500,
+                        style = {
+                            backgroundColor = '#141517',
+                            color = '#ffffff'
+                        },
+                        icon = 'droplet',
+                        iconColor = '#C53030'
+                    })
                     SetLaststand(false)
                     local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
                     local killer = GetPedSourceOfDeath(ped)
                     if killer_2 ~= 0 and killer_2 ~= -1 then killer = killer_2 end
                     local killerId = NetworkGetPlayerIndexFromPed(killer)
-                    local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or Lang:t('info.self_death')
+                    local killerName = killerId ~= -1 and
+                    GetPlayerName(killerId) .. " " .. "(" .. GetPlayerServerId(killerId) .. ")" or
+                       Lang:t('info.self_death')
                     local weaponLabel = Lang:t('info.wep_unknown')
                     local weaponName = Lang:t('info.wep_unknown')
                     local weaponItem = QBCore.Shared.Weapons[killerWeapon]
@@ -95,7 +107,12 @@ function SetLaststand(bool)
                         weaponLabel = weaponItem.label
                         weaponName = weaponItem.name
                     end
-                    TriggerServerEvent("qb-log:server:CreateLog", "death", Lang:t('logs.death_log_title', {playername = GetPlayerName(-1), playerid = GetPlayerServerId(player)}), "red", Lang:t('logs.death_log_message', {killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel, weaponname = weaponName}))
+                    TriggerServerEvent("qb-log:server:CreateLog", "death",
+           Lang:t('logs.death_log_title',
+                         { playername = GetPlayerName(-1), playerid = GetPlayerServerId(player) }), "red",
+              Lang:t('logs.death_log_message',
+         { killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel,
+                  weaponname = weaponName }))
                     deathTime = 0
                     OnDeath()
                     DeathTimer()
@@ -129,7 +146,17 @@ RegisterNetEvent('hospital:client:UseFirstAid', function()
             TriggerServerEvent('hospital:server:UseFirstAid', playerId)
         end
     else
-        QBCore.Functions.Notify(Lang:t('error.impossible'), 'error')
+        lib.notify({
+            id = 'impossible',
+            title = Lang:t('error.impossible'),
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'face-angry',
+            iconColor = '#C53030'
+        })
     end
 end)
 
@@ -147,21 +174,42 @@ end)
 
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     local ped = PlayerPedId()
-    QBCore.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), math.random(30000, 60000), false, true, {
-        disableMovement = false,
-        disableCarMovement = false,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = healAnimDict,
-        anim = healAnim,
-        flags = 1,
-    }, {}, {}, function() -- Done
+    QBCore.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), math.random(30000, 60000), false, true,
+    {
+            disableMovement = false,
+            disableCarMovement = false,
+            disableMouse = false,
+            disableCombat = true,
+        }, {
+            animDict = healAnimDict,
+            anim = healAnim,
+            flags = 1,
+        }, {}, {}, function() -- Done
+            ClearPedTasks(ped)
+            lib.notify({
+                id = 'revived',
+                title = Lang:t('success.revived'),
+                duration = 2500,
+                style = {
+                    backgroundColor = '#141517',
+                    color = '#ffffff'
+                },
+                icon = 'kit-medical',
+                iconColor = '#07c70d'
+            })
+            TriggerServerEvent("hospital:server:RevivePlayer", targetId)
+        end, function() -- Cancel
         ClearPedTasks(ped)
-        QBCore.Functions.Notify(Lang:t('success.revived'), 'success')
-        TriggerServerEvent("hospital:server:RevivePlayer", targetId)
-    end, function() -- Cancel
-        ClearPedTasks(ped)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
+        lib.notify({
+            id = 'canceled',
+            title = Lang:t('error.canceled'),
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'xmark',
+            iconColor = '#C53030'
+        })
     end)
 end)

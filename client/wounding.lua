@@ -6,7 +6,18 @@ local painkillerAmount = 0
 
 local function DoBleedAlert()
     if not isDead and tonumber(isBleeding) > 0 then
-        QBCore.Functions.Notify(Lang:t('info.bleed_alert', {bleedstate = Config.BleedingStates[tonumber(isBleeding)].label}), "error", 5000)
+        lib.notify({
+            id = "bleed_alert",
+            title = Lang:t('info.bleed_alert'),
+            description = Config.BleedingStates[tonumber(isBleeding)].label,
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'droplet',
+            iconColor = '#C53030'
+        })
     end
 end
 
@@ -39,12 +50,12 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
     QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.ifaks'), 3000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
-		disableMouse = false,
-		disableCombat = true,
+        disableMouse = false,
+        disableCombat = true,
     }, {
-		animDict = "mp_suicide",
-		anim = "pill",
-		flags = 49,
+        animDict = "mp_suicide",
+        anim = "pill",
+        flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         TriggerServerEvent("hospital:server:removeIfaks")
@@ -60,7 +71,17 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
         end
     end, function() -- Cancel
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
+        lib.notify({
+            id = "cancelled",
+            title = Lang:t('error.canceled'),
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'xmark',
+            iconColor = '#C53030'
+        })
     end)
 end)
 
@@ -69,12 +90,12 @@ RegisterNetEvent('hospital:client:UseBandage', function()
     QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.bandage'), 4000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
-		disableMouse = false,
-		disableCombat = true,
+        disableMouse = false,
+        disableCombat = true,
     }, {
-		animDict = "anim@amb@business@weed@weed_inspecting_high_dry@",
-		anim = "weed_inspecting_high_base_inspector",
-		flags = 49,
+        animDict = "anim@amb@business@weed@weed_inspecting_high_dry@",
+        anim = "weed_inspecting_high_base_inspector",
+        flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
         TriggerServerEvent("hospital:server:removeBandage")
@@ -88,7 +109,17 @@ RegisterNetEvent('hospital:client:UseBandage', function()
         end
     end, function() -- Cancel
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
+        lib.notify({
+            id = "cancelled",
+            title = Lang:t('error.canceled'),
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'xmark',
+            iconColor = '#C53030'
+        })
     end)
 end)
 
@@ -97,12 +128,12 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
     QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.painkillers'), 3000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
-		disableMouse = false,
-		disableCombat = true,
+        disableMouse = false,
+        disableCombat = true,
     }, {
-		animDict = "mp_suicide",
-		anim = "pill",
-		flags = 49,
+        animDict = "mp_suicide",
+        anim = "pill",
+        flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         TriggerServerEvent("hospital:server:removePainkillers")
@@ -113,7 +144,17 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
         end
     end, function() -- Cancel
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
+        lib.notify({
+            id = "cancelled",
+            title = Lang:t('error.canceled'),
+            duration = 2500,
+            style = {
+                backgroundColor = '#141517',
+                color = '#ffffff'
+            },
+            icon = 'xmark',
+            iconColor = '#C53030'
+        })
     end)
 end)
 
@@ -136,20 +177,20 @@ CreateThread(function()
 end)
 
 CreateThread(function()
-	while true do
-		if #injured > 0 then
-			local level = 0
-			for _, v in pairs(injured) do
-				if v.severity > level then
-					level = v.severity
-				end
-			end
-			SetPedMoveRateOverride(PlayerPedId(), Config.MovementRate[level])
-			Wait(5)
-		else
-			Wait(1000)
-		end
-	end
+    while true do
+        if #injured > 0 then
+            local level = 0
+            for _, v in pairs(injured) do
+                if v.severity > level then
+                    level = v.severity
+                end
+            end
+            SetPedMoveRateOverride(PlayerPedId(), Config.MovementRate[level])
+            Wait(5)
+        else
+            Wait(1000)
+        end
+    end
 end)
 
 CreateThread(function()
@@ -173,7 +214,8 @@ CreateThread(function()
 
                                 if not IsPedRagdoll(player) and IsPedOnFoot(player) and not IsPedSwimming(player) then
                                     ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
-                                    SetPedToRagdollWithFall(player, 7500, 9000, 1, GetEntityForwardVector(player), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+                                    SetPedToRagdollWithFall(player, 7500, 9000, 1, GetEntityForwardVector(player), 1.0,
+                                  0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
                                 end
 
                                 Wait(1500)
@@ -205,7 +247,8 @@ CreateThread(function()
                         local randX = math.random() + math.random(-1, 1)
                         local randY = math.random() + math.random(-1, 1)
                         local coords = GetOffsetFromEntityInWorldCoords(player, randX, randY, 0)
-                        TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid, QBCore.Functions.GetPlayerData().metadata["bloodtype"], coords)
+                        TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid
+                            , QBCore.Functions.GetPlayerData().metadata["bloodtype"], coords)
 
                         if advanceBleedTimer >= Config.AdvanceBleedTimer then
                             ApplyBleed(1)
