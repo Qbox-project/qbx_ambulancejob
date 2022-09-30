@@ -42,35 +42,23 @@ function TakeOutVehicle(vehicleInfo)
 end
 
 function MenuGarage()
-    local vehicleMenu = {
-        {
-            header = Lang:t('menu.amb_vehicles'),
-            isMenuHeader = true
-        }
-    }
+    local optionsMenu = {}
 
     local authorizedVehicles = Config.AuthorizedVehicles[QBCore.Functions.GetPlayerData().job.grade.level]
     for veh, label in pairs(authorizedVehicles) do
-        vehicleMenu[#vehicleMenu + 1] = {
-            header = label,
-            txt = "",
-            params = {
-                event = "ambulance:client:TakeOutVehicle",
-                args = {
-                    vehicle = veh
-                }
-            }
+        optionsMenu[#optionsMenu + 1] = {
+            title = label,
+            event = "ambulance:client:TakeOutVehicle",
+            args = { vehicle = veh }
         }
     end
-    vehicleMenu[#vehicleMenu + 1] = {
-        header = Lang:t('menu.close'),
-        txt = "",
-        params = {
-            event = "qb-menu:client:closeMenu"
-        }
 
-    }
-    exports['qb-menu']:openMenu(vehicleMenu)
+    lib.registerContext({
+        id = 'ambulance_garage_context_menu',
+        title = Lang:t('menu.amb_vehicles'),
+        options = optionsMenu
+    })
+    lib.showContext('ambulance_garage_context_menu')
 end
 
 -- Events
@@ -146,29 +134,20 @@ end)
 
 function Status()
     if isStatusChecking then
-        local statusMenu = {
-            {
-                header = Lang:t('menu.status'),
-                isMenuHeader = true
-            }
-        }
+        local statusMenu = {}
         for _, v in pairs(statusChecks) do
             statusMenu[#statusMenu + 1] = {
-                header = v.label,
-                txt = "",
-                params = {
-                    event = "hospital:client:TreatWounds",
-                }
+                title = v.label,
+                event = "hospital:client:TreatWounds",
             }
         end
-        statusMenu[#statusMenu + 1] = {
-            header = Lang:t('menu.close'),
-            txt = "",
-            params = {
-                event = "qb-menu:client:closeMenu"
-            }
-        }
-        exports['qb-menu']:openMenu(statusMenu)
+
+        lib.registerContext({
+            id = 'ambulance_status_context_menu',
+            title = Lang:t('menu.status'),
+            options = statusMenu
+        })
+        lib.showContext('ambulance_status_context_menu')
     end
 end
 
