@@ -46,10 +46,10 @@ function OnDeath()
             SetEntityHealth(player, GetEntityMaxHealth(player))
             if IsPedInAnyVehicle(player, false) then
                 loadAnimDict("veh@low@front_ps@idle_duck")
-                TaskPlayAnim(player, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                TaskPlayAnim(player, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
             else
                 loadAnimDict(deadAnimDict)
-                TaskPlayAnim(player, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                TaskPlayAnim(player, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
             end
             TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_died'))
         end
@@ -82,7 +82,7 @@ end
 
 local function DrawTxt(x, y, width, height, scale, text, r, g, b, a, _)
     SetTextFont(4)
-    SetTextProportional(0)
+    SetTextProportional(false)
     SetTextScale(scale, scale)
     SetTextColour(r, g, b, a)
     SetTextDropShadow(0, 0, 0, 0, 255)
@@ -106,19 +106,12 @@ AddEventHandler('gameEventTriggered', function(event, data)
             elseif InLaststand and not isDead then
                 SetLaststand(false)
                 local playerid = NetworkGetPlayerIndexFromPed(victim)
-                local playerName = GetPlayerName(playerid) .. " " .. "(" .. GetPlayerServerId(playerid) .. ")" or
-                 Lang:t('info.self_death')
+                local playerName = GetPlayerName(playerid) .. " " .. "(" .. GetPlayerServerId(playerid) .. ")" or Lang:t('info.self_death')
                 local killerId = NetworkGetPlayerIndexFromPed(attacker)
-                local killerName = GetPlayerName(killerId) .. " " .. "(" .. GetPlayerServerId(killerId) .. ")" or
-               Lang:t('info.self_death')
+                local killerName = GetPlayerName(killerId) .. " " .. "(" .. GetPlayerServerId(killerId) .. ")" or Lang:t('info.self_death')
                 local weaponLabel = QBCore.Shared.Weapons[weapon].label or 'Unknown'
                 local weaponName = QBCore.Shared.Weapons[weapon].name or 'Unknown'
-                TriggerServerEvent("qb-log:server:CreateLog", "death",
-             Lang:t('logs.death_log_title', { playername = playerName, playerid = GetPlayerServerId(playerid) }),
-           "red",
-         Lang:t('logs.death_log_message',
-       { killername = killerName, playername = playerName, weaponlabel = weaponLabel,
-                  weaponname = weaponName }))
+                TriggerServerEvent("qb-log:server:CreateLog", "death", Lang:t('logs.death_log_title', { playername = playerName, playerid = GetPlayerServerId(playerid) }), "red", Lang:t('logs.death_log_message', { killername = killerName, playername = playerName, weaponlabel = weaponLabel, weaponname = weaponName }))
                 deathTime = Config.DeathTime
                 OnDeath()
                 DeathTimer()
@@ -153,30 +146,27 @@ CreateThread(function()
             if isDead then
                 if not isInHospitalBed then
                     if deathTime > 0 then
-                        DrawTxt(0.93, 1.44, 1.0, 1.0, 0.6,
-                          Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), 255, 255, 255, 255)
+                        DrawTxt(0.93, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), 255, 255, 255, 255)
                     else
-                        DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6,
-                Lang:t('info.respawn_revive', { holdtime = hold, cost = Config.BillCost }), 255, 255, 255,
-     255)
+                        DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', { holdtime = hold, cost = Config.BillCost }), 255, 255, 255, 255)
                     end
                 end
 
                 if IsPedInAnyVehicle(ped, false) then
                     loadAnimDict("veh@low@front_ps@idle_duck")
                     if not IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
-                        TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                        TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
                     end
                 else
                     if isInHospitalBed then
                         if not IsEntityPlayingAnim(ped, inBedDict, inBedAnim, 3) then
                             loadAnimDict(inBedDict)
-                            TaskPlayAnim(ped, inBedDict, inBedAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                            TaskPlayAnim(ped, inBedDict, inBedAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
                         end
                     else
                         if not IsEntityPlayingAnim(ped, deadAnimDict, deadAnim, 3) then
                             loadAnimDict(deadAnimDict)
-                            TaskPlayAnim(ped, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                            TaskPlayAnim(ped, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
                         end
                     end
                 end
@@ -186,11 +176,9 @@ CreateThread(function()
                 sleep = 5
 
                 if LaststandTime > Laststand.MinimumRevive then
-                    DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', { time = math.ceil(LaststandTime) }), 255
-                        , 255, 255, 255)
+                    DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
                 else
-                    DrawTxt(0.845, 1.44, 1.0, 1.0, 0.6,
-                       Lang:t('info.bleed_out_help', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
+                    DrawTxt(0.845, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out_help', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
                     if not emsNotified then
                         DrawTxt(0.91, 1.40, 1.0, 1.0, 0.6, Lang:t('info.request_help'), 255, 255, 255, 255)
                     else
@@ -207,12 +195,12 @@ CreateThread(function()
                     if IsPedInAnyVehicle(ped, false) then
                         loadAnimDict("veh@low@front_ps@idle_duck")
                         if not IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
-                            TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                            TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
                         end
                     else
                         loadAnimDict(lastStandDict)
                         if not IsEntityPlayingAnim(ped, lastStandDict, lastStandAnim, 3) then
-                            TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                            TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
                         end
                     end
                 else

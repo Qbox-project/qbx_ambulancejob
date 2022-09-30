@@ -159,8 +159,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
             if result then
                 for k, v in pairs(result) do
                     if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
-                        statusChecks[#statusChecks + 1] = { bone = Config.BoneIndexes[k],
-                   label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
+                        statusChecks[#statusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
                     elseif result["WEAPONWOUNDS"] then
                         for _, v2 in pairs(result["WEAPONWOUNDS"]) do
                             TriggerEvent('chat:addMessage', {
@@ -399,8 +398,7 @@ end
 
 RegisterNetEvent('qb-ambulancejob:stash', function()
     if onDuty then
-        TriggerServerEvent("inventory:server:OpenInventory", "stash",
-           "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
+        TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
         TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
     end
 end)
@@ -475,7 +473,7 @@ RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
         currentHospital = k
 
         local coords = Config.Locations["main"][currentHospital]
-        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+        SetEntityCoords(ped, coords.x, coords.y, coords.z, false, false, false, false)
         SetEntityHeading(ped, coords.w)
 
         Wait(100)
@@ -495,7 +493,7 @@ RegisterNetEvent('qb-ambulancejob:elevator_main', function()
         currentHospital = k
 
         local coords = Config.Locations["roof"][currentHospital]
-        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+        SetEntityCoords(ped, coords.x, coords.y, coords.z, false, false, false, false)
         SetEntityHeading(ped, coords.w)
 
         Wait(100)

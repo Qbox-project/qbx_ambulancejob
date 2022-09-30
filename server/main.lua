@@ -407,8 +407,7 @@ end)
 
 -- Commands
 
-QBCore.Commands.Add('911e', Lang:t('info.ems_report'), { { name = 'message', help = Lang:t('info.message_sent') } },
-	false, function(source, args)
+QBCore.Commands.Add('911e', Lang:t('info.ems_report'), { { name = 'message', help = Lang:t('info.message_sent') } }, false, function(source, args)
 	local src = source
 	local message
 	if args[1] then message = table.concat(args, " ") else message = Lang:t('info.civ_call') end
@@ -482,105 +481,101 @@ QBCore.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function
 	end
 end)
 
-QBCore.Commands.Add("revive", Lang:t('info.revive_player_a'), { { name = "id", help = Lang:t('info.player_id') } }, false
-	, function(source, args)
-		local src = source
-		if args[1] then
-			local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
-			if Player then
-				TriggerClientEvent('hospital:client:Revive', Player.PlayerData.source)
-			else
-				TriggerClientEvent('ox_lib:notify', src, {
-					id = 'not_online',
-					description = Lang:t('error.not_online'),
-					duration = 2500,
-					style = {
-						backgroundColor = '#141517',
-						color = '#ffffff'
-					},
-					icon = 'signal',
-					iconColor = '#C0392B'
-				})
-			end
+QBCore.Commands.Add("revive", Lang:t('info.revive_player_a'), { { name = "id", help = Lang:t('info.player_id') } }, false, function(source, args)
+	local src = source
+	if args[1] then
+		local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
+		if Player then
+			TriggerClientEvent('hospital:client:Revive', Player.PlayerData.source)
 		else
-			TriggerClientEvent('hospital:client:Revive', src)
+			TriggerClientEvent('ox_lib:notify', src, {
+				id = 'not_online',
+				description = Lang:t('error.not_online'),
+				duration = 2500,
+				style = {
+					backgroundColor = '#141517',
+					color = '#ffffff'
+				},
+				icon = 'signal',
+				iconColor = '#C0392B'
+			})
 		end
-	end, "admin")
+	else
+		TriggerClientEvent('hospital:client:Revive', src)
+	end
+end, "admin")
 
-QBCore.Commands.Add("setpain", Lang:t('info.pain_level'), { { name = "id", help = Lang:t('info.player_id') } }, false,
-	function(source, args)
-		local src = source
-		if args[1] then
-			local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
-			if Player then
-				TriggerClientEvent('hospital:client:SetPain', Player.PlayerData.source)
-			else
-				TriggerClientEvent('ox_lib:notify', src, {
-					id = 'not_online',
-					description = Lang:t('error.not_online'),
-					duration = 2500,
-					style = {
-						backgroundColor = '#141517',
-						color = '#ffffff'
-					},
-					icon = 'signal',
-					iconColor = '#C0392B'
-				})
-			end
+QBCore.Commands.Add("setpain", Lang:t('info.pain_level'), { { name = "id", help = Lang:t('info.player_id') } }, false, function(source, args)
+	local src = source
+	if args[1] then
+		local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
+		if Player then
+			TriggerClientEvent('hospital:client:SetPain', Player.PlayerData.source)
 		else
-			TriggerClientEvent('hospital:client:SetPain', src)
+			TriggerClientEvent('ox_lib:notify', src, {
+				id = 'not_online',
+				description = Lang:t('error.not_online'),
+				duration = 2500,
+				style = {
+					backgroundColor = '#141517',
+					color = '#ffffff'
+				},
+				icon = 'signal',
+				iconColor = '#C0392B'
+			})
 		end
-	end, "admin")
+	else
+		TriggerClientEvent('hospital:client:SetPain', src)
+	end
+end, "admin")
 
-QBCore.Commands.Add("kill", Lang:t('info.kill'), { { name = "id", help = Lang:t('info.player_id') } }, false,
-	function(source, args)
-		local src = source
-		if args[1] then
-			local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
-			if Player then
-				TriggerClientEvent('hospital:client:KillPlayer', Player.PlayerData.source)
-			else
-				TriggerClientEvent('ox_lib:notify', src, {
-					id = 'not_online',
-					description = Lang:t('error.not_online'),
-					duration = 2500,
-					style = {
-						backgroundColor = '#141517',
-						color = '#ffffff'
-					},
-					icon = 'signal',
-					iconColor = '#C0392B'
-				})
-			end
+QBCore.Commands.Add("kill", Lang:t('info.kill'), { { name = "id", help = Lang:t('info.player_id') } }, false, function(source, args)
+	local src = source
+	if args[1] then
+		local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
+		if Player then
+			TriggerClientEvent('hospital:client:KillPlayer', Player.PlayerData.source)
 		else
-			TriggerClientEvent('hospital:client:KillPlayer', src)
+			TriggerClientEvent('ox_lib:notify', src, {
+				id = 'not_online',
+				description = Lang:t('error.not_online'),
+				duration = 2500,
+				style = {
+					backgroundColor = '#141517',
+					color = '#ffffff'
+				},
+				icon = 'signal',
+				iconColor = '#C0392B'
+			})
 		end
-	end, "admin")
+	else
+		TriggerClientEvent('hospital:client:KillPlayer', src)
+	end
+end, "admin")
 
-QBCore.Commands.Add('aheal', Lang:t('info.heal_player_a'), { { name = 'id', help = Lang:t('info.player_id') } }, false,
-	function(source, args)
-		local src = source
-		if args[1] then
-			local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
-			if Player then
-				TriggerClientEvent('hospital:client:adminHeal', Player.PlayerData.source)
-			else
-				TriggerClientEvent('ox_lib:notify', src, {
-					id = 'not_online',
-					description = Lang:t('error.not_online'),
-					duration = 2500,
-					style = {
-						backgroundColor = '#141517',
-						color = '#ffffff'
-					},
-					icon = 'signal',
-					iconColor = '#C0392B'
-				})
-			end
+QBCore.Commands.Add('aheal', Lang:t('info.heal_player_a'), { { name = 'id', help = Lang:t('info.player_id') } }, false, function(source, args)
+	local src = source
+	if args[1] then
+		local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
+		if Player then
+			TriggerClientEvent('hospital:client:adminHeal', Player.PlayerData.source)
 		else
-			TriggerClientEvent('hospital:client:adminHeal', src)
+			TriggerClientEvent('ox_lib:notify', src, {
+				id = 'not_online',
+				description = Lang:t('error.not_online'),
+				duration = 2500,
+				style = {
+					backgroundColor = '#141517',
+					color = '#ffffff'
+				},
+				icon = 'signal',
+				iconColor = '#C0392B'
+			})
 		end
-	end, 'admin')
+	else
+		TriggerClientEvent('hospital:client:adminHeal', src)
+	end
+end, 'admin')
 
 -- Items
 

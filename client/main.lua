@@ -55,22 +55,14 @@ local function GetAvailableBed(bedId)
     if bedId == nil then
         for k, _ in pairs(Config.Locations["beds"]) do
             if not Config.Locations["beds"][k].taken then
-                if #
-                    (
-                    pos -
-                        vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y,
-                            Config.Locations["beds"][k].coords.z)) < 500 then
+                if #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z)) < 500 then
                     retval = k
                 end
             end
         end
     else
         if not Config.Locations["beds"][bedId].taken then
-            if #
-                (
-                pos -
-                    vector3(Config.Locations["beds"][bedId].coords.x, Config.Locations["beds"][bedId].coords.y,
-                        Config.Locations["beds"][bedId].coords.z)) < 500 then
+            if #(pos - vector3(Config.Locations["beds"][bedId].coords.x, Config.Locations["beds"][bedId].coords.y, Config.Locations["beds"][bedId].coords.z)) < 500 then
                 retval = bedId
             end
         end
@@ -92,8 +84,7 @@ local function IsDamagingEvent(damageDone, weapon)
     local luck = math.random(100)
     local multi = damageDone / Config.HealthDamage
 
-    return luck < (Config.HealthDamage * multi) or
-        (damageDone >= Config.ForceInjury or multi > Config.MaxInjuryChanceMulti or Config.ForceInjuryWeapons[weapon])
+    return luck < (Config.HealthDamage * multi) or (damageDone >= Config.ForceInjury or multi > Config.MaxInjuryChanceMulti or Config.ForceInjuryWeapons[weapon])
 end
 
 local function DoLimbAlert()
@@ -102,8 +93,7 @@ local function DoLimbAlert()
             local limbDamageMsg = ''
             if #injured <= Config.AlertShowInfo then
                 for k, v in pairs(injured) do
-                    limbDamageMsg = limbDamageMsg ..
-                        Lang:t('info.pain_message', { limb = v.label, severity = Config.WoundStates[v.severity] })
+                    limbDamageMsg = limbDamageMsg .. Lang:t('info.pain_message', { limb = v.label, severity = Config.WoundStates[v.severity] })
                     if k < #injured then
                         limbDamageMsg = limbDamageMsg .. " | "
                     end
@@ -159,11 +149,7 @@ local function SetClosestBed()
     local current = nil
     local dist = nil
     for k, _ in pairs(Config.Locations["beds"]) do
-        local dist2 = #
-            (
-            pos -
-                vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y,
-                    Config.Locations["beds"][k].coords.z))
+        local dist2 = #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z))
         if current then
             if dist2 < dist then
                 current = k
@@ -296,8 +282,7 @@ local function SetBedCam()
         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(player), true, false)
     end
 
-    bedObject = GetClosestObjectOfType(bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z,
-        1.0, bedOccupyingData.model, false, false, false)
+    bedObject = GetClosestObjectOfType(bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z, 1.0, bedOccupyingData.model, false, false, false)
     FreezeEntityPosition(bedObject, true)
 
     SetEntityCoords(player, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02)
@@ -307,10 +292,10 @@ local function SetBedCam()
 
     loadAnimDict(inBedDict)
 
-    TaskPlayAnim(player, inBedDict, inBedAnim, 8.0, 1.0, -1, 1, 0, 0, 0, 0)
+    TaskPlayAnim(player, inBedDict, inBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
     SetEntityHeading(player, bedOccupyingData.coords.w)
 
-    cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", 1)
+    cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
     SetCamActive(cam, true)
     RenderScriptCams(true, false, 1, true, true)
     AttachCamToPedBone(cam, player, 31085, 0, 1.0, 1.0, true)
@@ -336,12 +321,12 @@ local function LeaveBed()
     FreezeEntityPosition(player, false)
     SetEntityInvincible(player, false)
     SetEntityHeading(player, bedOccupyingData.coords.w + 90)
-    TaskPlayAnim(player, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, 0, 0, 0)
+    TaskPlayAnim(player, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, false, false, false)
     Wait(4000)
     ClearPedTasks(player)
     TriggerServerEvent('hospital:server:LeaveBed', bedOccupying)
     FreezeEntityPosition(bedObject, true)
-    RenderScriptCams(0, true, 200, true, true)
+    RenderScriptCams(true, true, 200, true, true)
     DestroyCam(cam, false)
 
     bedOccupying = nil
@@ -403,8 +388,7 @@ local function ApplyImmediateEffects(ped, bone, weapon, damageDone)
                 SetPedToRagdoll(ped, 1500, 2000, 3, true, true, false)
             end
         end
-    elseif Config.MajorInjurWeapons[weapon] or
-        (Config.MinorInjurWeapons[weapon] and damageDone >= Config.DamageMinorToMajor) then
+    elseif Config.MajorInjurWeapons[weapon] or (Config.MinorInjurWeapons[weapon] and damageDone >= Config.DamageMinorToMajor) then
         if Config.CriticalAreas[Config.Bones[bone]] then
             if armor > 0 and Config.CriticalAreas[Config.Bones[bone]].armored then
                 if math.random(100) <= math.ceil(Config.MajorArmoredBleedChance) then
@@ -471,22 +455,19 @@ end
 local function ProcessDamage(ped)
     if not isDead and not InLaststand and not onPainKillers then
         for _, v in pairs(injured) do
-            if (v.part == 'LLEG' and v.severity > 1) or (v.part == 'RLEG' and v.severity > 1) or
-                (v.part == 'LFOOT' and v.severity > 2) or (v.part == 'RFOOT' and v.severity > 2) then
+            if (v.part == 'LLEG' and v.severity > 1) or (v.part == 'RLEG' and v.severity > 1) or (v.part == 'LFOOT' and v.severity > 2) or (v.part == 'RFOOT' and v.severity > 2) then
                 if legCount >= Config.LegInjuryTimer then
                     if not IsPedRagdoll(ped) and IsPedOnFoot(ped) then
                         local chance = math.random(100)
                         if (IsPedRunning(ped) or IsPedSprinting(ped)) then
                             if chance <= Config.LegInjuryChance.Running then
                                 ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
-                                SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0,
-                                    0.0, 0.0, 0.0, 0.0)
+                                SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
                             end
                         else
                             if chance <= Config.LegInjuryChance.Walking then
                                 ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
-                                SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0,
-                                    0.0, 0.0, 0.0, 0.0)
+                                SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
                             end
                         end
                     end
@@ -494,12 +475,9 @@ local function ProcessDamage(ped)
                 else
                     legCount = legCount + 1
                 end
-            elseif (v.part == 'LARM' and v.severity > 1) or (v.part == 'LHAND' and v.severity > 1) or
-                (v.part == 'LFINGER' and v.severity > 2) or (v.part == 'RARM' and v.severity > 1) or
-                (v.part == 'RHAND' and v.severity > 1) or (v.part == 'RFINGER' and v.severity > 2) then
+            elseif (v.part == 'LARM' and v.severity > 1) or (v.part == 'LHAND' and v.severity > 1) or (v.part == 'LFINGER' and v.severity > 2) or (v.part == 'RARM' and v.severity > 1) or (v.part == 'RHAND' and v.severity > 1) or (v.part == 'RFINGER' and v.severity > 2) then
                 if armcount >= Config.ArmInjuryTimer then
-                    if (v.part == 'LARM' and v.severity > 1) or (v.part == 'LHAND' and v.severity > 1) or
-                        (v.part == 'LFINGER' and v.severity > 2) then
+                    if (v.part == 'LARM' and v.severity > 1) or (v.part == 'LHAND' and v.severity > 1) or (v.part == 'LFINGER' and v.severity > 2) then
                         local isDisabled = 15
                         CreateThread(function()
                             while isDisabled > 0 do
