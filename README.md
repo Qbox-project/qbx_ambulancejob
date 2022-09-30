@@ -51,3 +51,8 @@ setr UseTarget true
 
 ![Preview Screenshot](https://i.imgur.com/U7egPuZ.jpeg)
 
+# Alert Styles (Preview)
+
+![Preview Screenshot](https://i.imgur.com/QKm0Zha.png)
+
+![Preview Screenshot](https://i.imgur.com/cTXlV0F.png)
