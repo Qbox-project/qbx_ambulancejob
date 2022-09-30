@@ -708,7 +708,7 @@ RegisterNetEvent('hospital:client:HealInjuries', function(type)
             color = '#ffffff'
         },
         icon = 'heart-pulse',
-        iconColor = '#07c70d'
+        iconColor = '#27ae60'
     })
 end)
 
@@ -728,7 +728,7 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, data, isRevive)
                     color = '#fffff'
                 },
                 icon = 'handshake-angle',
-                iconColor = '#07c70d'
+                iconColor = '#27ae60'
             })
             Wait(Config.AIHealTimer * 1000)
             TriggerEvent("hospital:client:Revive")
@@ -821,7 +821,7 @@ CreateThread(function()
                 icon = "fa-solid fa-bed",
                 style = {
                     borderRadius = 2,
-                    backgroundColor = '#36454f',
+                    backgroundColor = '#141517',
                     color = 'white'
                 }
             })
@@ -1070,7 +1070,7 @@ else
                         icon = "fa-solid fa-user-doctor",
                         style = {
                             borderRadius = 2,
-                            backgroundColor = '#36454f',
+                            backgroundColor = '#141517',
                             color = 'white'
                         }
                     })
@@ -1081,7 +1081,7 @@ else
                         icon = "fa-solid fa-clipboard",
                         style = {
                             borderRadius = 2,
-                            backgroundColor = '#36454f',
+                            backgroundColor = '#141517',
                             color = 'white'
                         }
                     })
@@ -1109,7 +1109,7 @@ else
                     icon = "fa-solid fa-bed",
                     style = {
                         borderRadius = 2,
-                        backgroundColor = '#36454f',
+                        backgroundColor = '#141517',
                         color = 'white'
                     }
                 })

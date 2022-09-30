@@ -19,7 +19,11 @@ setr UseTarget false
 setr UseTarget true
 ```
 
-# Using DrawTextUi (Screenshots)
+# Using DrawTextUi (Screenshots DrawTextColor was changed)
+
+###### New Color
+![Preview Screenshot](https://i.imgur.com/angvmJE.png)
+
 ![Preview Screenshot](https://i.imgur.com/6YZOqUB.jpeg)
 
 ![Preview Screenshot](https://i.imgur.com/Fdn3gIi.jpeg)
@@ -51,8 +55,3 @@ setr UseTarget true
 
 ![Preview Screenshot](https://i.imgur.com/U7egPuZ.jpeg)
 
-# Alert Styles (Preview)
-
-![Preview Screenshot](https://i.imgur.com/QKm0Zha.png)
-
-![Preview Screenshot](https://i.imgur.com/cTXlV0F.png)

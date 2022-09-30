@@ -186,7 +186,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
                                 color = '#ffffff'
                             },
                             icon = 'heal',
-                            iconColor = '#07c70d'
+                            iconColor = '#27ae60'
                         })
                     end
                 end
@@ -240,7 +240,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                         duration = 2500,
                         style = {
                             backgroundColor = '#141517',
-                            color = '#07c70d6'
+                            color = '#27ae606'
                         },
                         icon = 'kit-medical',
                         iconColor = '#C53030'
@@ -320,7 +320,7 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
                         duration = 2500,
                         style = {
                             backgroundColor = '#141517',
-                            color = '#07c70d'
+                            color = '#27ae60'
                         },
                         icon = 'bandage',
                         iconColor = '#C53030'
@@ -520,7 +520,7 @@ CreateThread(function()
                     icon = "fa-solid fa-truck-medical",
                     style = {
                         borderRadius = 5,
-                        backgroundColor = '#36454f',
+                        backgroundColor = '#141517',
                         color = 'white'
                     }
                 })
@@ -554,7 +554,7 @@ CreateThread(function()
                     icon = "fa-solid fa-helicopter",
                     style = {
                         borderRadius = 5,
-                        backgroundColor = '#36454f',
+                        backgroundColor = '#141517',
                         color = 'white'
                     }
                 })
@@ -690,7 +690,7 @@ else
                         icon = "fa-solid fa-clipboard",
                         style = {
                             borderRadius = 2,
-                            backgroundColor = '#36454f',
+                            backgroundColor = '#141517',
                             color = 'white'
                         }
                     })
@@ -701,7 +701,7 @@ else
                         icon = "fa-solid fa-clipboard",
                         style = {
                             borderRadius = 2,
-                            backgroundColor = '#36454f',
+                            backgroundColor = '#141517',
                             color = 'white'
                         }
                     })
@@ -732,7 +732,7 @@ else
                         icon = "fa-solid fa-breifcase",
                         style = {
                             borderRadius = 2,
-                            backgroundColor = '#36454f',
+                            backgroundColor = '#141517',
                             color = 'white'
                         }
                     })
@@ -763,7 +763,7 @@ else
                         icon = "fa-solid fa-lock",
                         style = {
                             borderRadius = 2,
-                            backgroundColor = '#36454f',
+                            backgroundColor = '#141517',
                             color = 'white'
                         }
                     })
@@ -794,7 +794,7 @@ else
                         icon = "fa-solid fa-hospital",
                         style = {
                             borderRadius = 2,
-                            backgroundColor = '#36454f',
+                            backgroundColor = '#141517',
                             color = 'white'
                         }
                     })
@@ -805,7 +805,7 @@ else
                         icon = "fa-solid fa-ban",
                         style = {
                             borderRadius = 2,
-                            backgroundColor = '#36454f',
+                            backgroundColor = '#141517',
                             color = 'white'
                         }
                     })
@@ -835,7 +835,7 @@ else
                         icon = "fa-solid fa-hospital",
                         style = {
                             borderRadius = 2,
-                            backgroundColor = '#36454f',
+                            backgroundColor = '#141517',
                             color = 'white'
                         }
                     })
@@ -846,7 +846,7 @@ else
                         icon = "fa-solid fa-ban",
                         style = {
                             borderRadius = 2,
-                            backgroundColor = '#36454f',
+                            backgroundColor = '#141517',
                             color = 'white'
                         }
                     })

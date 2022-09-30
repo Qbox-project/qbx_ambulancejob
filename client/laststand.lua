@@ -202,7 +202,7 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
                 color = '#ffffff'
             },
             icon = 'kit-medical',
-            iconColor = '#07c70d'
+            iconColor = '#27ae60'
         })
         TriggerServerEvent("hospital:server:RevivePlayer", targetId)
     else
