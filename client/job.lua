@@ -172,21 +172,10 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
                         TriggerEvent('chat:addMessage', {
                             color = { 255, 0, 0 },
                             multiline = false,
-                            args = { Lang:t('info.status'),
-                                Lang:t('info.is_status', { status = Config.BleedingStates[v].label }) }
+                            args = { Lang:t('info.status'), Lang:t('info.is_status', { status = Config.BleedingStates[v].label }) }
                         })
                     else
-                        lib.notify({
-                            id = 'healthy_player',
-                            title = Lang:t('success.healthy_player'),
-                            duration = 2500,
-                            style = {
-                                backgroundColor = '#141517',
-                                color = '#ffffff'
-                            },
-                            icon = 'heal',
-                            iconColor = '#27ae60'
-                        })
+                        lib.notify({ description = Lang:t('success.healthy_player'), type = 'success' })
                     end
                 end
                 isStatusChecking = true
@@ -194,17 +183,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
             end
         end, playerId)
     else
-        lib.notify({
-            id = 'no_player',
-            title = Lang:t('error.no_player'),
-            duration = 2500,
-            style = {
-                backgroundColor = '#141517',
-                color = '#ffffff'
-            },
-            icon = 'xmark',
-            iconColor = '#C0392B'
-        })
+        lib.notify({ description = Lang:t('error.no_player'), type = 'error' })
     end
 end)
 
@@ -233,57 +212,17 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                 })
                 then
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    lib.notify({
-                        id = 'revived',
-                        title = Lang:t('success.revived'),
-                        duration = 2500,
-                        style = {
-                            backgroundColor = '#141517',
-                            color = '#27ae606'
-                        },
-                        icon = 'kit-medical',
-                        iconColor = '#C0392B'
-                    })
+                    lib.notify({ description = Lang:t('success.revived'), type = 'success' })
                     TriggerServerEvent("hospital:server:RevivePlayer", playerId)
                 else
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    lib.notify({
-                        id = 'canceled',
-                        title = Lang:t('error.canceled'),
-                        duration = 2500,
-                        style = {
-                            backgroundColor = '#141517',
-                            color = '#ffffff'
-                        },
-                        icon = 'xmark',
-                        iconColor = '#C0392B'
-                    })
+                    lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
                 end
             else
-                lib.notify({
-                    id = 'no_player',
-                    title = Lang:t('error.no_player'),
-                    duration = 2500,
-                    style = {
-                        backgroundColor = '#141517',
-                        color = '#ffffff'
-                    },
-                    icon = 'xmark',
-                    iconColor = '#C0392B'
-                })
+                lib.notify({ description = Lang:t('error.no_player'), type = 'error' })
             end
         else
-            lib.notify({
-                id = 'no_firstaid',
-                title = Lang:t('error.no_firstaid'),
-                duration = 2500,
-                style = {
-                    backgroundColor = '#141517',
-                    color = '#ffffff'
-                },
-                icon = 'xmark',
-                iconColor = '#C0392B'
-            })
+            lib.notify({ description = Lang:t('error.no_firstaid'), type = 'error' })
         end
     end, 'firstaid')
 end)
@@ -313,57 +252,17 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
                 })
                 then
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    lib.notify({
-                        id = 'helped_player',
-                        title = Lang:t('success.helped_player'),
-                        duration = 2500,
-                        style = {
-                            backgroundColor = '#141517',
-                            color = '#27ae60'
-                        },
-                        icon = 'bandage',
-                        iconColor = '#C0392B'
-                    })
+                    lib.notify({ description = Lang:t('success.helped_player'), type = 'success' })
                     TriggerServerEvent("hospital:server:TreatWounds", playerId)
                 else
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    lib.notify({
-                        id = 'canceled',
-                        title = Lang:t('error.canceled'),
-                        duration = 2500,
-                        style = {
-                            backgroundColor = '#141517',
-                            color = '#ffffff'
-                        },
-                        icon = 'xmark',
-                        iconColor = '#C0392B'
-                    })
+                    lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
                 end
             else
-                lib.notify({
-                    id = 'no_player',
-                    title = Lang:t('error.no_player'),
-                    duration = 2500,
-                    style = {
-                        backgroundColor = '#141517',
-                        color = '#ffffff'
-                    },
-                    icon = 'xmark',
-                    iconColor = '#C0392B'
-                })
+                lib.notify({ description = Lang:t('error.no_player'), type = 'error' })
             end
         else
-            lib.notify({
-                id = 'no_bandage',
-                title = Lang:t('error.no_bandage'),
-                duration = 2500,
-                style = {
-                    backgroundColor = '#141517',
-                    color = '#ffffff'
-                },
-                icon = 'xmark',
-                iconColor = '#C0392B'
-            })
+            lib.notify({ description = Lang:t('error.no_bandage'), type = 'error' })
         end
     end, 'bandage')
 end)

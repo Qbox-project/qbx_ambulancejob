@@ -101,35 +101,14 @@ local function DoLimbAlert()
             else
                 limbDamageMsg = Lang:t('info.many_places')
             end
-            lib.notify({
-                id = 'limbDamage',
-                title = limbDamageMsg,
-                duration = 2500,
-                style = {
-                    backgroundColor = '#141517',
-                    color = '#ffffff'
-                },
-                icon = 'xmark',
-                iconColor = '#C0392B'
-            })
+            lib.notify({ description = limbDamageMsg, type = 'error' })
         end
     end
 end
 
 local function DoBleedAlert()
     if not isDead and tonumber(isBleeding) > 0 then
-        lib.notify({
-            id = 'info.bleed_alert',
-            title = (Lang:t('info.bleed_alert')),
-            duration = 2500,
-            description = Config.BleedingStates[tonumber(isBleeding)].label,
-            style = {
-                backgroundColor = '#141517',
-                color = '#ffffff'
-            },
-            icon = 'droplet-slash',
-            iconColor = '#2980B9'
-        })
+        lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(isBleeding)].label, type = 'inform' })
     end
 end
 
@@ -550,18 +529,7 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
-    lib.notify({
-        id = "ambulance_alert",
-        title = Lang:t('text.alert'),
-        duration = 5000,
-        description = text .. ' | ' .. street1name .. ' ' .. street2name,
-        style = {
-            backgroundColor = '#141517',
-            color = '#ffffff'
-        },
-        icon = 'circle-exclamation',
-        iconColor = '#C0392B'
-    })
+    lib.notify({ title = Lang:t('text.alert'), description = text .. ' | ' .. street1name .. ' ' .. street2name, type = 'inform' })
     PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
     local transG = 250
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
@@ -624,17 +592,7 @@ RegisterNetEvent('hospital:client:Revive', function()
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
     emsNotified = false
-    lib.notify({
-        id = "healthy",
-        title = Lang:t('info.healthy'),
-        duration = 2500,
-        style = {
-            backgroundColor = '#141517',
-            color = '#ffffff'
-        },
-        icon = 'heart-pulse',
-        iconColor = '#2980B9'
-    })
+    lib.notify({ description = Lang:t('info.healthy'), type = 'inform' })
 end)
 
 RegisterNetEvent('hospital:client:SetPain', function()
@@ -677,17 +635,7 @@ RegisterNetEvent('hospital:client:HealInjuries', function(type)
     end
     TriggerServerEvent("hospital:server:RestoreWeaponDamage")
 
-    lib.notify({
-        id = "woundsHealed",
-        title = Lang:t('success.wounds_healed'),
-        duration = 2500,
-        style = {
-            backgroundColor = '#141517',
-            color = '#ffffff'
-        },
-        icon = 'heart-pulse',
-        iconColor = '#27ae60'
-    })
+    lib.notify({ description = Lang:t('success.wounds_healed'), type = 'success' })
 end)
 
 RegisterNetEvent('hospital:client:SendToBed', function(id, data, isRevive)
@@ -697,17 +645,7 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, data, isRevive)
     CreateThread(function()
         Wait(5)
         if isRevive then
-            lib.notify({
-                id = "beingHelped",
-                title = Lang:t('success.being_helped'),
-                duration = 2500,
-                style = {
-                    backgroundColor = '#141517',
-                    color = '#fffff'
-                },
-                icon = 'handshake-angle',
-                iconColor = '#27ae60'
-            })
+            lib.notify({ description = Lang:t('success.being_helped'), type = 'success' })
             Wait(Config.AIHealTimer * 1000)
             TriggerEvent("hospital:client:Revive")
         else
@@ -948,31 +886,11 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
             if bedId then
                 TriggerServerEvent("hospital:server:SendToBed", bedId, true)
             else
-                lib.notify({
-                    id = "bedTaken",
-                    title = Lang:t('error.beds_taken'),
-                    duration = 2500,
-                    style = {
-                        backgroundColor = '#141517',
-                        color = '#ffffff'
-                    },
-                    icon = 'bed',
-                    iconColor = '#C0392B'
-                })
+                lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
             end
         else
             TriggerEvent('animations:client:EmoteCommandStart', { "c" })
-            lib.notify({
-                id = "cancelled",
-                title = Lang:t('error.canceled'),
-                duration = 2500,
-                style = {
-                    backgroundColor = '#141517',
-                    color = '#ffffff'
-                },
-                icon = 'xmark',
-                iconColor = '#C0392B'
-            })
+            lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
         end
     end
 end)
@@ -981,17 +899,7 @@ RegisterNetEvent('qb-ambulancejob:beds', function()
     if GetAvailableBed(closestBed) then
         TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
     else
-        lib.notify({
-            id = "beds_taken",
-            title = Lang:t('error.beds_taken'),
-            duration = 2500,
-            style = {
-                backgroundColor = '#141517',
-                color = '#ffffff'
-            },
-            icon = 'bed',
-            iconColor = '#C0392B'
-        })
+        lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
     end
 end)
 
