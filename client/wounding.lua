@@ -6,18 +6,7 @@ local painkillerAmount = 0
 
 local function DoBleedAlert()
     if not isDead and tonumber(isBleeding) > 0 then
-        lib.notify({
-            id = "bleed_alert",
-            title = Lang:t('info.bleed_alert'),
-            description = Config.BleedingStates[tonumber(isBleeding)].label,
-            duration = 2500,
-            style = {
-                backgroundColor = '#141517',
-                color = '#ffffff'
-            },
-            icon = 'droplet',
-            iconColor = '#C0392B'
-        })
+        lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(isBleeding)].label, type = 'inform' })
     end
 end
 
@@ -79,17 +68,7 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
         end
     else
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        lib.notify({
-            id = "cancelled",
-            title = Lang:t('error.canceled'),
-            duration = 2500,
-            style = {
-                backgroundColor = '#141517',
-                color = '#ffffff'
-            },
-            icon = 'xmark',
-            iconColor = '#C0392B'
-        })
+        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
     end
 end)
 
@@ -125,17 +104,7 @@ RegisterNetEvent('hospital:client:UseBandage', function()
         end
     else
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        lib.notify({
-            id = "cancelled",
-            title = Lang:t('error.canceled'),
-            duration = 2500,
-            style = {
-                backgroundColor = '#141517',
-                color = '#ffffff'
-            },
-            icon = 'xmark',
-            iconColor = '#C0392B'
-        })
+        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
     end
 end)
 
@@ -168,17 +137,7 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
         end
     else
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        lib.notify({
-            id = "cancelled",
-            title = Lang:t('error.canceled'),
-            duration = 2500,
-            style = {
-                backgroundColor = '#141517',
-                color = '#ffffff'
-            },
-            icon = 'xmark',
-            iconColor = '#C0392B'
-        })
+        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
     end
 end)
 

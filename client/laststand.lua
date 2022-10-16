@@ -81,17 +81,7 @@ function SetLaststand(bool)
                     LaststandTime = LaststandTime - 1
                     Config.DeathTime = LaststandTime
                 elseif LaststandTime - 1 <= 0 then
-                    lib.notify({
-                        id = 'bled_out',
-                        title = Lang:t('error.bled_out'),
-                        duration = 2500,
-                        style = {
-                            backgroundColor = '#141517',
-                            color = '#ffffff'
-                        },
-                        icon = 'droplet',
-                        iconColor = '#C0392B'
-                    })
+                    lib.notify({ description = Lang:t('error.bled_out'), type = 'error' })
                     SetLaststand(false)
                     local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
                     local killer = GetPedSourceOfDeath(ped)
@@ -139,17 +129,7 @@ RegisterNetEvent('hospital:client:UseFirstAid', function()
             TriggerServerEvent('hospital:server:UseFirstAid', playerId)
         end
     else
-        lib.notify({
-            id = 'impossible',
-            title = Lang:t('error.impossible'),
-            duration = 2500,
-            style = {
-                backgroundColor = '#141517',
-                color = '#ffffff'
-            },
-            icon = 'face-angry',
-            iconColor = '#C0392B'
-        })
+        lib.notify({ description = Lang:t('error.impossible'), type = 'error' })
     end
 end)
 
@@ -186,30 +166,10 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     })
     then
         ClearPedTasks(ped)
-        lib.notify({
-            id = 'revived',
-            title = Lang:t('success.revived'),
-            duration = 2500,
-            style = {
-                backgroundColor = '#141517',
-                color = '#ffffff'
-            },
-            icon = 'kit-medical',
-            iconColor = '#27ae60'
-        })
+        lib.notify({ description = Lang:t('success.revived'), type = 'success' })
         TriggerServerEvent("hospital:server:RevivePlayer", targetId)
     else
         ClearPedTasks(ped)
-        lib.notify({
-            id = 'canceled',
-            title = Lang:t('error.canceled'),
-            duration = 2500,
-            style = {
-                backgroundColor = '#141517',
-                color = '#ffffff'
-            },
-            icon = 'xmark',
-            iconColor = '#C0392B'
-        })
+        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
     end
 end)
