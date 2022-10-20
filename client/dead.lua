@@ -4,6 +4,14 @@ local hold = 5
 deathTime = 0
 
 -- Functions
+local function MedicCheck()
+    QBCore.Functions.TriggerCallback('hospital:GetDoctors', function(medics)
+        if medics < 1 then
+            return false
+        end
+        return true
+    end)
+end
 
 local function loadAnimDict(dict)
     while (not HasAnimDictLoaded(dict)) do
@@ -186,6 +194,10 @@ CreateThread(function()
                     end
 
                     if IsControlJustPressed(0, 47) and not emsNotified then
+                        if not MedicCheck() then
+                            lib.notify({ type = 'error', message = Lang:t('error.no_medics') })
+                            return
+                        end
                         TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
                         emsNotified = true
                     end
