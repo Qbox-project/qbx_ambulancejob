@@ -196,10 +196,10 @@ CreateThread(function()
                     if IsControlJustPressed(0, 47) and not emsNotified then
                         if not MedicCheck() then
                             lib.notify({ type = 'error', message = Lang:t('error.no_medics') })
-                            return
+                        else
+                            TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
+                            emsNotified = true
                         end
-                        TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
-                        emsNotified = true
                     end
                 end
 
