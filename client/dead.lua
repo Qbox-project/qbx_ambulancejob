@@ -190,7 +190,7 @@ CreateThread(function()
                         DrawTxt(0.90, 1.40, 1.0, 1.0, 0.6, Lang:t('info.help_requested'), 255, 255, 255, 255)
                     end
 
-                    if IsEmsOnDuty() then
+                    if not IsEmsOnDuty() then
                         lib.notify({ type = 'error', message = Lang:t('error.no_medics') })
                     end
 
