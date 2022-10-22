@@ -192,11 +192,9 @@ CreateThread(function()
                         DrawTxt(0.90, 1.40, 1.0, 1.0, 0.6, Lang:t('info.help_requested'), 255, 255, 255, 255)
                     end
 
-                    if IsControlJustPressed(0, 47) and not emsNotified then
-                        if IsEmsOnDuty() then
-                            TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
-                            emsNotified = true
-                        end
+                    if IsControlJustPressed(0, 47) and not emsNotified and IsEmsOnDuty() then
+                        TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
+                        emsNotified = true
                     end
                 end
 
