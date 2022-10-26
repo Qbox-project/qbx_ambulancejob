@@ -4,6 +4,11 @@ local hold = 5
 deathTime = 0
 
 -- Functions
+local function IsEmsOnDuty()
+    QBCore.Functions.TriggerCallback('hospital:GetDoctors', function(medics)
+        return medics > 0
+    end)
+end
 
 local function loadAnimDict(dict)
     while (not HasAnimDictLoaded(dict)) do
@@ -145,7 +150,7 @@ CreateThread(function()
 
             if isDead then
                 if not isInHospitalBed then
-                    if deathTime > 0 then
+                    if deathTime > 0 and IsEmsOnDuty() then
                         DrawTxt(0.93, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), 255, 255, 255, 255)
                     else
                         DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', { holdtime = hold, cost = Config.BillCost }), 255, 255, 255, 255)
@@ -185,7 +190,7 @@ CreateThread(function()
                         DrawTxt(0.90, 1.40, 1.0, 1.0, 0.6, Lang:t('info.help_requested'), 255, 255, 255, 255)
                     end
 
-                    if IsControlJustPressed(0, 47) and not emsNotified then
+                    if IsControlJustPressed(0, 47) and not emsNotified and IsEmsOnDuty() then
                         TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
                         emsNotified = true
                     end

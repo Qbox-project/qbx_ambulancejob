@@ -9,7 +9,6 @@ isEscorted = false
 local isEscorting = false
 
 -- Functions
-
 local function GetClosestPlayer()
     local closestPlayers = QBCore.Functions.GetPlayersFromCoords()
     local closestDistance = -1
