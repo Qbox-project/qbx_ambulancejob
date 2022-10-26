@@ -87,7 +87,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     CreateThread(function()
         Wait(5000)
         QBCore.Functions.GetPlayerData(function(PlayerData)
-            SetEntityHealth(ped, PlayerData.metadata["health"]
+            SetEntityHealth(ped, PlayerData.metadata["health"])
             SetPlayerHealthRechargeMultiplier(player, 0.0)
             SetPlayerHealthRechargeLimit(player, 0.0)
         end)
