@@ -85,17 +85,13 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     local ped = PlayerPedId()
     local player = PlayerId()
     CreateThread(function()
-        Wait(5000)
-        SetEntityMaxHealth(ped, 200)
-        SetEntityHealth(ped, 200)
-        SetPlayerHealthRechargeMultiplier(player, 0.0)
-        SetPlayerHealthRechargeLimit(player, 0.0)
-    end)
-    CreateThread(function()
         Wait(1000)
         QBCore.Functions.GetPlayerData(function(PlayerData)
             PlayerJob = PlayerData.job
             onDuty = PlayerData.job.onduty
+            SetEntityHealth(ped, PlayerData.metadata["health"])
+            SetPlayerHealthRechargeMultiplier(player, 0.0)
+            SetPlayerHealthRechargeLimit(player, 0.0)
             SetPedArmour(PlayerPedId(), PlayerData.metadata["armor"])
             if (not PlayerData.metadata["inlaststand"] and PlayerData.metadata["isdead"]) then
                 deathTime = Laststand.ReviveInterval
