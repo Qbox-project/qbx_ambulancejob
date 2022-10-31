@@ -408,15 +408,7 @@ CreateThread(function()
     for k, v in pairs(Config.Locations["vehicle"]) do
         local function inVehicleZone()
             if PlayerJob.name == "ambulance" and onDuty then
-                lib.showTextUI(Lang:t('text.veh_button'), {
-                    position = "top-center",
-                    icon = "fa-solid fa-truck-medical",
-                    style = {
-                        borderRadius = 5,
-                        backgroundColor = '#141517',
-                        color = 'white'
-                    }
-                })
+                lib.showTextUI(Lang:t('text.veh_button'))
                 EMSVehicle(k)
             else
                 CheckVehicle = false
@@ -442,15 +434,7 @@ CreateThread(function()
     for k, v in pairs(Config.Locations["helicopter"]) do
         local function inHeliZone()
             if PlayerJob.name == "ambulance" and onDuty then
-                lib.showTextUI(Lang:t('text.veh_button'), {
-                    position = "top-center",
-                    icon = "fa-solid fa-helicopter",
-                    style = {
-                        borderRadius = 5,
-                        backgroundColor = '#141517',
-                        color = 'white'
-                    }
-                })
+                lib.showTextUI(Lang:t('text.veh_button'))
                 EMSHelicopter(k)
             else
                 CheckHeli = false
@@ -578,26 +562,10 @@ else
         for _, v in pairs(Config.Locations["duty"]) do
             local function EnteredSignInZone()
                 if not onDuty then
-                    lib.showTextUI(Lang:t('text.onduty_button'), {
-                        position = "top-center",
-                        icon = "fa-solid fa-clipboard",
-                        style = {
-                            borderRadius = 2,
-                            backgroundColor = '#141517',
-                            color = 'white'
-                        }
-                    })
+                    lib.showTextUI(Lang:t('text.onduty_button'))
                     EMSControls("sign")
                 else
-                    lib.showTextUI(Lang:t('text.offduty_button'), {
-                        position = "top-center",
-                        icon = "fa-solid fa-clipboard",
-                        style = {
-                            borderRadius = 2,
-                            backgroundColor = '#141517',
-                            color = 'white'
-                        }
-                    })
+                    lib.showTextUI(Lang:t('text.offduty_button'))
                     EMSControls("sign")
                 end
             end
@@ -620,15 +588,7 @@ else
         for _, v in pairs(Config.Locations["stash"]) do
             local function EnteredStashZone()
                 if onDuty then
-                    lib.showTextUI(Lang:t('text.pstash_button'), {
-                        position = "top-center",
-                        icon = "fa-solid fa-breifcase",
-                        style = {
-                            borderRadius = 2,
-                            backgroundColor = '#141517',
-                            color = 'white'
-                        }
-                    })
+                    lib.showTextUI(Lang:t('text.pstash_button'))
                     EMSControls("stash")
                 end
             end
@@ -651,15 +611,7 @@ else
         for _, v in pairs(Config.Locations["armory"]) do
             local function EnteredArmoryZone()
                 if onDuty then
-                    lib.showTextUI(Lang:t('text.armory_button'), {
-                        position = "top-center",
-                        icon = "fa-solid fa-lock",
-                        style = {
-                            borderRadius = 2,
-                            backgroundColor = '#141517',
-                            color = 'white'
-                        }
-                    })
+                    lib.showTextUI(Lang:t('text.armory_button'))
                     EMSControls("armory")
                 end
             end
@@ -682,26 +634,10 @@ else
         for _, v in pairs(Config.Locations["roof"]) do
             local function EnteredRoofZone()
                 if onDuty then
-                    lib.showTextUI(Lang:t('text.elevator_main'), {
-                        position = "top-center",
-                        icon = "fa-solid fa-hospital",
-                        style = {
-                            borderRadius = 2,
-                            backgroundColor = '#141517',
-                            color = 'white'
-                        }
-                    })
+                    lib.showTextUI(Lang:t('text.elevator_main'))
                     EMSControls("main")
                 else
-                    lib.showTextUI(Lang:t('error.not_ems'), {
-                        position = "top-center",
-                        icon = "fa-solid fa-ban",
-                        style = {
-                            borderRadius = 2,
-                            backgroundColor = '#141517',
-                            color = 'white'
-                        }
-                    })
+                    lib.showTextUI(Lang:t('error.not_ems'))
                 end
             end
 
@@ -723,26 +659,10 @@ else
         for _, v in pairs(Config.Locations["main"]) do
             local function EnteredMainZone()
                 if onDuty then
-                    lib.showTextUI(Lang:t('text.elevator_roof'), {
-                        position = "top-center",
-                        icon = "fa-solid fa-hospital",
-                        style = {
-                            borderRadius = 2,
-                            backgroundColor = '#141517',
-                            color = 'white'
-                        }
-                    })
+                    lib.showTextUI(Lang:t('text.elevator_roof'))
                     EMSControls("roof")
                 else
-                    lib.showTextUI(Lang:t('error.not_ems'), {
-                        position = "top-center",
-                        icon = "fa-solid fa-ban",
-                        style = {
-                            borderRadius = 2,
-                            backgroundColor = '#141517',
-                            color = 'white'
-                        }
-                    })
+                    lib.showTextUI(Lang:t('error.not_ems'))
                 end
             end
 

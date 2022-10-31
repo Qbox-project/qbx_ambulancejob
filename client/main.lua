@@ -732,15 +732,7 @@ CreateThread(function()
         if isInHospitalBed and canLeaveBed then
             sleep = 0
 
-            lib.showTextUI(Lang:t('text.bed_out'), {
-                position = "top-center",
-                icon = "fa-solid fa-bed",
-                style = {
-                    borderRadius = 2,
-                    backgroundColor = '#141517',
-                    color = 'white'
-                }
-            })
+            lib.showTextUI(Lang:t('text.bed_out'))
             if IsControlJustReleased(0, 38) then
                 exports['qb-core']:KeyPressed(38)
                 LeaveBed()
@@ -951,26 +943,10 @@ else
         for _, v in pairs(Config.Locations["checking"]) do
             local function enterCheckInZone()
                 if doctorCount >= Config.MinimalDoctors then
-                    lib.showTextUI(Lang:t('text.call_doc'), {
-                        position = "top-center",
-                        icon = "fa-solid fa-user-doctor",
-                        style = {
-                            borderRadius = 2,
-                            backgroundColor = '#141517',
-                            color = 'white'
-                        }
-                    })
+                    lib.showTextUI(Lang:t('text.call_doc'))
                     CheckInControls("checkin")
                 else
-                    lib.showTextUI(Lang:t('text.check_in'), {
-                        position = "top-center",
-                        icon = "fa-solid fa-clipboard",
-                        style = {
-                            borderRadius = 2,
-                            backgroundColor = '#141517',
-                            color = 'white'
-                        }
-                    })
+                    lib.showTextUI(Lang:t('text.check_in'))
                 end
             end
 
@@ -990,15 +966,7 @@ else
         end
         for k, v in pairs(Config.Locations["beds"]) do
             local function enterBedZone()
-                lib.showTextUI(Lang:t('text.lie_bed'), {
-                    position = "top-center",
-                    icon = "fa-solid fa-bed",
-                    style = {
-                        borderRadius = 2,
-                        backgroundColor = '#141517',
-                        color = 'white'
-                    }
-                })
+                lib.showTextUI(Lang:t('text.lie_bed'))
                 CheckInControls("beds")
             end
 

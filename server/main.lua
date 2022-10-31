@@ -39,17 +39,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 				if Config.WipeInventoryOnRespawn then
 					Player.Functions.ClearInventory()
 					MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-					TriggerClientEvent('ox_lib:notify', src, {
-						id = 'possessions_taken',
-						description = Lang:t('error.possessions_taken'),
-						duration = 2500,
-						style = {
-							backgroundColor = '#141517',
-							color = '#ffffff'
-						},
-						icon = 'person-circle-xmark',
-						iconColor = '#C0392B'
-					})
+					TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.possessions_taken'), type = 'error' })
 				end
 				Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 				exports['qb-management']:AddMoney("ambulance", Config.BillCost)
@@ -63,17 +53,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 		if Config.WipeInventoryOnRespawn then
 			Player.Functions.ClearInventory()
 			MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-			TriggerClientEvent('ox_lib:notify', src, {
-				id = 'possessions_taken',
-				description = Lang:t('error.possessions_taken'),
-				duration = 2500,
-				style = {
-					backgroundColor = '#141517',
-					color = '#ffffff'
-				},
-				icon = 'person-circle-xmark',
-				iconColor = '#C0392B'
-			})
+			TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.possessions_taken'), type = 'error' })
 		end
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 		exports['qb-management']:AddMoney("ambulance", Config.BillCost)
@@ -86,17 +66,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 				if Config.WipeInventoryOnRespawn then
 					Player.Functions.ClearInventory()
 					MySQL.update('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-					TriggerClientEvent('ox_lib:notify', src, {
-						id = 'possessions_taken',
-						description = Lang:t('error.possessions_taken'),
-						duration = 2500,
-						style = {
-							backgroundColor = '#141517',
-							color = '#ffffff'
-						},
-						icon = 'person-circle-xmark',
-						iconColor = '#C0392B'
-					})
+					TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.possessions_taken'), type = 'error' })
 				end
 				Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 				exports['qb-management']:AddMoney("ambulance", Config.BillCost)
@@ -110,17 +80,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 		if Config.WipeInventoryOnRespawn then
 			Player.Functions.ClearInventory()
 			MySQL.update('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-			TriggerClientEvent('ox_lib:notify', src, {
-				id = 'possessions_taken',
-				description = Lang:t('error.possessions_taken'),
-				duration = 2500,
-				style = {
-					backgroundColor = '#141517',
-					color = '#ffffff'
-				},
-				icon = 'person-circle-xmark',
-				iconColor = '#C0392B'
-			})
+			TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.possessions_taken'), type = 'error' })
 		end
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 		exports['qb-management']:AddMoney("ambulance", Config.BillCost)
@@ -239,17 +199,7 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 				TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], "remove")
 				TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
 			else
-				TriggerClientEvent('ox_lib:notify', src, {
-					id = 'not_enough_money',
-					description = Lang:t('error.not_enough_money'),
-					duration = 2500,
-					style = {
-						backgroundColor = '#141517',
-						color = '#ffffff'
-					},
-					icon = 'money-check-dollar',
-					iconColor = '#C0392B'
-				})
+				TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_enough_money'), type = 'error' })
 			end
 		else
 			Player.Functions.RemoveItem('firstaid', 1)
@@ -266,34 +216,14 @@ RegisterNetEvent('hospital:server:SendDoctorAlert', function()
 		local players = QBCore.Functions.GetQBPlayers()
 		for _, v in pairs(players) do
 			if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-				TriggerClientEvent('ox_lib:notify', src, {
-					id = 'dr_needed',
-					description = Lang:t('info.dr_needed'),
-					duration = 2500,
-					style = {
-						backgroundColor = '#141517',
-						color = '#ffffff'
-					},
-					icon = 'user-doctor',
-					iconColor = '#2980B9'
-				})
+				TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('info.dr_needed'), type = 'inform' })
 			end
 		end
 		SetTimeout(Config.DocCooldown * 60000, function()
 			doctorCalled = false
 		end)
 	else
-		TriggerClientEvent('ox_lib:notify', src, {
-			id = 'doctor_alert',
-			description = Lang:t('info.dr_alert'),
-			duration = 2500,
-			style = {
-				backgroundColor = '#141517',
-				color = '#ffffff'
-			},
-			icon = 'user-doctor',
-			iconColor = '#2980B9'
-		})
+		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('info.dr_needed'), type = 'inform' })
 	end
 end)
 
@@ -310,17 +240,7 @@ RegisterNetEvent('hospital:server:CanHelp', function(helperId, canHelp)
 	if canHelp then
 		TriggerClientEvent('hospital:client:HelpPerson', helperId, src)
 	else
-		TriggerClientEvent('ox_lib:notify', src, {
-			id = 'cant_help',
-			description = Lang:t('error.cant_help'),
-			duration = 2500,
-			style = {
-				backgroundColor = '#141517',
-				color = '#ffffff'
-			},
-			icon = 'x-mark',
-			iconColor = '#C0392B'
-		})
+		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.cant_help'), type = 'error' })
 	end
 end)
 
@@ -427,17 +347,7 @@ QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(s
 	if Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:CheckStatus", src)
 	else
-		TriggerClientEvent('ox_lib:notify', src, {
-			id = 'not_ems',
-			description = Lang:t('error.not_ems'),
-			duration = 2500,
-			style = {
-				backgroundColor = '#141517',
-				color = '#ffffff'
-			},
-			icon = 'x-mark',
-			iconColor = '#C0392B'
-		})
+		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_ems'), type = 'error' })
 	end
 end)
 
@@ -447,17 +357,7 @@ QBCore.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(sour
 	if Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:TreatWounds", src)
 	else
-		TriggerClientEvent('ox_lib:notify', src, {
-			id = 'not_ems',
-			description = Lang:t('error.not_ems'),
-			duration = 2500,
-			style = {
-				backgroundColor = '#141517',
-				color = '#ffffff'
-			},
-			icon = 'x-mark',
-			iconColor = '#C0392B'
-		})
+		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_ems'), type = 'error' })
 	end
 end)
 
@@ -467,17 +367,7 @@ QBCore.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function
 	if Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:RevivePlayer", src)
 	else
-		TriggerClientEvent('ox_lib:notify', src, {
-			id = 'not_ems',
-			description = Lang:t('error.not_ems'),
-			duration = 2500,
-			style = {
-				backgroundColor = '#141517',
-				color = '#ffffff'
-			},
-			icon = 'x-mark',
-			iconColor = '#C0392B'
-		})
+		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_ems'), type = 'error' })
 	end
 end)
 
@@ -488,17 +378,7 @@ QBCore.Commands.Add("revive", Lang:t('info.revive_player_a'), { { name = "id", h
 		if Player then
 			TriggerClientEvent('hospital:client:Revive', Player.PlayerData.source)
 		else
-			TriggerClientEvent('ox_lib:notify', src, {
-				id = 'not_online',
-				description = Lang:t('error.not_online'),
-				duration = 2500,
-				style = {
-					backgroundColor = '#141517',
-					color = '#ffffff'
-				},
-				icon = 'signal',
-				iconColor = '#C0392B'
-			})
+			TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_online'), type = 'error' })
 		end
 	else
 		TriggerClientEvent('hospital:client:Revive', src)
@@ -512,17 +392,7 @@ QBCore.Commands.Add("setpain", Lang:t('info.pain_level'), { { name = "id", help 
 		if Player then
 			TriggerClientEvent('hospital:client:SetPain', Player.PlayerData.source)
 		else
-			TriggerClientEvent('ox_lib:notify', src, {
-				id = 'not_online',
-				description = Lang:t('error.not_online'),
-				duration = 2500,
-				style = {
-					backgroundColor = '#141517',
-					color = '#ffffff'
-				},
-				icon = 'signal',
-				iconColor = '#C0392B'
-			})
+			TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_online'), type = 'error' })
 		end
 	else
 		TriggerClientEvent('hospital:client:SetPain', src)
@@ -536,17 +406,7 @@ QBCore.Commands.Add("kill", Lang:t('info.kill'), { { name = "id", help = Lang:t(
 		if Player then
 			TriggerClientEvent('hospital:client:KillPlayer', Player.PlayerData.source)
 		else
-			TriggerClientEvent('ox_lib:notify', src, {
-				id = 'not_online',
-				description = Lang:t('error.not_online'),
-				duration = 2500,
-				style = {
-					backgroundColor = '#141517',
-					color = '#ffffff'
-				},
-				icon = 'signal',
-				iconColor = '#C0392B'
-			})
+			TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_online'), type = 'error' })
 		end
 	else
 		TriggerClientEvent('hospital:client:KillPlayer', src)
@@ -560,17 +420,7 @@ QBCore.Commands.Add('aheal', Lang:t('info.heal_player_a'), { { name = 'id', help
 		if Player then
 			TriggerClientEvent('hospital:client:adminHeal', Player.PlayerData.source)
 		else
-			TriggerClientEvent('ox_lib:notify', src, {
-				id = 'not_online',
-				description = Lang:t('error.not_online'),
-				duration = 2500,
-				style = {
-					backgroundColor = '#141517',
-					color = '#ffffff'
-				},
-				icon = 'signal',
-				iconColor = '#C0392B'
-			})
+			TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_online'), type = 'error' })
 		end
 	else
 		TriggerClientEvent('hospital:client:adminHeal', src)
