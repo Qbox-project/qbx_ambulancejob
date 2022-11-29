@@ -2,8 +2,8 @@
 EMS Job and Death/Wound Logic for QB-Core Framework :ambulance:
 
 ## Dependencies
-- [qb-core](https://github.com/QBCore-Remastered/qb-core) (Required)
-- [qb-phone](https://github.com/QBCore-Remastered/qb-phone) (Required)
+- [qb-core](https://github.com/Qbox-project/qb-core) (Required)
+- [qb-phone](https://github.com/Qbox-project/qb-phone) (Required)
 - [ox-target](https://github.com/overextended/ox_target) (Required)
 - [ox_lib](https://github.com/overextended/ox_lib) (Required)
 
