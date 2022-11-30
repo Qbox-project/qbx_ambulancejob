@@ -552,20 +552,20 @@ QBCore.Commands.Add('aheal', Lang:t('info.heal_player_a'), {
 end, 'admin')
 
 -- Items
-QBCore.Functions.CreateUseableItem("ifaks", function(source, item)
-    TriggerClientEvent("hospital:client:UseIfaks", src)
+QBCore.Functions.CreateUseableItem("ifaks", function(source, _)
+    TriggerClientEvent("hospital:client:UseIfaks", source)
 end)
 
-QBCore.Functions.CreateUseableItem("bandage", function(source, item)
-    TriggerClientEvent("hospital:client:UseBandage", src)
+QBCore.Functions.CreateUseableItem("bandage", function(source, _)
+    TriggerClientEvent("hospital:client:UseBandage", source)
 end)
 
-QBCore.Functions.CreateUseableItem("painkillers", function(source, item)
-    TriggerClientEvent("hospital:client:UsePainkillers", src)
+QBCore.Functions.CreateUseableItem("painkillers", function(source, _)
+    TriggerClientEvent("hospital:client:UsePainkillers", source)
 end)
 
-QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
-    TriggerClientEvent("hospital:client:UseFirstAid", src)
+QBCore.Functions.CreateUseableItem("firstaid", function(source, _)
+    TriggerClientEvent("hospital:client:UseFirstAid", source)
 end)
 
 exports('GetDoctorCount', function()

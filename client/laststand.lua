@@ -127,7 +127,7 @@ function SetLaststand(bool)
     else
         lib.requestAnimDict(lastStandDict)
 
-        TaskPlayAnim(ped, lastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
+        TaskPlayAnim(cache.ped, lastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
         RemoveAnimDict(lastStandDict)
 
         InLaststand = false
