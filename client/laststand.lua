@@ -63,7 +63,7 @@ function SetLaststand(bool)
 
         SetEntityHealth(cache.ped, 150)
 
-        if IsPedInAnyVehicle(cache.ped, false) then
+        if cache.vehicle then
             lib.requestAnimDict("veh@low@front_ps@idle_duck")
 
             TaskPlayAnim(cache.ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 8.0, -1, 1, -1, false, false, false)

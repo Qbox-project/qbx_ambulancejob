@@ -51,7 +51,7 @@ local function GetAvailableBed(bedId)
     local retval = nil
 
     if not bedId then
-        for k, v in pairs(Config.Locations["beds"]) do
+        for k, v in pairs(Config.Locations.beds) do
             if not v.taken then
                 if #(pos - v.coords) < 500 then
                     retval = k
@@ -59,7 +59,7 @@ local function GetAvailableBed(bedId)
             end
         end
     else
-        local bedData = Config.Locations["beds"][bedId]
+        local bedData = Config.Locations.beds[bedId]
 
         if not bedData.taken then
             if #(pos - bedData.coords) < 500 then
@@ -108,7 +108,7 @@ local function DoLimbAlert()
                 limbDamageMsg = Lang:t('info.many_places')
             end
 
-            lib.notify({ 
+            lib.notify({
                 description = limbDamageMsg,
                 type = 'error'
             })
@@ -143,8 +143,8 @@ local function SetClosestBed()
     local current = nil
     local dist = nil
 
-    for k, _ in pairs(Config.Locations["beds"]) do
-        local dist2 = #(pos - vec3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z))
+    for k, v in pairs(Config.Locations.beds) do
+        local dist2 = #(pos - v.coords.xyz)
 
         if current then
             if dist2 < dist then
@@ -333,8 +333,8 @@ local function LeaveBed()
     isInHospitalBed = false
 
     QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerData.metadata["injail"] > 0 then
-            TriggerEvent("prison:client:Enter", PlayerData.metadata["injail"])
+        if PlayerData.metadata.injail > 0 then
+            TriggerEvent("prison:client:Enter", PlayerData.metadata.injail)
         end
     end)
 end
@@ -722,11 +722,11 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, data, isRevive)
 end)
 
 RegisterNetEvent('hospital:client:SetBed', function(id, isTaken)
-    Config.Locations["beds"][id].taken = isTaken
+    Config.Locations.beds[id].taken = isTaken
 end)
 
 RegisterNetEvent('hospital:client:SetBed2', function(id, isTaken)
-    Config.Locations["jailbeds"][id].taken = isTaken
+    Config.Locations.jailbeds[id].taken = isTaken
 end)
 
 RegisterNetEvent('hospital:client:RespawnAtHospital', function()
@@ -752,7 +752,11 @@ RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
         TriggerServerEvent('qb-phone:server:sendNewMail', {
             sender = Lang:t('mail.sender'),
             subject = Lang:t('mail.subject'),
-            message = Lang:t('mail.message', { gender = gender, lastname = charinfo.lastname, costs = amount }),
+            message = Lang:t('mail.message', {
+                gender = gender,
+                lastname = charinfo.lastname,
+                costs = amount
+            }),
             button = {}
         })
     end)
@@ -788,7 +792,7 @@ end)
 
 -- Threads
 CreateThread(function()
-    for _, station in pairs(Config.Locations["stations"]) do
+    for _, station in pairs(Config.Locations.stations) do
         local blip = AddBlipForCoord(station.coords.x, station.coords.y, station.coords.z)
 
         SetBlipSprite(blip, 61)
@@ -1000,7 +1004,7 @@ end)
 -- Convar turns into a boolean
 if Config.UseTarget then
     CreateThread(function()
-        for k, v in pairs(Config.Locations["checking"]) do
+        for k, v in pairs(Config.Locations.checking) do
             exports.ox_target:addBoxZone({
                 name = "checking" .. k,
                 coords = vec3(v.x, v.y, v.z),
@@ -1011,7 +1015,7 @@ if Config.UseTarget then
                     {
                         type = "client",
                         event = "qb-ambulancejob:checkin",
-                        icon = "fas fa-clipboard",
+                        icon = "fa-solid fa-clipboard",
                         label = Lang:t('text.check'),
                         distance = 1.5,
                         groups = "ambulance",
@@ -1020,7 +1024,7 @@ if Config.UseTarget then
             })
         end
 
-        for k, v in pairs(Config.Locations["beds"]) do
+        for k, v in pairs(Config.Locations.beds) do
             exports.ox_target:addBoxZone({
                 name = "beds" .. k,
                 coords = vec3(v.coords.x, v.coords.y, v.coords.z),
@@ -1031,7 +1035,7 @@ if Config.UseTarget then
                     {
                         type = "client",
                         event = "qb-ambulancejob:beds",
-                        icon = "fas fa-clipboard",
+                        icon = "fa-solid fa-clipboard",
                         label = Lang:t('text.bed'),
                         distance = 1.5,
                         groups = "ambulance",
@@ -1042,7 +1046,7 @@ if Config.UseTarget then
     end)
 else
     CreateThread(function()
-        for _, v in pairs(Config.Locations["checking"]) do
+        for _, v in pairs(Config.Locations.checking) do
             local function enterCheckInZone()
                 if doctorCount >= Config.MinimalDoctors then
                     lib.showTextUI(Lang:t('text.call_doc'))
@@ -1069,7 +1073,7 @@ else
             })
         end
 
-        for _, v in pairs(Config.Locations["beds"]) do
+        for _, v in pairs(Config.Locations.beds) do
             local function enterBedZone()
                 lib.showTextUI(Lang:t('text.lie_bed'))
 

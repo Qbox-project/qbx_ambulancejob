@@ -22,7 +22,7 @@ RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
-    TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["beds"][bedId], isRevive)
+    TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations.beds[bedId], isRevive)
     TriggerClientEvent('hospital:client:SetBed', -1, bedId, true)
 
     Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
@@ -36,8 +36,8 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
-    if Player.PlayerData.metadata["injail"] > 0 then
-        for k, v in pairs(Config.Locations["jailbeds"]) do
+    if Player.PlayerData.metadata.injail > 0 then
+        for k, v in pairs(Config.Locations.jailbeds) do
             if not v.taken then
                 TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
                 TriggerClientEvent('hospital:client:SetBed2', -1, k, true)
@@ -50,7 +50,10 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
                         Player.PlayerData.citizenid
                     })
 
-                    TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.possessions_taken'), type = 'error' })
+                    TriggerClientEvent('ox_lib:notify', src, {
+                        description = Lang:t('error.possessions_taken'),
+                        type = 'error'
+                    })
                 end
 
                 Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
@@ -62,7 +65,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
             end
         end
 
-        TriggerClientEvent('hospital:client:SendToBed', src, 1, Config.Locations["jailbeds"][1], true)
+        TriggerClientEvent('hospital:client:SendToBed', src, 1, Config.Locations.jailbeds[1], true)
         TriggerClientEvent('hospital:client:SetBed', -1, 1, true)
 
         if Config.WipeInventoryOnRespawn then
@@ -82,7 +85,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 
         TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
     else
-        for k, v in pairs(Config.Locations["beds"]) do
+        for k, v in pairs(Config.Locations.beds) do
             if not v.taken then
                 TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
                 TriggerClientEvent('hospital:client:SetBed', -1, k, true)
@@ -95,7 +98,10 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
                         Player.PlayerData.citizenid
                     })
 
-                    TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.possessions_taken'), type = 'error' })
+                    TriggerClientEvent('ox_lib:notify', src, {
+                        description = Lang:t('error.possessions_taken'),
+                        type = 'error'
+                    })
                 end
 
                 Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
@@ -107,7 +113,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
             end
         end
 
-        TriggerClientEvent('hospital:client:SendToBed', src, 1, Config.Locations["beds"][1], true)
+        TriggerClientEvent('hospital:client:SendToBed', src, 1, Config.Locations.beds[1], true)
         TriggerClientEvent('hospital:client:SetBed', -1, 1, true)
 
         if Config.WipeInventoryOnRespawn then

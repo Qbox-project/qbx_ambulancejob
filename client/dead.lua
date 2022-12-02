@@ -44,7 +44,7 @@ function OnDeath()
             SetEntityInvincible(cache.ped, true)
             SetEntityHealth(cache.ped, GetEntityMaxHealth(cache.ped))
 
-            if IsPedInAnyVehicle(cache.ped, false) then
+            if cache.vehicle then
                 lib.requestAnimDict("veh@low@front_ps@idle_duck")
 
                 TaskPlayAnim(cache.ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
@@ -168,7 +168,7 @@ CreateThread(function()
                     end
                 end
 
-                if IsPedInAnyVehicle(cache.ped, false) then
+                if cache.vehicle then
                     if not IsEntityPlayingAnim(cache.ped, "veh@low@front_ps@idle_duck", "sit", 3) then
                         lib.requestAnimDict("veh@low@front_ps@idle_duck")
 
@@ -220,7 +220,7 @@ CreateThread(function()
                 end
 
                 if not isEscorted then
-                    if IsPedInAnyVehicle(cache.ped, false) then
+                    if cache.vehicle then
                         if not IsEntityPlayingAnim(cache.ped, "veh@low@front_ps@idle_duck", "sit", 3) then
                             lib.requestAnimDict("veh@low@front_ps@idle_duck")
 
@@ -236,7 +236,7 @@ CreateThread(function()
                         end
                     end
                 else
-                    if IsPedInAnyVehicle(cache.ped, false) then
+                    if cache.vehicle then
                         if IsEntityPlayingAnim(cache.ped, "veh@low@front_ps@idle_duck", "sit", 3) then
                             lib.requestAnimDict("veh@low@front_ps@idle_duck")
 

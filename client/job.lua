@@ -26,7 +26,7 @@ local function GetClosestPlayer()
 end
 
 function TakeOutVehicle(vehicleInfo)
-    local coords = Config.Locations["vehicle"][currentGarage]
+    local coords = Config.Locations.vehicle[currentGarage]
 
     QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
         local veh = NetToVeh(netId)
@@ -378,7 +378,7 @@ local function EMSVehicle(k)
             if IsControlJustPressed(0, 38) then
                 CheckVehicle = false
 
-                if IsPedInAnyVehicle(cache.ped, false) then
+                if cache.vehicle then
                     QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(cache.ped))
                 else
                     local currentVehicle = k
@@ -404,11 +404,11 @@ local function EMSHelicopter(k)
             if IsControlJustPressed(0, 38) then
                 CheckHeli = false
 
-                if IsPedInAnyVehicle(cache.ped, false) then
+                if cache.vehicle then
                     QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(cache.ped))
                 else
                     local currentHelictoper = k
-                    local coords = Config.Locations["helicopter"][currentHelictoper]
+                    local coords = Config.Locations.helicopter[currentHelictoper]
 
                     QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
                         local veh = NetToVeh(netId)
@@ -432,7 +432,7 @@ local function EMSHelicopter(k)
 end
 
 RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
-    for k, _ in pairs(Config.Locations["roof"]) do
+    for k, _ in pairs(Config.Locations.roof) do
         DoScreenFadeOut(500)
         while not IsScreenFadedOut() do
             Wait(10)
@@ -440,7 +440,7 @@ RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
 
         currentHospital = k
 
-        local coords = Config.Locations["main"][currentHospital]
+        local coords = Config.Locations.main[currentHospital]
         SetEntityCoords(cache.ped, coords.x, coords.y, coords.z, false, false, false, false)
         SetEntityHeading(cache.ped, coords.w)
 
@@ -451,7 +451,7 @@ RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
 end)
 
 RegisterNetEvent('qb-ambulancejob:elevator_main', function()
-    for k, _ in pairs(Config.Locations["main"]) do
+    for k, _ in pairs(Config.Locations.main) do
         DoScreenFadeOut(500)
         while not IsScreenFadedOut() do
             Wait(10)
@@ -459,7 +459,7 @@ RegisterNetEvent('qb-ambulancejob:elevator_main', function()
 
         currentHospital = k
 
-        local coords = Config.Locations["roof"][currentHospital]
+        local coords = Config.Locations.roof[currentHospital]
 
         SetEntityCoords(cache.ped, coords.x, coords.y, coords.z, false, false, false, false)
         SetEntityHeading(cache.ped, coords.w)
@@ -477,7 +477,7 @@ RegisterNetEvent('EMSToggle:Duty', function()
 end)
 
 CreateThread(function()
-    for k, v in pairs(Config.Locations["vehicle"]) do
+    for k, v in pairs(Config.Locations.vehicle) do
         local function inVehicleZone()
             if PlayerJob.name == "ambulance" and onDuty then
                 lib.showTextUI(Lang:t('text.veh_button'))
@@ -506,7 +506,7 @@ CreateThread(function()
         })
     end
 
-    for k, v in pairs(Config.Locations["helicopter"]) do
+    for k, v in pairs(Config.Locations.helicopter) do
         local function inHeliZone()
             if PlayerJob.name == "ambulance" and onDuty then
                 lib.showTextUI(Lang:t('text.veh_button'))
@@ -539,7 +539,7 @@ end)
 -- Convar turns into a boolean
 if Config.UseTarget then
     CreateThread(function()
-        for k, v in pairs(Config.Locations["duty"]) do
+        for k, v in pairs(Config.Locations.duty) do
             exports.ox_target:addBoxZone({
                 name = "duty" .. k,
                 coords = vec3(v.x, v.y, v.z),
@@ -550,7 +550,7 @@ if Config.UseTarget then
                     {
                         type = "client",
                         event = "EMSToggle:Duty",
-                        icon = "fa fa-clipboard",
+                        icon = "fa-solid fa-clipboard",
                         label = Lang:t('text.duty'),
                         distance = 2,
                         groups = "ambulance"
@@ -559,7 +559,7 @@ if Config.UseTarget then
             })
         end
 
-        for k, v in pairs(Config.Locations["stash"]) do
+        for k, v in pairs(Config.Locations.stash) do
             exports.ox_target:addBoxZone({
                 name = "stash" .. k,
                 coords = vec3(v.x, v.y, v.z),
@@ -570,7 +570,7 @@ if Config.UseTarget then
                     {
                         type = "client",
                         event = "qb-ambulancejob:stash",
-                        icon = "fa fa-clipboard",
+                        icon = "fa-solid fa-clipboard",
                         label = Lang:t('text.pstash'),
                         distance = 2,
                         groups = "ambulance"
@@ -579,7 +579,7 @@ if Config.UseTarget then
             })
         end
 
-        for k, v in pairs(Config.Locations["armory"]) do
+        for k, v in pairs(Config.Locations.armory) do
             exports.ox_target:addBoxZone({
                 name = "armory" .. k,
                 coords = vec3(v.x, v.y, v.z),
@@ -590,7 +590,7 @@ if Config.UseTarget then
                     {
                         type = "client",
                         event = "qb-ambulancejob:armory",
-                        icon = "fa fa-clipboard",
+                        icon = "fa-solid fa-clipboard",
                         label = Lang:t('text.armory'),
                         distance = 1.5,
                         groups = "ambulance"
@@ -599,7 +599,7 @@ if Config.UseTarget then
             })
         end
 
-        for k, v in pairs(Config.Locations["roof"]) do
+        for k, v in pairs(Config.Locations.roof) do
             exports.ox_target:addBoxZone({
                 name = "roof" .. k,
                 coords = vec3(v.x, v.y, v.z),
@@ -610,7 +610,7 @@ if Config.UseTarget then
                     {
                         type = "client",
                         event = "qb-ambulancejob:elevator_roof",
-                        icon = "fas fa-hand-point-up",
+                        icon = "fa-solid fa-hand-point-up",
                         label = Lang:t('text.el_roof'),
                         distance = 1.5,
                         groups = "ambulance"
@@ -619,7 +619,7 @@ if Config.UseTarget then
             })
         end
 
-        for k, v in pairs(Config.Locations["main"]) do
+        for k, v in pairs(Config.Locations.main) do
             exports.ox_target:addBoxZone({
                 name = "main" .. k,
                 coords = vec3(v.x, v.y, v.z),
@@ -630,7 +630,7 @@ if Config.UseTarget then
                     {
                         type = "client",
                         event = "qb-ambulancejob:elevator_main",
-                        icon = "fas fa-hand-point-up",
+                        icon = "fa-solid fa-hand-point-up",
                         label = Lang:t('text.el_roof'),
                         distance = 1.5,
                         groups = "ambulance"
@@ -641,7 +641,7 @@ if Config.UseTarget then
     end)
 else
     CreateThread(function()
-        for _, v in pairs(Config.Locations["duty"]) do
+        for _, v in pairs(Config.Locations.duty) do
             local function EnteredSignInZone()
                 if not onDuty then
                     lib.showTextUI(Lang:t('text.onduty_button'))
@@ -670,7 +670,7 @@ else
             })
         end
 
-        for _, v in pairs(Config.Locations["stash"]) do
+        for _, v in pairs(Config.Locations.stash) do
             local function EnteredStashZone()
                 if onDuty then
                     lib.showTextUI(Lang:t('text.pstash_button'))
@@ -695,7 +695,7 @@ else
             })
         end
 
-        for _, v in pairs(Config.Locations["armory"]) do
+        for _, v in pairs(Config.Locations.armory) do
             local function EnteredArmoryZone()
                 if onDuty then
                     lib.showTextUI(Lang:t('text.armory_button'))
@@ -720,7 +720,7 @@ else
             })
         end
 
-        for _, v in pairs(Config.Locations["roof"]) do
+        for _, v in pairs(Config.Locations.roof) do
             local function EnteredRoofZone()
                 if onDuty then
                     lib.showTextUI(Lang:t('text.elevator_main'))
@@ -747,7 +747,7 @@ else
             })
         end
 
-        for _, v in pairs(Config.Locations["main"]) do
+        for _, v in pairs(Config.Locations.main) do
             local function EnteredMainZone()
                 if onDuty then
                     lib.showTextUI(Lang:t('text.elevator_roof'))
