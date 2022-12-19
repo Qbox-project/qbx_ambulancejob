@@ -187,19 +187,15 @@ AddEventHandler("playerDropped", function()
 	end
 end)
 
-local function useFirstAidKit(player, patient)
-	player.Functions.RemoveItem('firstaid', 1)
-	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, QBCore.Shared.Items['firstaid'], "remove")
-	TriggerClientEvent('hospital:client:Revive', patient.PlayerData.source)
-end
-
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
 	local patient = QBCore.Functions.GetPlayer(playerId)
 
 	if not patient then return end
-	useFirstAidKit(player, patient)
+	player.Functions.RemoveItem('firstaid', 1)
+	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, QBCore.Shared.Items['firstaid'], "remove")
+	TriggerClientEvent('hospital:client:Revive', patient.PlayerData.source)
 end)
 
 RegisterNetEvent('hospital:server:SendDoctorAlert', function()
