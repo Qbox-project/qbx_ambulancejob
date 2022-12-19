@@ -431,93 +431,102 @@ local function CheckDamage(ped, bone, weapon, damageDone)
     end
 end
 
-local function ProcessDamage(ped)
-    if not isDead and not InLaststand and not onPainKillers then
-        for _, v in pairs(injured) do
-            if (v.part == 'LLEG' and v.severity > 1) or (v.part == 'RLEG' and v.severity > 1) or (v.part == 'LFOOT' and v.severity > 2) or (v.part == 'RFOOT' and v.severity > 2) then
-                if legCount >= Config.LegInjuryTimer then
-                    if not IsPedRagdoll(ped) and IsPedOnFoot(ped) then
-                        local chance = math.random(100)
-                        if (IsPedRunning(ped) or IsPedSprinting(ped)) then
-                            if chance <= Config.LegInjuryChance.Running then
-                                ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
-                                SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-                            end
-                        else
-                            if chance <= Config.LegInjuryChance.Walking then
-                                ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
-                                SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-                            end
-                        end
-                    end
-                    legCount = 0
-                else
-                    legCount = legCount + 1
+local function isLegDamaged(injury)
+    return (injury.part == 'LLEG' and injury.severity > 1) or (injury.part == 'RLEG' and injury.severity > 1) or (injury.part == 'LFOOT' and injury.severity > 2) or (injury.part == 'RFOOT' and injury.severity > 2)
+end
+
+local function makePedFall(ped)
+    ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
+    SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+end
+
+local function chancePedFalls(ped)
+    if IsPedRagdoll(ped) or not IsPedOnFoot(ped) then return end
+    local chance = (IsPedRunning(ped) or IsPedSprinting(ped)) and Config.LegInjuryChance.Running or Config.LegInjuryChance.Walking
+    local rand = math.random(100)
+    if rand <= chance then
+        makePedFall(ped)
+    end
+end
+
+local function isLeftArmDamaged(injury)
+    return (injury.part == 'LARM' and injury.severity > 1) or (injury.part == 'LHAND' and injury.severity > 1) or (injury.part == 'LFINGER' and injury.severity > 2)
+end
+
+local function isArmDamaged(injury)
+    return isLeftArmDamaged(injury) or (injury.part == 'RARM' and injury.severity > 1) or (injury.part == 'RHAND' and injury.severity > 1) or (injury.part == 'RFINGER' and injury.severity > 2)
+end
+
+local function disableArms(ped, injury)
+    local disableTimer = 15
+    local isLeftArm = isLeftArmDamaged(injury)
+    while disableTimer > 0 do
+        if IsPedInAnyVehicle(ped, true) then
+            DisableControlAction(0, 63, true) -- veh turn left
+        end
+
+        local playerId = PlayerId()
+        if IsPlayerFreeAiming(playerId) then
+            if isLeftArm then
+                DisablePlayerFiring(playerId, true) -- Disable weapon firing
+            else
+                DisableControlAction(0, 25, true) -- Disable weapon aiming
+            end
+        end
+
+        disableTimer -= 1
+        Wait(1)
+    end
+end
+
+local function isHeadDamaged(injury)
+    return injury.part == 'HEAD' and injury.severity > 2
+end
+
+local function playBrainDamageEffectAndRagdoll(ped)
+    SetFlash(0, 0, 100, 10000, 100)
+
+    DoScreenFadeOut(100)
+    while not IsScreenFadedOut() do
+        Wait(0)
+    end
+
+    if not IsPedRagdoll(ped) and IsPedOnFoot(ped) and not IsPedSwimming(ped) then
+        ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
+        SetPedToRagdoll(ped, 5000, 1, 2)
+    end
+
+    Wait(5000)
+    DoScreenFadeIn(250)
+end
+
+local function processDamage(ped)
+    if isDead or InLaststand or onPainKillers then return end
+    for _, injury in pairs(injured) do
+        if (isLegDamaged(injury)) then
+            if legCount >= Config.LegInjuryTimer then
+                chancePedFalls(ped)
+                legCount = 0
+            else
+                legCount += 1
+            end
+        elseif isArmDamaged(injury) then
+            if armcount >= Config.ArmInjuryTimer then
+                CreateThread(disableArms(ped, injury))
+                armcount = 0
+            else
+                armcount = armcount + 1
+            end
+        elseif (isHeadDamaged(injury)) then
+            if headCount >= Config.HeadInjuryTimer then
+                local chance = math.random(100)
+
+                if chance <= Config.HeadInjuryChance then
+                    playBrainDamageEffectAndRagdoll(ped)
                 end
-            elseif (v.part == 'LARM' and v.severity > 1) or (v.part == 'LHAND' and v.severity > 1) or (v.part == 'LFINGER' and v.severity > 2) or (v.part == 'RARM' and v.severity > 1) or (v.part == 'RHAND' and v.severity > 1) or (v.part == 'RFINGER' and v.severity > 2) then
-                if armcount >= Config.ArmInjuryTimer then
-                    if (v.part == 'LARM' and v.severity > 1) or (v.part == 'LHAND' and v.severity > 1) or (v.part == 'LFINGER' and v.severity > 2) then
-                        local isDisabled = 15
-                        CreateThread(function()
-                            while isDisabled > 0 do
-                                if IsPedInAnyVehicle(ped, true) then
-                                    DisableControlAction(0, 63, true) -- veh turn left
-                                end
-
-                                if IsPlayerFreeAiming(PlayerId()) then
-                                    DisablePlayerFiring(PlayerId(), true) -- Disable weapon firing
-                                end
-
-                                isDisabled = isDisabled - 1
-                                Wait(1)
-                            end
-                        end)
-                    else
-                        local isDisabled = 15
-                        CreateThread(function()
-                            while isDisabled > 0 do
-                                if IsPedInAnyVehicle(ped, true) then
-                                    DisableControlAction(0, 63, true) -- veh turn left
-                                end
-
-                                if IsPlayerFreeAiming(PlayerId()) then
-                                    DisableControlAction(0, 25, true) -- Disable weapon firing
-                                end
-
-                                isDisabled = isDisabled - 1
-                                Wait(1)
-                            end
-                        end)
-                    end
-
-                    armcount = 0
-                else
-                    armcount = armcount + 1
-                end
-            elseif (v.part == 'HEAD' and v.severity > 2) then
-                if headCount >= Config.HeadInjuryTimer then
-                    local chance = math.random(100)
-
-                    if chance <= Config.HeadInjuryChance then
-                        SetFlash(0, 0, 100, 10000, 100)
-
-                        DoScreenFadeOut(100)
-                        while not IsScreenFadedOut() do
-                            Wait(0)
-                        end
-
-                        if not IsPedRagdoll(ped) and IsPedOnFoot(ped) and not IsPedSwimming(ped) then
-                            ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
-                            SetPedToRagdoll(ped, 5000, 1, 2)
-                        end
-
-                        Wait(5000)
-                        DoScreenFadeIn(250)
-                    end
-                    headCount = 0
-                else
-                    headCount = headCount + 1
-                end
+                headCount = 0
+            else
+                headCount = headCount + 1
             end
         end
     end
@@ -824,7 +833,7 @@ CreateThread(function()
         playerArmor = armor
 
         if not isInHospitalBed then
-            ProcessDamage(ped)
+            processDamage(ped)
         end
         Wait(100)
     end
