@@ -188,8 +188,7 @@ AddEventHandler("playerDropped", function()
 end)
 
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
-	local src = source
-	local player = QBCore.Functions.GetPlayer(src)
+	local player = QBCore.Functions.GetPlayer(source)
 	local patient = QBCore.Functions.GetPlayer(playerId)
 
 	if not patient then return end
