@@ -48,10 +48,10 @@ end
 
 local function playLastStandAnimation(ped)
     if cache.vehicle then
-        lib.LoadAnimDict("veh@low@front_ps@idle_duck")
+        lib.requestAnimDict("veh@low@front_ps@idle_duck")
         TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 8.0, -1, 1, -1, false, false, false)
     else
-        lib.LoadAnimDict(lastStandDict)
+        lib.requestAnimDict(lastStandDict)
         TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 8.0, -1, 1, -1, false, false, false)
     end
 end
