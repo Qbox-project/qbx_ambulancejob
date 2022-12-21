@@ -1,5 +1,6 @@
 local hold = 5
 deathTime = 0
+emsNotified = false
 
 -- Functions
 function OnDeath()
@@ -95,5 +96,3 @@ AddEventHandler('gameEventTriggered', function(event, data)
         end
     end
 end)
-
-emsNotified = false

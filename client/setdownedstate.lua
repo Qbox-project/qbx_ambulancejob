@@ -1,7 +1,7 @@
 local deadAnimDict = "dead"
 local deadAnim = "dead_a"
 
-local function drawTxt(x, y, width, height, scale, text, r, g, b, a, _)
+local function drawTxt(x, y, width, height, scale, text, r, g, b, a)
     SetTextFont(4)
     SetTextProportional(false)
     SetTextScale(scale, scale)
@@ -30,8 +30,7 @@ local function displayRespawnText()
 end
 
 local function playDeadAnimation(ped)
-    if IsPedInAnyVehicle(ped, false) then
-        
+    if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
         if not IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
             TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
@@ -61,7 +60,7 @@ local function handleDead(ped)
 end
 
 local function playEscortedLastStandAnimation(ped)
-    if IsPedInAnyVehicle(ped, false) then
+    if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
         if IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
             StopAnimTask(ped, "veh@low@front_ps@idle_duck", "sit", 3)
@@ -75,7 +74,7 @@ local function playEscortedLastStandAnimation(ped)
 end
 
 local function playUnescortedLastStandAnimation(ped)
-    if IsPedInAnyVehicle(ped, false) then
+    if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
         if not IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
             TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
@@ -133,16 +132,15 @@ end
 
 --- Set dead and last stand states.
 CreateThread(function()
-    local ped = PlayerPedId()
     while true do
         if isDead or InLaststand then
             disableControls()
             if isDead then
-                handleDead(ped)
+                handleDead(cache.ped)
             elseif InLaststand then
-                handleLastStand(ped)
+                handleLastStand(cache.ped)
             end
-            Wait(5)
+            Wait(0)
         else
             Wait(1000)
         end
