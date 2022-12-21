@@ -107,9 +107,9 @@ AddEventHandler('gameEventTriggered', function(event, data)
         if not IsEntityAPed(victim) then return end
         if victimDied and NetworkGetPlayerIndexFromPed(victim) == PlayerId() and IsEntityDead(PlayerPedId()) then
             if not InLaststand then
-                SetLaststand(true)
+                startLastStand()
             elseif InLaststand and not isDead then
-                SetLaststand(false)
+                endLastStand()
                 local playerid = NetworkGetPlayerIndexFromPed(victim)
                 local playerName = GetPlayerName(playerid) .. " " .. "(" .. GetPlayerServerId(playerid) .. ")" or Lang:t('info.self_death')
                 local killerId = NetworkGetPlayerIndexFromPed(attacker)
