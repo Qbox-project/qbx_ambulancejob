@@ -31,7 +31,7 @@ end
 -- Events
 
 RegisterNetEvent('hospital:client:UseIfaks', function()
-    local ped = PlayerPedId()
+    local ped = cache.ped
     if lib.progressCircle({
         duration = 3000,
         position = 'bottom',
@@ -69,7 +69,7 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
 end)
 
 RegisterNetEvent('hospital:client:UseBandage', function()
-    local ped = PlayerPedId()
+    local ped = cache.ped
     if lib.progressCircle({
         duration = 4000,
         position = 'bottom',
@@ -105,7 +105,7 @@ RegisterNetEvent('hospital:client:UseBandage', function()
 end)
 
 RegisterNetEvent('hospital:client:UsePainkillers', function()
-    local ped = PlayerPedId()
+    local ped = cache.ped
     if lib.progressCircle({
         duration = 3000,
         position = 'bottom',
@@ -172,7 +172,7 @@ CreateThread(function()
     while true do
         if #injured > 0 then
             local level = getWorstInjury()
-            SetPedMoveRateOverride(PlayerPedId(), Config.MovementRate[level])
+            SetPedMoveRateOverride(cache.ped, Config.MovementRate[level])
             Wait(5)
         else
             Wait(1000)
@@ -246,7 +246,7 @@ local function advanceBleedTimer(player)
     if math.floor(bleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
         local currPos = GetEntityCoords(player, true)
         local moving = #(prevPos.xy - currPos.xy)
-        if (moving > 1 and not IsPedInAnyVehicle(player)) and isBleeding > 2 then
+        if (moving > 1 and not cache.vehicle) and isBleeding > 2 then
             advancedBleedTimer += Config.BleedMovementAdvance
             bleedTickTimer += Config.BleedMovementTick
             prevPos = currPos
@@ -259,7 +259,7 @@ end
 
 local function checkBleeding()
     if isBleeding <= 0 or onPainKillers then return end
-    local player = PlayerPedId()
+    local player = cache.ped
     if bleedTickTimer >= Config.BleedTickRate and not isInHospitalBed then
         handleBleeding(player)
         bleedTickTimer = 0
@@ -270,7 +270,7 @@ end
 
 CreateThread(function()
     Wait(2500)
-    prevPos = GetEntityCoords(PlayerPedId(), true)
+    prevPos = GetEntityCoords(cache.ped, true)
     while true do
         Wait(1000)
         checkBleeding()
