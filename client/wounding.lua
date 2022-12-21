@@ -215,11 +215,11 @@ local function applyBleedEffects(player)
     local coords = GetOffsetFromEntityInWorldCoords(player, randX, randY, 0)
     TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid, QBCore.Functions.GetPlayerData().metadata["bloodtype"], coords)
 
-    if advancedBleedTimer >= Config.AdvanceBleedTimer then
+    if advanceBleedTimer >= Config.AdvanceBleedTimer then
         applyBleed(1)
-        advancedBleedTimer = 0
+        advanceBleedTimer = 0
     else
-        advancedBleedTimer += 1
+        advanceBleedTimer += 1
     end
 end
 
@@ -242,12 +242,12 @@ local function handleBleeding(player)
     applyBleedEffects(player)
 end
 
-local function advanceBleedTimer(player)
+local function bleedTick(player)
     if math.floor(bleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
         local currPos = GetEntityCoords(player, true)
         local moving = #(prevPos.xy - currPos.xy)
         if (moving > 1 and not cache.vehicle) and isBleeding > 2 then
-            advancedBleedTimer += Config.BleedMovementAdvance
+            advanceBleedTimer += Config.BleedMovementAdvance
             bleedTickTimer += Config.BleedMovementTick
             prevPos = currPos
         else
@@ -264,7 +264,7 @@ local function checkBleeding()
         handleBleeding(player)
         bleedTickTimer = 0
     else
-        advanceBleedTimer(player)
+        bleedTick(player)
     end
 end
 

@@ -15,7 +15,7 @@ inBedDict = "anim@gangops@morgue@table@"
 inBedAnim = "body_search"
 isInHospitalBed = false
 isBleeding = 0
-bleedTickTimer, advancedBleedTimer = 0, 0
+bleedTickTimer, advanceBleedTimer = 0, 0
 fadeOutTimer, blackoutTimer = 0, 0
 legCount = 0
 armcount = 0
@@ -182,7 +182,7 @@ function ResetPartial()
     if isBleeding <= 2 then
         isBleeding = 0
         bleedTickTimer = 0
-        advancedBleedTimer = 0
+        advanceBleedTimer = 0
         fadeOutTimer = 0
         blackoutTimer = 0
     end
@@ -205,7 +205,7 @@ end
 local function ResetAll()
     isBleeding = 0
     bleedTickTimer = 0
-    advancedBleedTimer = 0
+    advanceBleedTimer = 0
     fadeOutTimer = 0
     blackoutTimer = 0
     onDrugs = 0
