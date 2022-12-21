@@ -245,7 +245,7 @@ end
 local function advanceBleedTimer(player)
     if math.floor(bleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
         local currPos = GetEntityCoords(player, true)
-        local moving = #(vector2(prevPos.x, prevPos.y) - vector2(currPos.x, currPos.y))
+        local moving = #(prevPos.xy - currPos.xy)
         if (moving > 1 and not IsPedInAnyVehicle(player)) and isBleeding > 2 then
             advancedBleedTimer += Config.BleedMovementAdvance
             bleedTickTimer += Config.BleedMovementTick
