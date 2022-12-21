@@ -11,9 +11,8 @@ local function chancePedFalls(ped)
     if IsPedRagdoll(ped) or not IsPedOnFoot(ped) then return end
     local chance = (IsPedRunning(ped) or IsPedSprinting(ped)) and Config.LegInjuryChance.Running or Config.LegInjuryChance.Walking
     local rand = math.random(100)
-    if rand <= chance then
-        makePedFall(ped)
-    end
+    if rand > chance then return end
+    makePedFall(ped)
 end
 
 local function isLeftArmDamaged(injury)
@@ -32,7 +31,7 @@ local function disableArms(ped, injury)
             DisableControlAction(0, 63, true) -- veh turn left
         end
 
-        local playerId = PlayerId()
+        local playerId = cache.playerId
         if IsPlayerFreeAiming(playerId) then
             if isLeftArm then
                 DisablePlayerFiring(playerId, true) -- Disable weapon firing
@@ -72,7 +71,7 @@ end
 function processDamage(ped)
     if isDead or InLaststand or onPainKillers then return end
     for _, injury in pairs(injured) do
-        if (isLegDamaged(injury)) then
+        if isLegDamaged(injury) then
             if legCount >= Config.LegInjuryTimer then
                 chancePedFalls(ped)
                 legCount = 0
@@ -84,9 +83,9 @@ function processDamage(ped)
                 CreateThread(disableArms(ped, injury))
                 armcount = 0
             else
-                armcount = armcount + 1
+                armcount += 1
             end
-        elseif (isHeadDamaged(injury)) then
+        elseif isHeadDamaged(injury) then
             if headCount >= Config.HeadInjuryTimer then
                 local chance = math.random(100)
 
@@ -95,7 +94,7 @@ function processDamage(ped)
                 end
                 headCount = 0
             else
-                headCount = headCount + 1
+                headCount += 1
             end
         end
     end
