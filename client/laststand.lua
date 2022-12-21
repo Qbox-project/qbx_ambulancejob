@@ -13,10 +13,10 @@ local function GetClosestPlayer()
     local closestPlayers = QBCore.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
-    local coords = GetEntityCoords(PlayerPedId())
+    local coords = GetEntityCoords(cache.ped)
 
     for i = 1, #closestPlayers, 1 do
-        if closestPlayers[i] ~= PlayerId() then
+        if closestPlayers[i] ~= cache.playerId then
             local pos = GetEntityCoords(GetPlayerPed(closestPlayers[i]))
             local distance = #(pos - coords)
 
@@ -37,24 +37,17 @@ end
 local function resurrectPlayer(ped)
     local pos = GetEntityCoords(ped)
     local heading = GetEntityHeading(ped)
+    local veh = cache.vehicle
+    local seat = cache.seat
 
-    if IsPedInAnyVehicle(ped) then
-        local veh = GetVehiclePedIsIn(ped)
-        local vehseats = GetVehicleModelNumberOfSeats(joaat(GetEntityModel(veh)))
-        for i = -1, vehseats do
-            local occupant = GetPedInVehicleSeat(veh, i)
-            if occupant == ped then
-                NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
-                SetPedIntoVehicle(ped, veh, i)
-            end
-        end
-    else
-        NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
+    NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
+    if veh then
+        SetPedIntoVehicle(ped, veh, seat)
     end
 end
 
 local function playLastStandAnimation(ped)
-    if IsPedInAnyVehicle(ped, false) then
+    if cache.vehicle then
         lib.LoadAnimDict("veh@low@front_ps@idle_duck")
         TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 8.0, -1, 1, -1, false, false, false)
     else
@@ -64,8 +57,8 @@ local function playLastStandAnimation(ped)
 end
 
 local function logPlayerKiller()
-    local ped = PlayerPedId()
-    local player = PlayerId()
+    local ped = cache.ped
+    local player = cache.playerId
     local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
     local killer = GetPedSourceOfDeath(ped)
     if killer_2 ~= 0 and killer_2 ~= -1 then killer = killer_2 end
@@ -97,7 +90,7 @@ local function countdownLastStand()
 end
 
 function startLastStand()
-    local ped = PlayerPedId()
+    local ped = cache.ped
     Wait(1000)
     waitForPlayerToStopMoving(ped)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
@@ -116,7 +109,7 @@ function startLastStand()
 end
 
 function endLastStand()
-    local ped = PlayerPedId()
+    local ped = cache.ped
     TaskPlayAnim(ped, lastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
     InLaststand = false
     LaststandTime = 0
@@ -158,7 +151,7 @@ RegisterNetEvent('hospital:client:CanHelp', function(helperId)
 end)
 
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
-    local ped = PlayerPedId()
+    local ped = cache.ped
     if lib.progressCircle({
         duration = math.random(30000, 60000),
         position = 'bottom',
