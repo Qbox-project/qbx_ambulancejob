@@ -16,9 +16,12 @@ local function drawTxt(x, y, width, height, scale, text, r, g, b, a, _)
 end
 
 local function isEmsOnDuty()
+    local p = promise.new()
     QBCore.Functions.TriggerCallback('hospital:GetDoctors', function(medics)
-        return medics > 0
+        p:resolve(medics > 0)
     end)
+
+    return Citizen.Await(p)
 end
 
 local function displayRespawnText()
