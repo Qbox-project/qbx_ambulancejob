@@ -732,7 +732,7 @@ CreateThread(function()
         playerArmor = armor
 
         if not isInHospitalBed then
-            processDamage(ped)
+            ProcessDamage(ped)
         end
         Wait(100)
     end

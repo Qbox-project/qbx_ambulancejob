@@ -68,7 +68,7 @@ end
 
 ---applies disabling status effects based on injuries to specific body parts
 ---@param ped any
-function processDamage(ped)
+function ProcessDamage(ped)
     if isDead or InLaststand or onPainKillers then return end
     for _, injury in pairs(injured) do
         if isLegDamaged(injury) then
