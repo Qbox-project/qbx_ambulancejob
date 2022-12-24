@@ -140,10 +140,9 @@ end)
 local function consumePainKiller()
     painkillerAmount -= 1
     Wait(Config.PainkillerInterval * 1000)
-    if painkillerAmount <= 0 then
-        painkillerAmount = 0
-        onPainKillers = false
-    end
+    if painkillerAmount > 0 then return end
+    painkillerAmount = 0
+    onPainKillers = false
 end
 
 CreateThread(function()
