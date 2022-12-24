@@ -75,16 +75,16 @@ local function logPlayerKiller()
 end
 
 local function countdownLastStand()
-    if LaststandTime - 1 <= 0 then
+    if LaststandTime - 1 > 0 then
+        LaststandTime -= 1
+        Config.DeathTime = LaststandTime
+    else
         lib.notify({ description = Lang:t('error.bled_out'), type = 'error' })
         endLastStand()
         logPlayerKiller()
         deathTime = 0
         OnDeath()
         DeathTimer()
-    else
-        LaststandTime -= 1
-        Config.DeathTime = LaststandTime
     end
     Wait(1000)
 end
