@@ -98,7 +98,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
                 OnDeath()
                 DeathTimer()
             elseif (PlayerData.metadata["inlaststand"] and not PlayerData.metadata["isdead"]) then
-                SetLaststand(true)
+                startLastStand()
             else
                 TriggerServerEvent("hospital:server:SetDeathStatus", false)
                 TriggerServerEvent("hospital:server:SetLaststandStatus", false)
