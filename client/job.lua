@@ -1,11 +1,14 @@
-local PlayerJob = {}
+local playerJob = {}
 local onDuty = false
 local currentGarage = 0
 local currentHospital
+local check = false
+local checkVehicle = false
+local checkHeli = false
 
 -- Functions
 
-local function GetClosestPlayer()
+local function getClosestPlayer()
     local closestPlayers = QBCore.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
@@ -69,13 +72,13 @@ RegisterNetEvent('ambulance:client:TakeOutVehicle', function(data)
 end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
-    PlayerJob = JobInfo
-    if PlayerJob.name == 'ambulance' then
-        onDuty = PlayerJob.onduty
-        if PlayerJob.onduty then
-            TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+    playerJob = JobInfo
+    if playerJob.name == 'ambulance' then
+        onDuty = playerJob.onduty
+        if playerJob.onduty then
+            TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
         else
-            TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+            TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
         end
     end
 end)
@@ -87,41 +90,41 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     CreateThread(function()
         Wait(1000)
         QBCore.Functions.GetPlayerData(function(PlayerData)
-            PlayerJob = PlayerData.job
+            playerJob = PlayerData.job
             onDuty = PlayerData.job.onduty
             SetEntityHealth(ped, PlayerData.metadata["health"])
             SetPlayerHealthRechargeMultiplier(player, 0.0)
             SetPlayerHealthRechargeLimit(player, 0.0)
             SetPedArmour(PlayerPedId(), PlayerData.metadata["armor"])
             if (not PlayerData.metadata["inlaststand"] and PlayerData.metadata["isdead"]) then
-                deathTime = Laststand.ReviveInterval
+                DeathTime = Laststand.ReviveInterval
                 OnDeath()
                 DeathTimer()
             elseif (PlayerData.metadata["inlaststand"] and not PlayerData.metadata["isdead"]) then
-                startLastStand()
+                StartLastStand()
             else
                 TriggerServerEvent("hospital:server:SetDeathStatus", false)
                 TriggerServerEvent("hospital:server:SetLaststandStatus", false)
             end
-            if PlayerJob.name == 'ambulance' and onDuty then
-                TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+            if playerJob.name == 'ambulance' and onDuty then
+                TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
             end
         end)
     end)
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    if PlayerJob.name == 'ambulance' and onDuty then
-        TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+    if playerJob.name == 'ambulance' and onDuty then
+        TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
     end
 end)
 
 RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
-    if PlayerJob.name == 'ambulance' and duty ~= onDuty then
+    if playerJob.name == 'ambulance' and duty ~= onDuty then
         if duty then
-            TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+            TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
         else
-            TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+            TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
         end
     end
 
@@ -129,9 +132,9 @@ RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
 end)
 
 function Status()
-    if isStatusChecking then
+    if IsStatusChecking then
         local statusMenu = {}
-        for _, v in pairs(statusChecks) do
+        for _, v in pairs(StatusChecks) do
             statusMenu[#statusMenu + 1] = {
                 title = v.label,
                 event = "hospital:client:TreatWounds",
@@ -148,14 +151,14 @@ function Status()
 end
 
 RegisterNetEvent('hospital:client:CheckStatus', function()
-    local player, distance = GetClosestPlayer()
+    local player, distance = getClosestPlayer()
     if player ~= -1 and distance < 5.0 then
         local playerId = GetPlayerServerId(player)
         QBCore.Functions.TriggerCallback('hospital:GetPlayerStatus', function(result)
             if result then
                 for k, v in pairs(result) do
                     if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
-                        statusChecks[#statusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
+                        StatusChecks[#StatusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
                     elseif result["WEAPONWOUNDS"] then
                         for _, v2 in pairs(result["WEAPONWOUNDS"]) do
                             TriggerEvent('chat:addMessage', {
@@ -174,7 +177,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
                         lib.notify({ description = Lang:t('success.healthy_player'), type = 'success' })
                     end
                 end
-                isStatusChecking = true
+                IsStatusChecking = true
                 Status()
             end
         end, playerId)
@@ -186,7 +189,7 @@ end)
 RegisterNetEvent('hospital:client:RevivePlayer', function()
     QBCore.Functions.TriggerCallback('QBCore:HasItem', function(hasItem)
         if hasItem then
-            local player, distance = GetClosestPlayer()
+            local player, distance = getClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
                 if lib.progressCircle({
@@ -202,16 +205,16 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                         mouse = false,
                     },
                     anim = {
-                        dict = healAnimDict,
-                        clip = healAnim,
+                        dict = HealAnimDict,
+                        clip = HealAnim,
                     },
                 })
                 then
-                    StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
+                    StopAnimTask(PlayerPedId(), HealAnimDict, "exit", 1.0)
                     lib.notify({ description = Lang:t('success.revived'), type = 'success' })
                     TriggerServerEvent("hospital:server:RevivePlayer", playerId)
                 else
-                    StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
+                    StopAnimTask(PlayerPedId(), HealAnimDict, "exit", 1.0)
                     lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
                 end
             else
@@ -226,7 +229,7 @@ end)
 RegisterNetEvent('hospital:client:TreatWounds', function()
     QBCore.Functions.TriggerCallback('QBCore:HasItem', function(hasItem)
         if hasItem then
-            local player, distance = GetClosestPlayer()
+            local player, distance = getClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
                 if lib.progressCircle({
@@ -242,16 +245,16 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
                         mouse = false,
                     },
                     anim = {
-                        dict = healAnimDict,
-                        clip = healAnim,
+                        dict = HealAnimDict,
+                        clip = HealAnim,
                     },
                 })
                 then
-                    StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
+                    StopAnimTask(PlayerPedId(), HealAnimDict, "exit", 1.0)
                     lib.notify({ description = Lang:t('success.helped_player'), type = 'success' })
                     TriggerServerEvent("hospital:server:TreatWounds", playerId)
                 else
-                    StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
+                    StopAnimTask(PlayerPedId(), HealAnimDict, "exit", 1.0)
                     lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
                 end
             else
@@ -263,8 +266,7 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
     end, 'bandage')
 end)
 
-local check = false
-local function EMSControls(variable)
+local function emsControls(variable)
     CreateThread(function()
         check = true
         while check do
@@ -304,14 +306,13 @@ RegisterNetEvent('qb-ambulancejob:armory', function()
     end
 end)
 
-local CheckVehicle = false
-local function EMSVehicle(k)
-    CheckVehicle = true
+local function emsVehicle(k)
+    checkVehicle = true
     CreateThread(function()
-        while CheckVehicle do
+        while checkVehicle do
             if IsControlJustPressed(0, 38) then
                 exports['qb-core']:KeyPressed(38)
-                CheckVehicle = false
+                checkVehicle = false
                 local ped = PlayerPedId()
                 if IsPedInAnyVehicle(ped, false) then
                     QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
@@ -326,14 +327,13 @@ local function EMSVehicle(k)
     end)
 end
 
-local CheckHeli = false
-local function EMSHelicopter(k)
-    CheckHeli = true
+local function emsHelicopter(k)
+    checkHeli = true
     CreateThread(function()
-        while CheckHeli do
+        while checkHeli do
             if IsControlJustPressed(0, 38) then
                 exports['qb-core']:KeyPressed(38)
-                CheckHeli = false
+                checkHeli = false
                 local ped = PlayerPedId()
                 if IsPedInAnyVehicle(ped, false) then
                     QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
@@ -407,17 +407,17 @@ end)
 CreateThread(function()
     for k, v in pairs(Config.Locations["vehicle"]) do
         local function inVehicleZone()
-            if PlayerJob.name == "ambulance" and onDuty then
+            if playerJob.name == "ambulance" and onDuty then
                 lib.showTextUI(Lang:t('text.veh_button'))
-                EMSVehicle(k)
+                emsVehicle(k)
             else
-                CheckVehicle = false
+                checkVehicle = false
                 lib.hideTextUI()
             end
         end
 
         local function outVehicleZone()
-            CheckVehicle = false
+            checkVehicle = false
             lib.hideTextUI()
         end
 
@@ -433,17 +433,17 @@ CreateThread(function()
 
     for k, v in pairs(Config.Locations["helicopter"]) do
         local function inHeliZone()
-            if PlayerJob.name == "ambulance" and onDuty then
+            if playerJob.name == "ambulance" and onDuty then
                 lib.showTextUI(Lang:t('text.veh_button'))
-                EMSHelicopter(k)
+                emsHelicopter(k)
             else
-                CheckHeli = false
+                checkHeli = false
                 lib.hideTextUI()
             end
         end
 
         local function outHeliZone()
-            CheckHeli = false
+            checkHeli = false
             lib.hideTextUI()
         end
 
@@ -563,10 +563,10 @@ else
             local function EnteredSignInZone()
                 if not onDuty then
                     lib.showTextUI(Lang:t('text.onduty_button'))
-                    EMSControls("sign")
+                    emsControls("sign")
                 else
                     lib.showTextUI(Lang:t('text.offduty_button'))
-                    EMSControls("sign")
+                    emsControls("sign")
                 end
             end
 
@@ -589,7 +589,7 @@ else
             local function EnteredStashZone()
                 if onDuty then
                     lib.showTextUI(Lang:t('text.pstash_button'))
-                    EMSControls("stash")
+                    emsControls("stash")
                 end
             end
 
@@ -612,7 +612,7 @@ else
             local function EnteredArmoryZone()
                 if onDuty then
                     lib.showTextUI(Lang:t('text.armory_button'))
-                    EMSControls("armory")
+                    emsControls("armory")
                 end
             end
 
@@ -635,7 +635,7 @@ else
             local function EnteredRoofZone()
                 if onDuty then
                     lib.showTextUI(Lang:t('text.elevator_main'))
-                    EMSControls("main")
+                    emsControls("main")
                 else
                     lib.showTextUI(Lang:t('error.not_ems'))
                 end
@@ -660,7 +660,7 @@ else
             local function EnteredMainZone()
                 if onDuty then
                     lib.showTextUI(Lang:t('text.elevator_roof'))
-                    EMSControls("roof")
+                    emsControls("roof")
                 else
                     lib.showTextUI(Lang:t('error.not_ems'))
                 end

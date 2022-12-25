@@ -1,5 +1,34 @@
 QBCore = exports['qb-core']:GetCoreObject()
 
+InBedDict = "anim@gangops@morgue@table@"
+InBedAnim = "body_search"
+IsInHospitalBed = false
+IsBleeding = 0
+BleedTickTimer, AdvanceBleedTimer = 0, 0
+FadeOutTimer, BlackoutTimer = 0, 0
+LegCount = 0
+Armcount = 0
+HeadCount = 0
+PlayerHealth = nil
+IsDead = false
+IsStatusChecking = false
+StatusChecks = {}
+StatusCheckTime = 0
+HealAnimDict = "mini@cpr@char_a@cpr_str"
+HealAnim = "cpr_pumpchest"
+DeathTime = 0
+EmsNotified = false
+OnPainKillers = false
+Laststand = Laststand or {}
+Laststand.ReviveInterval = 360
+Laststand.MinimumRevive = 300
+InLaststand = false
+LaststandTime = 0
+LastStandDict = "combat@damage@writhe"
+LastStandAnim = "writhe_loop"
+IsEscorted = false
+Injured = {}
+
 local getOutDict = 'switch@franklin@bed'
 local getOutAnim = 'sleep_getup_rubeyes'
 local canLeaveBed = true
@@ -8,26 +37,10 @@ local bedObject = nil
 local bedOccupyingData = nil
 local closestBed = nil
 local doctorCount = 0
-local CurrentDamageList = {}
+local currentDamageList = {}
 local cam = nil
 local playerArmor = nil
-inBedDict = "anim@gangops@morgue@table@"
-inBedAnim = "body_search"
-isInHospitalBed = false
-isBleeding = 0
-bleedTickTimer, advanceBleedTimer = 0, 0
-fadeOutTimer, blackoutTimer = 0, 0
-legCount = 0
-armcount = 0
-headCount = 0
-playerHealth = nil
-isDead = false
-isStatusChecking = false
-statusChecks = {}
-statusCheckTime = 0
-healAnimDict = "mini@cpr@char_a@cpr_str"
-healAnim = "cpr_pumpchest"
-injured = {}
+local listen = false
 
 BodyParts = {
     ['HEAD'] = { label = Lang:t('body.head'), causeLimp = false, isDamaged = false, severity = 0 },
@@ -49,7 +62,7 @@ BodyParts = {
 
 -- Functions
 
-local function GetAvailableBed(bedId)
+local function getAvailableBed(bedId)
     local pos = GetEntityCoords(PlayerPedId())
     local retval = nil
     if bedId == nil then
@@ -70,7 +83,7 @@ local function GetAvailableBed(bedId)
     return retval
 end
 
-local function GetDamagingWeapon(ped)
+local function getDamagingWeapon(ped)
     for k, v in pairs(Config.Weapons) do
         if HasPedBeenDamagedByWeapon(ped, k, 0) then
             return v
@@ -80,21 +93,21 @@ local function GetDamagingWeapon(ped)
     return nil
 end
 
-local function IsDamagingEvent(damageDone, weapon)
+local function isDamagingEvent(damageDone, weapon)
     local luck = math.random(100)
     local multi = damageDone / Config.HealthDamage
 
     return luck < (Config.HealthDamage * multi) or (damageDone >= Config.ForceInjury or multi > Config.MaxInjuryChanceMulti or Config.ForceInjuryWeapons[weapon])
 end
 
-local function DoLimbAlert()
-    if not isDead and not InLaststand then
-        if #injured > 0 then
+local function doLimbAlert()
+    if not IsDead and not InLaststand then
+        if #Injured > 0 then
             local limbDamageMsg = ''
-            if #injured <= Config.AlertShowInfo then
-                for k, v in pairs(injured) do
+            if #Injured <= Config.AlertShowInfo then
+                for k, v in pairs(Injured) do
                     limbDamageMsg = limbDamageMsg .. Lang:t('info.pain_message', { limb = v.label, severity = Config.WoundStates[v.severity] })
-                    if k < #injured then
+                    if k < #Injured then
                         limbDamageMsg = limbDamageMsg .. " | "
                     end
                 end
@@ -106,24 +119,24 @@ local function DoLimbAlert()
     end
 end
 
-local function DoBleedAlert()
-    if not isDead and tonumber(isBleeding) > 0 then
-        lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(isBleeding)].label, type = 'inform' })
+local function doBleedAlert()
+    if not IsDead and tonumber(IsBleeding) > 0 then
+        lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(IsBleeding)].label, type = 'inform' })
     end
 end
 
-local function ApplyBleed(level)
-    if isBleeding ~= 4 then
-        if isBleeding + level > 4 then
-            isBleeding = 4
+local function applyBleed(level)
+    if IsBleeding ~= 4 then
+        if IsBleeding + level > 4 then
+            IsBleeding = 4
         else
-            isBleeding = isBleeding + level
+            IsBleeding = IsBleeding + level
         end
-        DoBleedAlert()
+        doBleedAlert()
     end
 end
 
-local function SetClosestBed()
+local function setClosestBed()
     local pos = GetEntityCoords(PlayerPedId(), true)
     local current = nil
     local dist = nil
@@ -139,12 +152,12 @@ local function SetClosestBed()
             current = k
         end
     end
-    if current ~= closestBed and not isInHospitalBed then
+    if current ~= closestBed and not IsInHospitalBed then
         closestBed = current
     end
 end
 
-local function IsInjuryCausingLimp()
+local function isInjuryCausingLimp()
     for _, v in pairs(BodyParts) do
         if v.causeLimp and v.isDamaged then
             return true
@@ -153,8 +166,8 @@ local function IsInjuryCausingLimp()
     return false
 end
 
-local function ProcessRunStuff(ped)
-    if IsInjuryCausingLimp() then
+local function processRunStuff(ped)
+    if isInjuryCausingLimp() then
         RequestAnimSet("move_m@injured")
         while not HasAnimSetLoaded("move_m@injured") do
             Wait(0)
@@ -172,47 +185,47 @@ function ResetPartial()
         end
     end
 
-    for k, v in pairs(injured) do
+    for k, v in pairs(Injured) do
         if v.severity <= 2 then
             v.severity = 0
-            table.remove(injured, k)
+            table.remove(Injured, k)
         end
     end
 
-    if isBleeding <= 2 then
-        isBleeding = 0
-        bleedTickTimer = 0
-        advanceBleedTimer = 0
-        fadeOutTimer = 0
-        blackoutTimer = 0
+    if IsBleeding <= 2 then
+        IsBleeding = 0
+        BleedTickTimer = 0
+        AdvanceBleedTimer = 0
+        FadeOutTimer = 0
+        BlackoutTimer = 0
     end
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = BodyParts,
-        isBleeding = tonumber(isBleeding)
+        isBleeding = tonumber(IsBleeding)
     })
 
-    ProcessRunStuff(PlayerPedId())
-    DoLimbAlert()
-    DoBleedAlert()
+    processRunStuff(PlayerPedId())
+    doLimbAlert()
+    doBleedAlert()
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = BodyParts,
-        isBleeding = tonumber(isBleeding)
+        isBleeding = tonumber(IsBleeding)
     })
 end
 
-local function ResetAll()
-    isBleeding = 0
-    bleedTickTimer = 0
-    advanceBleedTimer = 0
-    fadeOutTimer = 0
-    blackoutTimer = 0
+local function resetAll()
+    IsBleeding = 0
+    BleedTickTimer = 0
+    AdvanceBleedTimer = 0
+    FadeOutTimer = 0
+    BlackoutTimer = 0
     onDrugs = 0
     wasOnDrugs = false
     onPainKiller = 0
     wasOnPainKillers = false
-    injured = {}
+    Injured = {}
 
     for _, v in pairs(BodyParts) do
         v.isDamaged = false
@@ -221,19 +234,19 @@ local function ResetAll()
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = BodyParts,
-        isBleeding = tonumber(isBleeding)
+        isBleeding = tonumber(IsBleeding)
     })
 
-    CurrentDamageList = {}
-    TriggerServerEvent('hospital:server:SetWeaponDamage', CurrentDamageList)
+    currentDamageList = {}
+    TriggerServerEvent('hospital:server:SetWeaponDamage', currentDamageList)
 
-    ProcessRunStuff(PlayerPedId())
-    DoLimbAlert()
-    DoBleedAlert()
+    processRunStuff(PlayerPedId())
+    doLimbAlert()
+    doBleedAlert()
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = BodyParts,
-        isBleeding = tonumber(isBleeding)
+        isBleeding = tonumber(IsBleeding)
     })
     TriggerServerEvent("hospital:server:resetHungerThirst")
 end
@@ -245,8 +258,8 @@ local function loadAnimDict(dict)
     end
 end
 
-local function SetBedCam()
-    isInHospitalBed = true
+local function setBedCam()
+    IsInHospitalBed = true
     canLeaveBed = false
     local player = PlayerPedId()
 
@@ -269,9 +282,9 @@ local function SetBedCam()
     Wait(500)
     FreezeEntityPosition(player, true)
 
-    loadAnimDict(inBedDict)
+    loadAnimDict(InBedDict)
 
-    TaskPlayAnim(player, inBedDict, inBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
+    TaskPlayAnim(player, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
     SetEntityHeading(player, bedOccupyingData.coords.w)
 
     cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
@@ -289,7 +302,7 @@ local function SetBedCam()
     FreezeEntityPosition(player, true)
 end
 
-local function LeaveBed()
+local function leaveBed()
     local player = PlayerPedId()
 
     RequestAnimDict(getOutDict)
@@ -311,7 +324,7 @@ local function LeaveBed()
     bedOccupying = nil
     bedObject = nil
     bedOccupyingData = nil
-    isInHospitalBed = false
+    IsInHospitalBed = false
 
     QBCore.Functions.GetPlayerData(function(PlayerData)
         if PlayerData.metadata["injail"] > 0 then
@@ -320,11 +333,11 @@ local function LeaveBed()
     end)
 end
 
-local function IsInDamageList(damage)
+local function isInDamageList(damage)
     local retval = false
-    if CurrentDamageList then
-        for k, _ in pairs(CurrentDamageList) do
-            if CurrentDamageList[k] == damage then
+    if currentDamageList then
+        for k, _ in pairs(currentDamageList) do
+            if currentDamageList[k] == damage then
                 retval = true
             end
         end
@@ -332,33 +345,33 @@ local function IsInDamageList(damage)
     return retval
 end
 
-local function CheckWeaponDamage(ped)
+local function checkWeaponDamage(ped)
     local detected = false
     for k, v in pairs(QBCore.Shared.Weapons) do
         if HasPedBeenDamagedByWeapon(ped, k, 0) then
             detected = true
-            if not IsInDamageList(k) then
+            if not isInDamageList(k) then
                 TriggerEvent('chat:addMessage', {
                     color = { 255, 0, 0 },
                     multiline = false,
                     args = { Lang:t('info.status'), v.damagereason }
                 })
-                CurrentDamageList[#CurrentDamageList + 1] = k
+                currentDamageList[#currentDamageList + 1] = k
             end
         end
     end
     if detected then
-        TriggerServerEvent("hospital:server:SetWeaponDamage", CurrentDamageList)
+        TriggerServerEvent("hospital:server:SetWeaponDamage", currentDamageList)
     end
     ClearEntityLastDamageEntity(ped)
 end
 
-local function ApplyImmediateEffects(ped, bone, weapon, damageDone)
+local function applyImmediateEffects(ped, bone, weapon, damageDone)
     local armor = GetPedArmour(ped)
     if Config.MinorInjurWeapons[weapon] and damageDone < Config.DamageMinorToMajor then
         if Config.CriticalAreas[Config.Bones[bone]] then
             if armor <= 0 then
-                ApplyBleed(1)
+                applyBleed(1)
             end
         end
 
@@ -371,19 +384,19 @@ local function ApplyImmediateEffects(ped, bone, weapon, damageDone)
         if Config.CriticalAreas[Config.Bones[bone]] then
             if armor > 0 and Config.CriticalAreas[Config.Bones[bone]].armored then
                 if math.random(100) <= math.ceil(Config.MajorArmoredBleedChance) then
-                    ApplyBleed(1)
+                    applyBleed(1)
                 end
             else
-                ApplyBleed(1)
+                applyBleed(1)
             end
         else
             if armor > 0 then
                 if math.random(100) < (Config.MajorArmoredBleedChance) then
-                    ApplyBleed(1)
+                    applyBleed(1)
                 end
             else
                 if math.random(100) < (Config.MajorArmoredBleedChance * 2) then
-                    ApplyBleed(1)
+                    applyBleed(1)
                 end
             end
         end
@@ -396,16 +409,16 @@ local function ApplyImmediateEffects(ped, bone, weapon, damageDone)
     end
 end
 
-local function CheckDamage(ped, bone, weapon, damageDone)
+local function checkPedDamage(ped, bone, weapon, damageDone)
     if weapon == nil then return end
 
-    if Config.Bones[bone] and not isDead and not InLaststand then
-        ApplyImmediateEffects(ped, bone, weapon, damageDone)
+    if Config.Bones[bone] and not IsDead and not InLaststand then
+        applyImmediateEffects(ped, bone, weapon, damageDone)
 
         if not BodyParts[Config.Bones[bone]].isDamaged then
             BodyParts[Config.Bones[bone]].isDamaged = true
             BodyParts[Config.Bones[bone]].severity = math.random(1, 3)
-            injured[#injured + 1] = {
+            Injured[#Injured + 1] = {
                 part = Config.Bones[bone],
                 label = BodyParts[Config.Bones[bone]].label,
                 severity = BodyParts[Config.Bones[bone]].severity
@@ -414,7 +427,7 @@ local function CheckDamage(ped, bone, weapon, damageDone)
             if BodyParts[Config.Bones[bone]].severity < 4 then
                 BodyParts[Config.Bones[bone]].severity = BodyParts[Config.Bones[bone]].severity + 1
 
-                for _, v in pairs(injured) do
+                for _, v in pairs(Injured) do
                     if v.part == Config.Bones[bone] then
                         v.severity = BodyParts[Config.Bones[bone]].severity
                     end
@@ -424,18 +437,18 @@ local function CheckDamage(ped, bone, weapon, damageDone)
 
         TriggerServerEvent('hospital:server:SyncInjuries', {
             limbs = BodyParts,
-            isBleeding = tonumber(isBleeding)
+            isBleeding = tonumber(IsBleeding)
         })
 
-        ProcessRunStuff(ped)
+        processRunStuff(ped)
     end
 end
 
-local function ProcessDamage(ped)
-    if not isDead and not InLaststand and not onPainKillers then
-        for _, v in pairs(injured) do
+local function processDamage(ped)
+    if not IsDead and not InLaststand and not OnPainKillers then
+        for _, v in pairs(Injured) do
             if (v.part == 'LLEG' and v.severity > 1) or (v.part == 'RLEG' and v.severity > 1) or (v.part == 'LFOOT' and v.severity > 2) or (v.part == 'RFOOT' and v.severity > 2) then
-                if legCount >= Config.LegInjuryTimer then
+                if LegCount >= Config.LegInjuryTimer then
                     if not IsPedRagdoll(ped) and IsPedOnFoot(ped) then
                         local chance = math.random(100)
                         if (IsPedRunning(ped) or IsPedSprinting(ped)) then
@@ -450,12 +463,12 @@ local function ProcessDamage(ped)
                             end
                         end
                     end
-                    legCount = 0
+                    LegCount = 0
                 else
-                    legCount = legCount + 1
+                    LegCount = LegCount + 1
                 end
             elseif (v.part == 'LARM' and v.severity > 1) or (v.part == 'LHAND' and v.severity > 1) or (v.part == 'LFINGER' and v.severity > 2) or (v.part == 'RARM' and v.severity > 1) or (v.part == 'RHAND' and v.severity > 1) or (v.part == 'RFINGER' and v.severity > 2) then
-                if armcount >= Config.ArmInjuryTimer then
+                if Armcount >= Config.ArmInjuryTimer then
                     if (v.part == 'LARM' and v.severity > 1) or (v.part == 'LHAND' and v.severity > 1) or (v.part == 'LFINGER' and v.severity > 2) then
                         local isDisabled = 15
                         CreateThread(function()
@@ -490,12 +503,12 @@ local function ProcessDamage(ped)
                         end)
                     end
 
-                    armcount = 0
+                    Armcount = 0
                 else
-                    armcount = armcount + 1
+                    Armcount = Armcount + 1
                 end
             elseif (v.part == 'HEAD' and v.severity > 2) then
-                if headCount >= Config.HeadInjuryTimer then
+                if HeadCount >= Config.HeadInjuryTimer then
                     local chance = math.random(100)
 
                     if chance <= Config.HeadInjuryChance then
@@ -514,9 +527,9 @@ local function ProcessDamage(ped)
                         Wait(5000)
                         DoScreenFadeIn(250)
                     end
-                    headCount = 0
+                    HeadCount = 0
                 else
-                    headCount = headCount + 1
+                    HeadCount = HeadCount + 1
                 end
             end
         end
@@ -566,17 +579,17 @@ end)
 RegisterNetEvent('hospital:client:Revive', function()
     local player = PlayerPedId()
 
-    if isDead or InLaststand then
+    if IsDead or InLaststand then
         local pos = GetEntityCoords(player, true)
         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(player), true, false)
-        isDead = false
+        IsDead = false
         SetEntityInvincible(player, false)
-        endLastStand()
+        EndLastStand()
     end
 
-    if isInHospitalBed then
-        loadAnimDict(inBedDict)
-        TaskPlayAnim(player, inBedDict, inBedAnim, 8.0, 1.0, -1, 1, 0, 0, 0, 0)
+    if IsInHospitalBed then
+        loadAnimDict(InBedDict)
+        TaskPlayAnim(player, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, 0, 0, 0)
         SetEntityInvincible(player, true)
         canLeaveBed = true
     end
@@ -586,21 +599,21 @@ RegisterNetEvent('hospital:client:Revive', function()
     SetEntityHealth(player, 200)
     ClearPedBloodDamage(player)
     SetPlayerSprint(PlayerId(), true)
-    ResetAll()
+    resetAll()
     ResetPedMovementClipset(player, 0.0)
     TriggerServerEvent('hud:server:RelieveStress', 100)
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
-    emsNotified = false
+    EmsNotified = false
     lib.notify({ description = Lang:t('info.healthy'), type = 'inform' })
 end)
 
 RegisterNetEvent('hospital:client:SetPain', function()
-    ApplyBleed(math.random(1, 4))
+    applyBleed(math.random(1, 4))
     if not BodyParts[Config.Bones[24816]].isDamaged then
         BodyParts[Config.Bones[24816]].isDamaged = true
         BodyParts[Config.Bones[24816]].severity = math.random(1, 4)
-        injured[#injured + 1] = {
+        Injured[#Injured + 1] = {
             part = Config.Bones[24816],
             label = BodyParts[Config.Bones[24816]].label,
             severity = BodyParts[Config.Bones[24816]].severity
@@ -610,7 +623,7 @@ RegisterNetEvent('hospital:client:SetPain', function()
     if not BodyParts[Config.Bones[40269]].isDamaged then
         BodyParts[Config.Bones[40269]].isDamaged = true
         BodyParts[Config.Bones[40269]].severity = math.random(1, 4)
-        injured[#injured + 1] = {
+        Injured[#Injured + 1] = {
             part = Config.Bones[40269],
             label = BodyParts[Config.Bones[40269]].label,
             severity = BodyParts[Config.Bones[40269]].severity
@@ -619,7 +632,7 @@ RegisterNetEvent('hospital:client:SetPain', function()
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = BodyParts,
-        isBleeding = tonumber(isBleeding)
+        isBleeding = tonumber(IsBleeding)
     })
 end)
 
@@ -629,7 +642,7 @@ end)
 
 RegisterNetEvent('hospital:client:HealInjuries', function(type)
     if type == "full" then
-        ResetAll()
+        resetAll()
     else
         ResetPartial()
     end
@@ -641,7 +654,7 @@ end)
 RegisterNetEvent('hospital:client:SendToBed', function(id, data, isRevive)
     bedOccupying = id
     bedOccupyingData = data
-    SetBedCam()
+    setBedCam()
     CreateThread(function()
         Wait(5)
         if isRevive then
@@ -704,11 +717,11 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     if bedOccupying then
         TriggerServerEvent("hospital:server:LeaveBed", bedOccupying)
     end
-    isDead = false
-    deathTime = 0
+    IsDead = false
+    DeathTime = 0
     SetEntityInvincible(ped, false)
     SetPedArmour(ped, 0)
-    ResetAll()
+    resetAll()
 end)
 
 -- Threads
@@ -729,13 +742,13 @@ end)
 CreateThread(function()
     while true do
         local sleep = 1000
-        if isInHospitalBed and canLeaveBed then
+        if IsInHospitalBed and canLeaveBed then
             sleep = 0
 
             lib.showTextUI(Lang:t('text.bed_out'))
             if IsControlJustReleased(0, 38) then
                 exports['qb-core']:KeyPressed(38)
-                LeaveBed()
+                leaveBed()
                 lib.hideTextUI()
             end
         end
@@ -746,19 +759,19 @@ end)
 CreateThread(function()
     while true do
         Wait((1000 * Config.MessageTimer))
-        DoLimbAlert()
+        doLimbAlert()
     end
 end)
 
 CreateThread(function()
     while true do
         Wait(1000)
-        SetClosestBed()
-        if isStatusChecking then
-            statusCheckTime = statusCheckTime - 1
-            if statusCheckTime <= 0 then
-                statusChecks = {}
-                isStatusChecking = false
+        setClosestBed()
+        if IsStatusChecking then
+            StatusCheckTime = StatusCheckTime - 1
+            if StatusCheckTime <= 0 then
+                StatusChecks = {}
+                IsStatusChecking = false
             end
         end
     end
@@ -770,8 +783,8 @@ CreateThread(function()
         local health = GetEntityHealth(ped)
         local armor = GetPedArmour(ped)
 
-        if not playerHealth then
-            playerHealth = health
+        if not PlayerHealth then
+            PlayerHealth = health
         end
 
         if not playerArmor then
@@ -779,14 +792,14 @@ CreateThread(function()
         end
 
         local armorDamaged = (playerArmor ~= armor and armor < (playerArmor - Config.ArmorDamage) and armor > 0) -- Players armor was damaged
-        local healthDamaged = (playerHealth ~= health) -- Players health was damaged
+        local healthDamaged = (PlayerHealth ~= health) -- Players health was damaged
 
-        local damageDone = (playerHealth - health)
+        local damageDone = (PlayerHealth - health)
 
         if armorDamaged or healthDamaged then
             local hit, bone = GetPedLastDamageBone(ped)
             local bodypart = Config.Bones[bone]
-            local weapon = GetDamagingWeapon(ped)
+            local weapon = getDamagingWeapon(ped)
 
             if hit and bodypart ~= 'NONE' then
                 local checkDamage = true
@@ -801,8 +814,8 @@ CreateThread(function()
                         end
 
                         if checkDamage then
-                            if IsDamagingEvent(damageDone, weapon) then
-                                CheckDamage(ped, bone, weapon, damageDone)
+                            if isDamagingEvent(damageDone, weapon) then
+                                checkPedDamage(ped, bone, weapon, damageDone)
                             end
                         end
                     end
@@ -812,26 +825,25 @@ CreateThread(function()
                         checkDamage = false -- Don't check damage if the it was a body shot and the weapon class isn't that strong
                     end
                     if math.random(100) < Config.AlwaysBleedChance and checkDamage then
-                        ApplyBleed(1)
+                        applyBleed(1)
                     end
                 end
             end
 
-            CheckWeaponDamage(ped)
+            checkWeaponDamage(ped)
         end
 
-        playerHealth = health
+        PlayerHealth = health
         playerArmor = armor
 
-        if not isInHospitalBed then
-            ProcessDamage(ped)
+        if not IsInHospitalBed then
+            processDamage(ped)
         end
         Wait(100)
     end
 end)
 
-local listen = false
-local function CheckInControls(variable)
+local function checkInControls(variable)
     CreateThread(function()
         listen = true
         while listen do
@@ -868,13 +880,13 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
                 mouse = false,
             },
             anim = {
-                dict = healAnimDict,
-                clip = healAnim,
+                dict = HealAnimDict,
+                clip = HealAnim,
             },
         })
         then
             TriggerEvent('animations:client:EmoteCommandStart', { "c" })
-            local bedId = GetAvailableBed()
+            local bedId = getAvailableBed()
             if bedId then
                 TriggerServerEvent("hospital:server:SendToBed", bedId, true)
             else
@@ -888,7 +900,7 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
 end)
 
 RegisterNetEvent('qb-ambulancejob:beds', function()
-    if GetAvailableBed(closestBed) then
+    if getAvailableBed(closestBed) then
         TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
     else
         lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
@@ -944,7 +956,7 @@ else
             local function enterCheckInZone()
                 if doctorCount >= Config.MinimalDoctors then
                     lib.showTextUI(Lang:t('text.call_doc'))
-                    CheckInControls("checkin")
+                    checkInControls("checkin")
                 else
                     lib.showTextUI(Lang:t('text.check_in'))
                 end
@@ -967,7 +979,7 @@ else
         for k, v in pairs(Config.Locations["beds"]) do
             local function enterBedZone()
                 lib.showTextUI(Lang:t('text.lie_bed'))
-                CheckInControls("beds")
+                checkInControls("beds")
             end
 
             local function outBedZone()

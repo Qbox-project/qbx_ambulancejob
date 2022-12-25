@@ -1,11 +1,9 @@
 local hold = 5
-deathTime = 0
-emsNotified = false
 
 -- Functions
 function OnDeath()
-    if not isDead then
-        isDead = true
+    if not IsDead then
+        IsDead = true
         TriggerServerEvent("hospital:server:SetDeathStatus", true)
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
         local player = PlayerPedId()
@@ -14,7 +12,7 @@ function OnDeath()
             Wait(10)
         end
 
-        if isDead then
+        if IsDead then
             local pos = GetEntityCoords(player)
             local heading = GetEntityHeading(player)
 
@@ -49,11 +47,11 @@ end
 
 function DeathTimer()
     hold = 5
-    while isDead do
+    while IsDead do
         Wait(1000)
-        deathTime = deathTime - 1
-        if deathTime <= 0 then
-            if IsControlPressed(0, 38) and hold <= 0 and not isInHospitalBed then
+        DeathTime = DeathTime - 1
+        if DeathTime <= 0 then
+            if IsControlPressed(0, 38) and hold <= 0 and not IsInHospitalBed then
                 TriggerEvent("hospital:client:RespawnAtHospital")
                 hold = 5
             end
@@ -79,9 +77,9 @@ AddEventHandler('gameEventTriggered', function(event, data)
         if not IsEntityAPed(victim) then return end
         if victimDied and NetworkGetPlayerIndexFromPed(victim) == PlayerId() and IsEntityDead(PlayerPedId()) then
             if not InLaststand then
-                startLastStand()
-            elseif InLaststand and not isDead then
-                endLastStand()
+                StartLastStand()
+            elseif InLaststand and not IsDead then
+                EndLastStand()
                 local playerid = NetworkGetPlayerIndexFromPed(victim)
                 local playerName = GetPlayerName(playerid) .. " " .. "(" .. GetPlayerServerId(playerid) .. ")" or Lang:t('info.self_death')
                 local killerId = NetworkGetPlayerIndexFromPed(attacker)
@@ -89,7 +87,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
                 local weaponLabel = QBCore.Shared.Weapons[weapon].label or 'Unknown'
                 local weaponName = QBCore.Shared.Weapons[weapon].name or 'Unknown'
                 TriggerServerEvent("qb-log:server:CreateLog", "death", Lang:t('logs.death_log_title', { playername = playerName, playerid = GetPlayerServerId(playerid) }), "red", Lang:t('logs.death_log_message', { killername = killerName, playername = playerName, weaponlabel = weaponLabel, weaponname = weaponName }))
-                deathTime = Config.DeathTime
+                DeathTime = Config.DeathTime
                 OnDeath()
                 DeathTimer()
             end

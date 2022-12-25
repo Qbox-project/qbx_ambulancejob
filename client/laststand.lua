@@ -1,15 +1,7 @@
-Laststand = Laststand or {}
-Laststand.ReviveInterval = 360
-Laststand.MinimumRevive = 300
-InLaststand = false
-LaststandTime = 0
-lastStandDict = "combat@damage@writhe"
-lastStandAnim = "writhe_loop"
-isEscorted = false
 local isEscorting = false
 
 -- Functions
-local function GetClosestPlayer()
+local function getClosestPlayer()
     local closestPlayers = QBCore.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
@@ -51,8 +43,8 @@ local function playLastStandAnimation(ped)
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
         TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 8.0, -1, 1, -1, false, false, false)
     else
-        lib.requestAnimDict(lastStandDict)
-        TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 8.0, -1, 1, -1, false, false, false)
+        lib.requestAnimDict(LastStandDict)
+        TaskPlayAnim(ped, LastStandDict, LastStandAnim, 1.0, 8.0, -1, 1, -1, false, false, false)
     end
 end
 
@@ -80,16 +72,16 @@ local function countdownLastStand()
         Config.DeathTime = LaststandTime
     else
         lib.notify({ description = Lang:t('error.bled_out'), type = 'error' })
-        endLastStand()
+        EndLastStand()
         logPlayerKiller()
-        deathTime = 0
+        DeathTime = 0
         OnDeath()
         DeathTimer()
     end
     Wait(1000)
 end
 
-function startLastStand()
+function StartLastStand()
     local ped = cache.ped
     Wait(1000)
     waitForPlayerToStopMoving(ped)
@@ -108,9 +100,9 @@ function startLastStand()
     TriggerServerEvent("hospital:server:SetLaststandStatus", true)
 end
 
-function endLastStand()
+function EndLastStand()
     local ped = cache.ped
-    TaskPlayAnim(ped, lastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
+    TaskPlayAnim(ped, LastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
     InLaststand = false
     LaststandTime = 0
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
@@ -123,12 +115,12 @@ RegisterNetEvent('hospital:client:SetEscortingState', function(bool)
 end)
 
 RegisterNetEvent('hospital:client:isEscorted', function(bool)
-    isEscorted = bool
+    IsEscorted = bool
 end)
 
 RegisterNetEvent('hospital:client:UseFirstAid', function()
     if not isEscorting then
-        local player, distance = GetClosestPlayer()
+        local player, distance = getClosestPlayer()
         if player ~= -1 and distance < 1.5 then
             local playerId = GetPlayerServerId(player)
             TriggerServerEvent('hospital:server:UseFirstAid', playerId)
@@ -165,8 +157,8 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
             mouse = false,
         },
         anim = {
-            dict = healAnimDict,
-            clip = healAnim,
+            dict = HealAnimDict,
+            clip = HealAnim,
         },
     })
     then

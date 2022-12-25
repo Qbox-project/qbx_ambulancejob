@@ -1,9 +1,9 @@
-local PlayerInjuries = {}
-local PlayerWeaponWounds = {}
 local QBCore = exports['qb-core']:GetCoreObject()
+local playerInjuries = {}
+local playerWeaponWounds = {}
 local doctorCount = 0
 local doctorCalled = false
-local Doctors = {}
+local doctors = {}
 
 -- Events
 
@@ -84,21 +84,21 @@ end)
 
 RegisterNetEvent('hospital:server:SyncInjuries', function(data)
 	local src = source
-	PlayerInjuries[src] = data
+	playerInjuries[src] = data
 end)
 
 RegisterNetEvent('hospital:server:SetWeaponDamage', function(data)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player then
-		PlayerWeaponWounds[Player.PlayerData.source] = data
+		playerWeaponWounds[Player.PlayerData.source] = data
 	end
 end)
 
 RegisterNetEvent('hospital:server:RestoreWeaponDamage', function()
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
-	PlayerWeaponWounds[Player.PlayerData.source] = nil
+	playerWeaponWounds[Player.PlayerData.source] = nil
 end)
 
 RegisterNetEvent('hospital:server:SetDeathStatus', function(isDead)
@@ -143,7 +143,7 @@ RegisterNetEvent('hospital:server:AddDoctor', function(job)
 		local src = source
 		doctorCount = doctorCount + 1
 		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
-		Doctors[src] = true
+		doctors[src] = true
 	end
 end)
 
@@ -152,16 +152,16 @@ RegisterNetEvent('hospital:server:RemoveDoctor', function(job)
 		local src = source
 		doctorCount = doctorCount - 1
 		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
-		Doctors[src] = nil
+		doctors[src] = nil
 	end
 end)
 
 AddEventHandler("playerDropped", function()
 	local src = source
-	if Doctors[src] then
+	if doctors[src] then
 		doctorCount = doctorCount - 1
 		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
-		Doctors[src] = nil
+		doctors[src] = nil
 	end
 end)
 
@@ -275,18 +275,18 @@ QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, play
 	local injuries = {}
 	injuries["WEAPONWOUNDS"] = {}
 	if Player then
-		if PlayerInjuries[Player.PlayerData.source] then
-			if (PlayerInjuries[Player.PlayerData.source].isBleeding > 0) then
-				injuries["BLEED"] = PlayerInjuries[Player.PlayerData.source].isBleeding
+		if playerInjuries[Player.PlayerData.source] then
+			if (playerInjuries[Player.PlayerData.source].isBleeding > 0) then
+				injuries["BLEED"] = playerInjuries[Player.PlayerData.source].isBleeding
 			end
-			for k, _ in pairs(PlayerInjuries[Player.PlayerData.source].limbs) do
-				if PlayerInjuries[Player.PlayerData.source].limbs[k].isDamaged then
-					injuries[k] = PlayerInjuries[Player.PlayerData.source].limbs[k]
+			for k, _ in pairs(playerInjuries[Player.PlayerData.source].limbs) do
+				if playerInjuries[Player.PlayerData.source].limbs[k].isDamaged then
+					injuries[k] = playerInjuries[Player.PlayerData.source].limbs[k]
 				end
 			end
 		end
-		if PlayerWeaponWounds[Player.PlayerData.source] then
-			for k, v in pairs(PlayerWeaponWounds[Player.PlayerData.source]) do
+		if playerWeaponWounds[Player.PlayerData.source] then
+			for k, v in pairs(playerWeaponWounds[Player.PlayerData.source]) do
 				injuries["WEAPONWOUNDS"][k] = v
 			end
 		end
@@ -296,8 +296,8 @@ end)
 
 QBCore.Functions.CreateCallback('hospital:GetPlayerBleeding', function(source, cb)
 	local src = source
-	if PlayerInjuries[src] and PlayerInjuries[src].isBleeding then
-		cb(PlayerInjuries[src].isBleeding)
+	if playerInjuries[src] and playerInjuries[src].isBleeding then
+		cb(playerInjuries[src].isBleeding)
 	else
 		cb(nil)
 	end
