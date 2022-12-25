@@ -28,6 +28,8 @@ statusCheckTime = 0
 healAnimDict = "mini@cpr@char_a@cpr_str"
 healAnim = "cpr_pumpchest"
 injured = {}
+deadAnimDict = "dead"
+deadAnim = "dead_a"
 
 BodyParts = {
     ['HEAD'] = { label = Lang:t('body.head'), causeLimp = false, isDamaged = false, severity = 0 },

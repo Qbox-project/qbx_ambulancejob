@@ -1,6 +1,3 @@
-local deadAnimDict = "dead"
-local deadAnim = "dead_a"
-
 local function drawTxt(x, y, width, height, scale, text, r, g, b, a)
     SetTextFont(4)
     SetTextProportional(false)
