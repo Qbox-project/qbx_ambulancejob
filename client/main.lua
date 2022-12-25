@@ -479,7 +479,7 @@ RegisterNetEvent('hospital:client:Revive', function()
         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(player), true, false)
         isDead = false
         SetEntityInvincible(player, false)
-        SetLaststand(false)
+        endLastStand()
     end
 
     if isInHospitalBed then
