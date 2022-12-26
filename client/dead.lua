@@ -18,7 +18,7 @@ function OnDeath()
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
     local player = cache.ped
 
-    WaitForPlayerToStopMoving(player)
+    WaitForPedToStopMoving(player)
 
     ResurrectPlayer(player)
     playDeadAnimation(player)
