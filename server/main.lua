@@ -271,24 +271,27 @@ QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
 end)
 
 QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, playerId)
-	local Player = QBCore.Functions.GetPlayer(playerId)
+	local playerSource = QBCore.Functions.GetPlayer(playerId).PlayerData.source
 	local injuries = {}
 	injuries["WEAPONWOUNDS"] = {}
-	if Player then
-		if PlayerInjuries[Player.PlayerData.source] then
-			if (PlayerInjuries[Player.PlayerData.source].isBleeding > 0) then
-				injuries["BLEED"] = PlayerInjuries[Player.PlayerData.source].isBleeding
-			end
-			for k, _ in pairs(PlayerInjuries[Player.PlayerData.source].limbs) do
-				if PlayerInjuries[Player.PlayerData.source].limbs[k].isDamaged then
-					injuries[k] = PlayerInjuries[Player.PlayerData.source].limbs[k]
-				end
+	if not playerSource then cb(injuries) return end
+
+	local playerInjuries = PlayerInjuries[playerSource]
+	if playerInjuries then
+		if (playerInjuries.isBleeding > 0) then
+			injuries["BLEED"] = playerInjuries.isBleeding
+		end
+		for k, v in pairs(playerInjuries.limbs) do
+			if v.isDamaged then
+				injuries[k] = v
 			end
 		end
-		if PlayerWeaponWounds[Player.PlayerData.source] then
-			for k, v in pairs(PlayerWeaponWounds[Player.PlayerData.source]) do
-				injuries["WEAPONWOUNDS"][k] = v
-			end
+	end
+	
+	local playerWeaponWounds = PlayerWeaponWounds[playerSource]
+	if playerWeaponWounds then
+		for k, v in pairs(playerWeaponWounds) do
+			injuries["WEAPONWOUNDS"][k] = v
 		end
 	end
 	cb(injuries)
