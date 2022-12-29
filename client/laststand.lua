@@ -30,11 +30,11 @@ local function GetClosestPlayer()
     return closestPlayer, closestDistance
 end
 
-local function waitForPlayerToStopMoving(ped)
+function WaitForPedToStopMoving(ped)
     while GetEntitySpeed(ped) > 0.5 or IsPedRagdoll(ped) do Wait(10) end
 end
 
-local function resurrectPlayer(ped)
+function ResurrectPlayer(ped)
     local pos = GetEntityCoords(ped)
     local heading = GetEntityHeading(ped)
     local veh = cache.vehicle
@@ -92,10 +92,10 @@ end
 function startLastStand()
     local ped = cache.ped
     Wait(1000)
-    waitForPlayerToStopMoving(ped)
+    WaitForPedToStopMoving(ped)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
     LaststandTime = Laststand.ReviveInterval
-    resurrectPlayer(ped)
+    ResurrectPlayer(ped)
     SetEntityHealth(ped, 150)
     playLastStandAnimation(ped)
     InLaststand = true
