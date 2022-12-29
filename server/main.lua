@@ -165,26 +165,14 @@ AddEventHandler("playerDropped", function()
 	end
 end)
 
-RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
-	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-	local Patient = QBCore.Functions.GetPlayer(playerId)
-	local oldMan = isOldMan or false
-	if Patient then
-		if oldMan then
-			if Player.Functions.RemoveMoney("cash", 5000, "revived-player") then
-				Player.Functions.RemoveItem('firstaid', 1)
-				TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], "remove")
-				TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
-			else
-				TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_enough_money'), type = 'error' })
-			end
-		else
-			Player.Functions.RemoveItem('firstaid', 1)
-			TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], "remove")
-			TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
-		end
-	end
+RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
+	local player = QBCore.Functions.GetPlayer(source)
+	local patient = QBCore.Functions.GetPlayer(playerId)
+
+	if not patient then return end
+	player.Functions.RemoveItem('firstaid', 1)
+	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, QBCore.Shared.Items['firstaid'], "remove")
+	TriggerClientEvent('hospital:client:Revive', patient.PlayerData.source)
 end)
 
 RegisterNetEvent('hospital:server:SendDoctorAlert', function()
