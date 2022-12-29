@@ -18,7 +18,8 @@ client_scripts {
 	'client/laststand.lua',
 	'client/job.lua',
 	'client/dead.lua',
-	'client/setdownedstate.lua'
+	'client/processdamage.lua',
+	'client/setdownedstate.lua',
 }
 
 server_scripts {
