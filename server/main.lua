@@ -30,31 +30,32 @@ local function wipeInventory(player)
 	TriggerClientEvent('ox_lib:notify', player.PlayerData.source, { description = Lang:t('error.possessions_taken'), type = 'error' })
 end
 
-local function respawnAtBed(player, setBedEventName, i, bed)
+local function respawnAtBed(player, bedsKey, i, bed)
 	TriggerClientEvent('hospital:client:SendToBed', player.PlayerData.source, i, bed, true)
-	TriggerClientEvent(setBedEventName, -1, i, true)
+	TriggerClientEvent('hospital:client:SetBed', -1, bedsKey, i, true)
 	if Config.WipeInventoryOnRespawn then
 		wipeInventory(player)
 	end
 	billPlayer(player)
 end
 
-local function respawnAtHospital(player, beds, setBedEventName)
+local function respawnAtHospital(player, bedsKey)
+	local beds = Config.Locations[bedsKey]
 	for i, bed in pairs(beds) do
 		if not bed.taken then
-			respawnAtBed(player, setBedEventName, i, bed)
+			respawnAtBed(player, bedsKey, i, bed)
 			return
 		end
 	end
-	respawnAtBed(player, 'hospital:client:SetBed')
+	respawnAtBed(player, bedsKey)
 end
 
 RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 	local player = QBCore.Functions.GetPlayer(source)
 	if player.PlayerData.metadata.injail > 0 then
-		respawnAtHospital(player, Config.Locations.jailbeds, 'hospital:client:SetBed2')
+		respawnAtHospital(player, "jailbeds")
 	else
-		respawnAtHospital(player, Config.Locations.beds, 'hospital:client:SetBed')
+		respawnAtHospital(player, "beds")
 	end
 end)
 
