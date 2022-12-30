@@ -114,9 +114,9 @@ RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
 end)
 
 local function status()
-    if not isStatusChecking then return end
+    if not IsStatusChecking then return end
     local statusMenu = {}
-    for _, v in pairs(statusChecks) do
+    for _, v in pairs(StatusChecks) do
         statusMenu[#statusMenu + 1] = {
             title = v.label,
             event = "hospital:client:TreatWounds",
@@ -134,7 +134,7 @@ end
 --- TODO: Refactor
 local function getPlayerStatus(k, v, result)
     if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
-        statusChecks[#statusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
+        StatusChecks[#StatusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
     elseif result["WEAPONWOUNDS"] then
         for _, v2 in pairs(result["WEAPONWOUNDS"]) do
             TriggerEvent('chat:addMessage', {
@@ -167,7 +167,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         for k, v in pairs(result) do
             getPlayerStatus(k, v, result)
         end
-        isStatusChecking = true
+        IsStatusChecking = true
         status()
     end, playerId)
 end)
@@ -197,16 +197,16 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
             mouse = false,
         },
         anim = {
-            dict = healAnimDict,
-            clip = healAnim,
+            dict = HealAnimDict,
+            clip = HealAnim,
         },
     })
     then
-        StopAnimTask(cache.ped, healAnimDict, "exit", 1.0)
+        StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
         lib.notify({ description = Lang:t('success.revived'), type = 'success' })
         TriggerServerEvent("hospital:server:RevivePlayer", GetPlayerServerId(player))
     else
-        StopAnimTask(cache.ped, healAnimDict, "exit", 1.0)
+        StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
         lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
     end
 end)
@@ -236,16 +236,16 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
             mouse = false,
         },
         anim = {
-            dict = healAnimDict,
-            clip = healAnim,
+            dict = HealAnimDict,
+            clip = HealAnim,
         },
     })
     then
-        StopAnimTask(cache.ped, healAnimDict, "exit", 1.0)
+        StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
         lib.notify({ description = Lang:t('success.helped_player'), type = 'success' })
         TriggerServerEvent("hospital:server:TreatWounds", GetPlayerServerId(player))
     else
-        StopAnimTask(cache.ped, healAnimDict, "exit", 1.0)
+        StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
         lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
     end
 end)

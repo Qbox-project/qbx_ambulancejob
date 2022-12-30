@@ -165,8 +165,8 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
             mouse = false,
         },
         anim = {
-            dict = healAnimDict,
-            clip = healAnim,
+            dict = HealAnimDict,
+            clip = HealAnim,
         },
     })
     then
