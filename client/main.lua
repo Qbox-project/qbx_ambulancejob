@@ -52,42 +52,6 @@ BodyParts = {
 }
 
 -- Functions
-
-local function isBedAvailable(pos, bed)
-    if bed.taken then return false end
-    if #(pos - vector3(bed.coords.x, bed.coords.y, bed.coords.z)) >= 500 then return false end
-    return true
-end
-
-local function getAvailableBed(bedId)
-    local pos = GetEntityCoords(cache.ped)
-
-    if bedId then
-        return isBedAvailable(pos, Config.Locations["beds"][bedId]) and bedId or nil
-    end
-
-    for index, bed in pairs(Config.Locations["beds"]) do
-        if isBedAvailable(pos, bed) then
-            return index
-        end
-    end
-end
-
-local function getDamagingWeapon(ped)
-    for k, v in pairs(Config.Weapons) do
-        if HasPedBeenDamagedByWeapon(ped, k, 0) then
-            return v
-        end
-    end
-end
-
-local function isDamagingEvent(damageDone, weapon)
-    local luck = math.random(100)
-    local multi = damageDone / Config.HealthDamage
-
-    return luck < (Config.HealthDamage * multi) or (damageDone >= Config.ForceInjury or multi > Config.MaxInjuryChanceMulti or Config.ForceInjuryWeapons[weapon])
-end
-
 local function doLimbAlert()
     if IsDead or InLaststand or #Injured == 0 then return end
 
@@ -114,24 +78,6 @@ local function applyBleed(level)
     if IsBleeding == 4 then return end
     IsBleeding = (IsBleeding + level >= 4) and 4 or (IsBleeding + level)
     doBleedAlert()
-end
-
-local function setClosestBed()
-    if IsInHospitalBed then return end
-
-    local pos = GetEntityCoords(cache.ped, true)
-    local current = nil
-    local minDist = nil
-    for index, bed in pairs(Config.Locations["beds"]) do
-        local bedDistance = #(pos - vector3(bed.coords.x, bed.coords.y, bed.coords.z))
-        if not current or bedDistance < minDist then
-            current = index
-            minDist = bedDistance
-        end
-    end
-
-    if current == closestBed then return end
-    closestBed = current
 end
 
 local function isInjuryCausingLimp()
@@ -224,108 +170,6 @@ local function resetAll()
         isBleeding = tonumber(IsBleeding)
     })
     TriggerServerEvent("hospital:server:resetHungerThirst")
-end
-
-local function setBedCam()
-    IsInHospitalBed = true
-    canLeaveBed = false
-    local player = cache.ped
-
-    DoScreenFadeOut(1000)
-
-    while not IsScreenFadedOut() do
-        Wait(100)
-    end
-
-    if IsPedDeadOrDying(player) then
-        local pos = GetEntityCoords(player, true)
-        NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(player), true, false)
-    end
-
-    bedObject = GetClosestObjectOfType(bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z, 1.0, bedOccupyingData.model, false, false, false)
-    FreezeEntityPosition(bedObject, true)
-
-    SetEntityCoords(player, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02)
-    Wait(500)
-    FreezeEntityPosition(player, true)
-
-    lib.requestAnimDict(InBedDict)
-
-    TaskPlayAnim(player, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
-    SetEntityHeading(player, bedOccupyingData.coords.w)
-
-    cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
-    SetCamActive(cam, true)
-    RenderScriptCams(true, false, 1, true, true)
-    AttachCamToPedBone(cam, player, 31085, 0, 1.0, 1.0, true)
-    SetCamFov(cam, 90.0)
-    local heading = GetEntityHeading(player)
-    heading = (heading > 180) and heading - 180 or heading + 180
-    SetCamRot(cam, -45.0, 0.0, heading, 2)
-
-    DoScreenFadeIn(1000)
-
-    Wait(1000)
-    FreezeEntityPosition(player, true)
-end
-
-local function leaveBed()
-    local player = cache.ped
-
-    lib.requestAnimDict(getOutDict)
-    FreezeEntityPosition(player, false)
-    SetEntityInvincible(player, false)
-    SetEntityHeading(player, bedOccupyingData.coords.w + 90)
-    TaskPlayAnim(player, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, false, false, false)
-    Wait(4000)
-    ClearPedTasks(player)
-    TriggerServerEvent('hospital:server:LeaveBed', bedOccupying)
-    FreezeEntityPosition(bedObject, true)
-    RenderScriptCams(false, true, 200, true, true)
-    DestroyCam(cam, false)
-
-    bedOccupying = nil
-    bedObject = nil
-    bedOccupyingData = nil
-    IsInHospitalBed = false
-
-    QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerData.metadata.injail <= 0 then return end
-        TriggerEvent("prison:client:Enter", PlayerData.metadata.injail)
-    end)
-end
-
-local function isInDamageList(damage)
-    if not currentDamageList then return false end
-
-    for _, v in pairs(currentDamageList) do
-        if v == damage then
-            return true
-        end
-    end
-
-    return false
-end
-
-local function checkWeaponDamage(ped)
-    local detected = false
-    for k, v in pairs(QBCore.Shared.Weapons) do
-        if HasPedBeenDamagedByWeapon(ped, k, 0) then
-            detected = true
-            if not isInDamageList(k) then
-                TriggerEvent('chat:addMessage', {
-                    color = { 255, 0, 0 },
-                    multiline = false,
-                    args = { Lang:t('info.status'), v.damagereason }
-                })
-                currentDamageList[#currentDamageList + 1] = k
-            end
-        end
-    end
-    if detected then
-        TriggerServerEvent("hospital:server:SetWeaponDamage", currentDamageList)
-    end
-    ClearEntityLastDamageEntity(ped)
 end
 
 local function applyStaggerEffect(ped, staggerArea, chance)
@@ -528,6 +372,49 @@ RegisterNetEvent('hospital:client:HealInjuries', function(type)
     lib.notify({ description = Lang:t('success.wounds_healed'), type = 'success' })
 end)
 
+local function setBedCam()
+    IsInHospitalBed = true
+    canLeaveBed = false
+    local player = cache.ped
+
+    DoScreenFadeOut(1000)
+
+    while not IsScreenFadedOut() do
+        Wait(100)
+    end
+
+    if IsPedDeadOrDying(player) then
+        local pos = GetEntityCoords(player, true)
+        NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(player), true, false)
+    end
+
+    bedObject = GetClosestObjectOfType(bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z, 1.0, bedOccupyingData.model, false, false, false)
+    FreezeEntityPosition(bedObject, true)
+
+    SetEntityCoords(player, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02)
+    Wait(500)
+    FreezeEntityPosition(player, true)
+
+    lib.requestAnimDict(InBedDict)
+
+    TaskPlayAnim(player, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
+    SetEntityHeading(player, bedOccupyingData.coords.w)
+
+    cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
+    SetCamActive(cam, true)
+    RenderScriptCams(true, false, 1, true, true)
+    AttachCamToPedBone(cam, player, 31085, 0, 1.0, 1.0, true)
+    SetCamFov(cam, 90.0)
+    local heading = GetEntityHeading(player)
+    heading = (heading > 180) and heading - 180 or heading + 180
+    SetCamRot(cam, -45.0, 0.0, heading, 2)
+
+    DoScreenFadeIn(1000)
+
+    Wait(1000)
+    FreezeEntityPosition(player, true)
+end
+
 RegisterNetEvent('hospital:client:SendToBed', function(id, data, isRevive)
     bedOccupying = id
     bedOccupyingData = data
@@ -608,6 +495,32 @@ CreateThread(function()
     end
 end)
 
+local function leaveBed()
+    local player = cache.ped
+
+    lib.requestAnimDict(getOutDict)
+    FreezeEntityPosition(player, false)
+    SetEntityInvincible(player, false)
+    SetEntityHeading(player, bedOccupyingData.coords.w + 90)
+    TaskPlayAnim(player, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, false, false, false)
+    Wait(4000)
+    ClearPedTasks(player)
+    TriggerServerEvent('hospital:server:LeaveBed', bedOccupying)
+    FreezeEntityPosition(bedObject, true)
+    RenderScriptCams(false, true, 200, true, true)
+    DestroyCam(cam, false)
+
+    bedOccupying = nil
+    bedObject = nil
+    bedOccupyingData = nil
+    IsInHospitalBed = false
+
+    QBCore.Functions.GetPlayerData(function(PlayerData)
+        if PlayerData.metadata.injail <= 0 then return end
+        TriggerEvent("prison:client:Enter", PlayerData.metadata.injail)
+    end)
+end
+
 --- shows leave bed text if the player can leave the bed, triggers leaving the bed if the right key is pressed.
 ---@return 1000|0 sleep how long to sleep before next run of this function
 local function showLeaveBedText()
@@ -634,6 +547,24 @@ CreateThread(function()
     end
 end)
 
+local function setClosestBed()
+    if IsInHospitalBed then return end
+
+    local pos = GetEntityCoords(cache.ped, true)
+    local current = nil
+    local minDist = nil
+    for index, bed in pairs(Config.Locations["beds"]) do
+        local bedDistance = #(pos - vector3(bed.coords.x, bed.coords.y, bed.coords.z))
+        if not current or bedDistance < minDist then
+            current = index
+            minDist = bedDistance
+        end
+    end
+
+    if current == closestBed then return end
+    closestBed = current
+end
+
 CreateThread(function()
     while true do
         Wait(1000)
@@ -651,6 +582,21 @@ end)
 --- returns true if player took damage in their upper body or if the weapon class is nothing.
 local function checkBodyHitOrWeakWeapon(isArmorDamaged, bodypart, weapon)
     return isArmorDamaged and (bodypart == 'SPINE' or bodypart == 'UPPER_BODY') or weapon == Config.WeaponClasses['NOTHING']
+end
+
+local function getDamagingWeapon(ped)
+    for k, v in pairs(Config.Weapons) do
+        if HasPedBeenDamagedByWeapon(ped, k, 0) then
+            return v
+        end
+    end
+end
+
+local function isDamagingEvent(damageDone, weapon)
+    local luck = math.random(100)
+    local multi = damageDone / Config.HealthDamage
+
+    return luck < (Config.HealthDamage * multi) or (damageDone >= Config.ForceInjury or multi > Config.MaxInjuryChanceMulti or Config.ForceInjuryWeapons[weapon])
 end
 
 local function applyDamage(ped, damageDone, isArmorDamaged)
@@ -675,6 +621,39 @@ local function applyDamage(ped, damageDone, isArmorDamaged)
         
         applyBleed(1)
     end
+end
+
+local function isInDamageList(damage)
+    if not currentDamageList then return false end
+
+    for _, v in pairs(currentDamageList) do
+        if v == damage then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function checkWeaponDamage(ped)
+    local detected = false
+    for k, v in pairs(QBCore.Shared.Weapons) do
+        if HasPedBeenDamagedByWeapon(ped, k, 0) then
+            detected = true
+            if not isInDamageList(k) then
+                TriggerEvent('chat:addMessage', {
+                    color = { 255, 0, 0 },
+                    multiline = false,
+                    args = { Lang:t('info.status'), v.damagereason }
+                })
+                currentDamageList[#currentDamageList + 1] = k
+            end
+        end
+    end
+    if detected then
+        TriggerServerEvent("hospital:server:SetWeaponDamage", currentDamageList)
+    end
+    ClearEntityLastDamageEntity(ped)
 end
 
 CreateThread(function()
@@ -725,6 +704,26 @@ local function checkInControls(variable)
         end
         Wait(0)
     until not listen
+end
+
+local function isBedAvailable(pos, bed)
+    if bed.taken then return false end
+    if #(pos - vector3(bed.coords.x, bed.coords.y, bed.coords.z)) >= 500 then return false end
+    return true
+end
+
+local function getAvailableBed(bedId)
+    local pos = GetEntityCoords(cache.ped)
+
+    if bedId then
+        return isBedAvailable(pos, Config.Locations["beds"][bedId]) and bedId or nil
+    end
+
+    for index, bed in pairs(Config.Locations["beds"]) do
+        if isBedAvailable(pos, bed) then
+            return index
+        end
+    end
 end
 
 RegisterNetEvent('qb-ambulancejob:checkin', function()
