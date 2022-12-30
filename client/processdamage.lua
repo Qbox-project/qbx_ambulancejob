@@ -69,32 +69,32 @@ end
 ---applies disabling status effects based on injuries to specific body parts
 ---@param ped any
 function ProcessDamage(ped)
-    if isDead or InLaststand or onPainKillers then return end
-    for _, injury in pairs(injured) do
+    if IsDead or InLaststand or onPainKillers then return end
+    for _, injury in pairs(Injured) do
         if isLegDamaged(injury) then
-            if legCount >= Config.LegInjuryTimer then
+            if LegCount >= Config.LegInjuryTimer then
                 chancePedFalls(ped)
-                legCount = 0
+                LegCount = 0
             else
-                legCount += 1
+                LegCount += 1
             end
         elseif isArmDamaged(injury) then
-            if armcount >= Config.ArmInjuryTimer then
+            if ArmCount >= Config.ArmInjuryTimer then
                 CreateThread(disableArms(ped, injury))
-                armcount = 0
+                ArmCount = 0
             else
-                armcount += 1
+                ArmCount += 1
             end
         elseif isHeadDamaged(injury) then
-            if headCount >= Config.HeadInjuryTimer then
+            if HeadCount >= Config.HeadInjuryTimer then
                 local chance = math.random(100)
 
                 if chance <= Config.HeadInjuryChance then
                     playBrainDamageEffectAndRagdoll(ped)
                 end
-                headCount = 0
+                HeadCount = 0
             else
-                headCount += 1
+                HeadCount += 1
             end
         end
     end

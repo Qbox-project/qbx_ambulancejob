@@ -3,27 +3,27 @@ onPainKillers = false
 local painkillerAmount = 0
 
 local function sendBleedAlert()
-    if isDead or tonumber(isBleeding) > 0 then return end
-    lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(isBleeding)].label, type = 'inform' })
+    if IsDead or tonumber(IsBleeding) > 0 then return end
+    lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(IsBleeding)].label, type = 'inform' })
 end
 
 local function removeBleed(level)
-    if isBleeding == 0 then return end
-    if isBleeding - level < 0 then
-        isBleeding = 0
+    if IsBleeding == 0 then return end
+    if IsBleeding - level < 0 then
+        IsBleeding = 0
     else
-        isBleeding -= level
+        IsBleeding -= level
     end
     sendBleedAlert()
 end
 
 local function applyBleed(level)
-    if isBleeding >= 4 then return end
+    if IsBleeding >= 4 then return end
 
-    if isBleeding + level > 4 then
-        isBleeding = 4
+    if IsBleeding + level > 4 then
+        IsBleeding = 4
     else
-        isBleeding += level
+        IsBleeding += level
     end
     sendBleedAlert()
 end
@@ -158,7 +158,7 @@ end)
 
 local function getWorstInjury()
     local level = 0
-    for _, injury in pairs(injured) do
+    for _, injury in pairs(Injured) do
         if injury.severity > level then
             level = injury.severity
         end
@@ -169,7 +169,7 @@ end
 
 CreateThread(function()
     while true do
-        if #injured > 0 then
+        if #Injured > 0 then
             local level = getWorstInjury()
             SetPedMoveRateOverride(cache.ped, Config.MovementRate[level])
             Wait(5)
@@ -205,63 +205,63 @@ local function makePlayerFadeOut()
 end
 
 local function applyBleedEffects(player)
-    local bleedDamage = tonumber(isBleeding) * Config.BleedTickDamage
+    local bleedDamage = tonumber(IsBleeding) * Config.BleedTickDamage
     ApplyDamageToPed(player, bleedDamage, false)
     sendBleedAlert()
-    playerHealth = playerHealth - bleedDamage
+    PlayerHealth = PlayerHealth - bleedDamage
     local randX = math.random() + math.random(-1, 1)
     local randY = math.random() + math.random(-1, 1)
     local coords = GetOffsetFromEntityInWorldCoords(player, randX, randY, 0)
     TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid, QBCore.Functions.GetPlayerData().metadata["bloodtype"], coords)
 
-    if advanceBleedTimer >= Config.AdvanceBleedTimer then
+    if AdvanceBleedTimer >= Config.AdvanceBleedTimer then
         applyBleed(1)
-        advanceBleedTimer = 0
+        AdvanceBleedTimer = 0
     else
-        advanceBleedTimer += 1
+        AdvanceBleedTimer += 1
     end
 end
 
 local function handleBleeding(player)
-    if isDead or InLaststand or isBleeding <= 0 then return end
-    if fadeOutTimer + 1 == Config.FadeOutTimer then
-        if blackoutTimer + 1 == Config.BlackoutTimer then
+    if IsDead or InLaststand or IsBleeding <= 0 then return end
+    if FadeOutTimer + 1 == Config.FadeOutTimer then
+        if BlackoutTimer + 1 == Config.BlackoutTimer then
             makePlayerBlackout(player)
-            blackoutTimer = 0
+            BlackoutTimer = 0
         else
             makePlayerFadeOut()
-            blackoutTimer += isBleeding > 3 and 2 or 1
+            BlackoutTimer += IsBleeding > 3 and 2 or 1
         end
 
-        fadeOutTimer = 0
+        FadeOutTimer = 0
     else
-        fadeOutTimer += 1
+        FadeOutTimer += 1
     end
 
     applyBleedEffects(player)
 end
 
 local function bleedTick(player)
-    if math.floor(bleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
+    if math.floor(BleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
         local currPos = GetEntityCoords(player, true)
         local moving = #(prevPos.xy - currPos.xy)
-        if (moving > 1 and not cache.vehicle) and isBleeding > 2 then
-            advanceBleedTimer += Config.BleedMovementAdvance
-            bleedTickTimer += Config.BleedMovementTick
+        if (moving > 1 and not cache.vehicle) and IsBleeding > 2 then
+            AdvanceBleedTimer += Config.BleedMovementAdvance
+            BleedTickTimer += Config.BleedMovementTick
             prevPos = currPos
         else
-            bleedTickTimer += 1
+            BleedTickTimer += 1
         end
     end
-    bleedTickTimer += 1
+    BleedTickTimer += 1
 end
 
 local function checkBleeding()
-    if isBleeding <= 0 or onPainKillers then return end
+    if IsBleeding <= 0 or onPainKillers then return end
     local player = cache.ped
-    if bleedTickTimer >= Config.BleedTickRate and not isInHospitalBed then
+    if BleedTickTimer >= Config.BleedTickRate and not IsInHospitalBed then
         handleBleeding(player)
-        bleedTickTimer = 0
+        BleedTickTimer = 0
     else
         bleedTick(player)
     end

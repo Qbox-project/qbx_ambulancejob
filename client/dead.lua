@@ -6,14 +6,14 @@ local function playDeadAnimation(player)
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
         TaskPlayAnim(player, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
     else
-        lib.requestAnimDict(deadAnimDict)
-        TaskPlayAnim(player, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
+        lib.requestAnimDict(DeadAnimDict)
+        TaskPlayAnim(player, DeadAnimDict, DeadAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
     end
 end
 
 function OnDeath()
-    if isDead then return end
-    isDead = true
+    if IsDead then return end
+    IsDead = true
     TriggerServerEvent("hospital:server:SetDeathStatus", true)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
     local player = cache.ped
@@ -30,11 +30,11 @@ end
 
 function DeathTimer()
     local hold = 5
-    while isDead do
+    while IsDead do
         Wait(1000)
         deathTime -= 1
         if deathTime <= 0 then
-            if IsControlPressed(0, 38) and hold <= 0 and not isInHospitalBed then
+            if IsControlPressed(0, 38) and hold <= 0 and not IsInHospitalBed then
                 TriggerEvent("hospital:client:RespawnAtHospital")
             end
             if IsControlPressed(0, 38) then
@@ -64,7 +64,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
     if not IsEntityAPed(victim) or not victimDied or NetworkGetPlayerIndexFromPed(victim) ~= cache.playerId or not IsEntityDead(cache.ped) then return end
     if not InLaststand then
         startLastStand()
-    elseif InLaststand and not isDead then
+    elseif InLaststand and not IsDead then
         endLastStand()
         logDeath(victim, attacker, weapon)
         deathTime = Config.DeathTime

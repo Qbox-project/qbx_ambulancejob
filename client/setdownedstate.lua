@@ -36,22 +36,22 @@ local function playDeadAnimation(ped)
             TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
         end
     else
-        if isInHospitalBed then
-            if not IsEntityPlayingAnim(ped, inBedDict, inBedAnim, 3) then
-                lib.requestAnimDict(inBedDict)
-                TaskPlayAnim(ped, inBedDict, inBedAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
+        if IsInHospitalBed then
+            if not IsEntityPlayingAnim(ped, InBedDict, InBedAnim, 3) then
+                lib.requestAnimDict(InBedDict)
+                TaskPlayAnim(ped, InBedDict, InBedAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
             end
         else
-            if not IsEntityPlayingAnim(ped, deadAnimDict, deadAnim, 3) then
-                lib.requestAnimDict(deadAnimDict)
-                TaskPlayAnim(ped, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
+            if not IsEntityPlayingAnim(ped, DeadAnimDict, DeadAnim, 3) then
+                lib.requestAnimDict(DeadAnimDict)
+                TaskPlayAnim(ped, DeadAnimDict, DeadAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
             end
         end
     end
 end
 
 local function handleDead(ped)
-    if not isInHospitalBed then
+    if not IsInHospitalBed then
         displayRespawnText()
     end
 
@@ -133,9 +133,9 @@ end
 --- Set dead and last stand states.
 CreateThread(function()
     while true do
-        if isDead or InLaststand then
+        if IsDead or InLaststand then
             disableControls()
-            if isDead then
+            if IsDead then
                 handleDead(cache.ped)
             elseif InLaststand then
                 handleLastStand(cache.ped)
