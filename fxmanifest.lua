@@ -13,12 +13,14 @@ shared_scripts {
 }
 
 client_scripts {
+	'client/damage/damage-effects.lua',
+	'client/damage/damage.lua',
+	'client/hospital.lua',
 	'client/main.lua',
 	'client/wounding.lua',
 	'client/laststand.lua',
 	'client/job.lua',
 	'client/dead.lua',
-	'client/processdamage.lua',
 	'client/setdownedstate.lua',
 }
 
