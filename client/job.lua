@@ -1,6 +1,5 @@
 local playerJob = {}
 local currentGarage = 0
-local currentHospital
 
 -- Functions
 local function takeOutVehicle(vehicleInfo)
@@ -336,44 +335,27 @@ local function EMSHelicopter(k)
     end)
 end
 
-RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
+local function teleportPlayerWithFade(coords)
     local ped = cache.ped
-    for k, _ in pairs(Config.Locations["roof"]) do
-        DoScreenFadeOut(500)
-        while not IsScreenFadedOut() do
-            Wait(10)
-        end
-
-        currentHospital = k
-
-        local coords = Config.Locations["main"][currentHospital]
-        SetEntityCoords(ped, coords.x, coords.y, coords.z, false, false, false, false)
-        SetEntityHeading(ped, coords.w)
-
-        Wait(100)
-
-        DoScreenFadeIn(1000)
+    DoScreenFadeOut(500)
+    while not IsScreenFadedOut() do
+        Wait(10)
     end
+
+    SetEntityCoords(ped, coords.x, coords.y, coords.z, false, false, false, false)
+    SetEntityHeading(ped, coords.w)
+
+    Wait(100)
+
+    DoScreenFadeIn(1000)
+end
+
+RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
+    teleportPlayerWithFade(Config.Locations["main"][1])
 end)
 
 RegisterNetEvent('qb-ambulancejob:elevator_main', function()
-    local ped = cache.ped
-    for k, _ in pairs(Config.Locations["main"]) do
-        DoScreenFadeOut(500)
-        while not IsScreenFadedOut() do
-            Wait(10)
-        end
-
-        currentHospital = k
-
-        local coords = Config.Locations["roof"][currentHospital]
-        SetEntityCoords(ped, coords.x, coords.y, coords.z, false, false, false, false)
-        SetEntityHeading(ped, coords.w)
-
-        Wait(100)
-
-        DoScreenFadeIn(1000)
-    end
+    teleportPlayerWithFade(Config.Locations["roof"][1])
 end)
 
 RegisterNetEvent('EMSToggle:Duty', function()
