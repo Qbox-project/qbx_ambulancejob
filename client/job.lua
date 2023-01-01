@@ -1,14 +1,8 @@
-local PlayerJob = {}
+local playerJob = {}
 local currentGarage = 0
 local currentHospital
 
 -- Functions
-
-local function GetClosestPlayer()
-    local coords = GetEntityCoords(cache.ped)
-    return QBCore.Functions.GetClosestPlayer(coords)
-end
-
 local function takeOutVehicle(vehicleInfo)
     local coords = Config.Locations["vehicle"][currentGarage]
     QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
@@ -53,12 +47,12 @@ RegisterNetEvent('ambulance:client:TakeOutVehicle', function(data)
 end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
-    PlayerJob = JobInfo
-    if PlayerJob.name ~= 'ambulance' then return end
-    if PlayerJob.onduty then
-        TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+    playerJob = JobInfo
+    if playerJob.name ~= 'ambulance' then return end
+    if playerJob.onduty then
+        TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
     else
-        TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+        TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
     end
 end)
 
@@ -89,27 +83,27 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         local ped = cache.ped
         local playerId = cache.playerId
         local playerData = QBCore.Functions.GetPlayerData()
-        PlayerJob = playerData.job
+        playerJob = playerData.job
         initHealthAndArmor(ped, playerId, playerData)
         initDeathAndLastStand(playerData)
-        if PlayerJob.name == 'ambulance' and PlayerJob.onduty then
-            TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+        if playerJob.name == 'ambulance' and playerJob.onduty then
+            TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
         end
     end)
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    if PlayerJob.name == 'ambulance' and PlayerJob.onduty then
-        TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+    if playerJob.name == 'ambulance' and playerJob.onduty then
+        TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
     end
 end)
 
 RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
-    if PlayerJob.name ~= 'ambulance' or duty == PlayerJob.onduty then return end
+    if playerJob.name ~= 'ambulance' or duty == playerJob.onduty then return end
     if duty then
-        TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+        TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
     else
-        TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+        TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
     end
 end)
 
@@ -279,14 +273,14 @@ local function EMSControls(variable)
 end
 
 RegisterNetEvent('qb-ambulancejob:stash', function()
-    if PlayerJob.onduty then
+    if playerJob.onduty then
         TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
         TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
     end
 end)
 
 RegisterNetEvent('qb-ambulancejob:armory', function()
-    if PlayerJob.onduty then
+    if playerJob.onduty then
         TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
     end
 end)
@@ -383,7 +377,7 @@ RegisterNetEvent('qb-ambulancejob:elevator_main', function()
 end)
 
 RegisterNetEvent('EMSToggle:Duty', function()
-    PlayerJob.onduty = not PlayerJob.onduty
+    playerJob.onduty = not playerJob.onduty
     TriggerServerEvent("QBCore:ToggleDuty")
     TriggerServerEvent("police:server:UpdateBlips")
 end)
@@ -392,7 +386,7 @@ end)
 CreateThread(function()
     for k, v in pairs(Config.Locations["vehicle"]) do
         local function inVehicleZone()
-            if PlayerJob.name == "ambulance" and PlayerJob.onduty then
+            if playerJob.name == "ambulance" and playerJob.onduty then
                 lib.showTextUI(Lang:t('text.veh_button'))
                 EMSVehicle(k)
             else
@@ -418,7 +412,7 @@ CreateThread(function()
 
     for k, v in pairs(Config.Locations["helicopter"]) do
         local function inHeliZone()
-            if PlayerJob.name == "ambulance" and PlayerJob.onduty then
+            if playerJob.name == "ambulance" and playerJob.onduty then
                 lib.showTextUI(Lang:t('text.veh_button'))
                 EMSHelicopter(k)
             else
@@ -546,7 +540,7 @@ else
     CreateThread(function()
         for _, v in pairs(Config.Locations["duty"]) do
             local function EnteredSignInZone()
-                if not PlayerJob.onduty then
+                if not playerJob.onduty then
                     lib.showTextUI(Lang:t('text.onduty_button'))
                     EMSControls("sign")
                 else
@@ -572,7 +566,7 @@ else
 
         for _, v in pairs(Config.Locations["stash"]) do
             local function EnteredStashZone()
-                if PlayerJob.onduty then
+                if playerJob.onduty then
                     lib.showTextUI(Lang:t('text.pstash_button'))
                     EMSControls("stash")
                 end
@@ -595,7 +589,7 @@ else
 
         for _, v in pairs(Config.Locations["armory"]) do
             local function EnteredArmoryZone()
-                if PlayerJob.onduty then
+                if playerJob.onduty then
                     lib.showTextUI(Lang:t('text.armory_button'))
                     EMSControls("armory")
                 end
@@ -618,7 +612,7 @@ else
 
         for _, v in pairs(Config.Locations["roof"]) do
             local function EnteredRoofZone()
-                if PlayerJob.onduty then
+                if playerJob.onduty then
                     lib.showTextUI(Lang:t('text.elevator_main'))
                     EMSControls("main")
                 else
@@ -643,7 +637,7 @@ else
 
         for _, v in pairs(Config.Locations["main"]) do
             local function EnteredMainZone()
-                if PlayerJob.onduty then
+                if playerJob.onduty then
                     lib.showTextUI(Lang:t('text.elevator_roof'))
                     EMSControls("roof")
                 else

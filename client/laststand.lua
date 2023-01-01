@@ -9,27 +9,6 @@ isEscorted = false
 local isEscorting = false
 
 -- Functions
-local function GetClosestPlayer()
-    local closestPlayers = QBCore.Functions.GetPlayersFromCoords()
-    local closestDistance = -1
-    local closestPlayer = -1
-    local coords = GetEntityCoords(cache.ped)
-
-    for i = 1, #closestPlayers, 1 do
-        if closestPlayers[i] ~= cache.playerId then
-            local pos = GetEntityCoords(GetPlayerPed(closestPlayers[i]))
-            local distance = #(pos - coords)
-
-            if closestDistance == -1 or closestDistance > distance then
-                closestPlayer = closestPlayers[i]
-                closestDistance = distance
-            end
-        end
-    end
-
-    return closestPlayer, closestDistance
-end
-
 function WaitForPedToStopMoving(ped)
     while GetEntitySpeed(ped) > 0.5 or IsPedRagdoll(ped) do Wait(10) end
 end

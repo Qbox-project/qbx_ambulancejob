@@ -347,3 +347,8 @@ CreateThread(function()
         doLimbAlert()
     end
 end)
+
+function GetClosestPlayer()
+    local coords = GetEntityCoords(cache.ped)
+    return QBCore.Functions.GetClosestPlayer(coords)
+end
