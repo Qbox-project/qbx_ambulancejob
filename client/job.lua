@@ -85,14 +85,14 @@ local function initHealthAndArmor(ped, playerId, playerMetadata)
     SetPedArmour(ped, playerMetadata.armor)
 end
 
----starts death or last stand based off of player's metadata 
----@param playerData any
-local function initDeathAndLastStand(playerData)
-    if (not playerData.metadata.inlaststand and playerData.metadata.isdead) then
+---starts death or last stand based off of player's metadata
+---@param metadata any
+local function initDeathAndLastStand(metadata)
+    if (not metadata.inlaststand and metadata.isdead) then
         deathTime = Laststand.ReviveInterval
         OnDeath()
         DeathTimer()
-    elseif (playerData.metadata.inlaststand and not playerData.metadata.isdead) then
+    elseif (metadata.inlaststand and not metadata.isdead) then
         startLastStand()
     else
         TriggerServerEvent("hospital:server:SetDeathStatus", false)
@@ -125,7 +125,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
 end)
 
 ---Updates doctor count when player goes on/off duty.
----@param onDuty boolean 
+---@param onDuty boolean
 RegisterNetEvent('QBCore:Client:SetDuty', function(onDuty)
     if playerJob.name ~= 'ambulance' or onDuty == playerJob.onduty then return end
     if onDuty then
