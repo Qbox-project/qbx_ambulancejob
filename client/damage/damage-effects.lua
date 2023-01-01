@@ -68,8 +68,8 @@ end
 
 ---applies disabling status effects based on injuries to specific body parts
 ---@param ped any
-function ProcessDamage(ped)
-    if IsDead or InLaststand or onPainKillers then return end
+function ApplyDamageEffects(ped)
+    if IsDead or InLaststand or onPainKillers or IsInHospitalBed then return end
     for _, injury in pairs(Injured) do
         if isLegDamaged(injury) then
             if LegCount >= Config.LegInjuryTimer then
@@ -80,7 +80,9 @@ function ProcessDamage(ped)
             end
         elseif isArmDamaged(injury) then
             if ArmCount >= Config.ArmInjuryTimer then
-                CreateThread(disableArms(ped, injury))
+                CreateThread(function()
+                    disableArms(ped, injury)
+                end)
                 ArmCount = 0
             else
                 ArmCount += 1
