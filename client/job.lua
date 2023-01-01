@@ -479,44 +479,40 @@ if Config.UseTarget then
                 }
             })
         end
-        for k, v in pairs(Config.Locations["roof"]) do
-            exports.ox_target:addBoxZone({
-                name = "roof" .. k,
-                coords = vec3(v.x, v.y, v.z),
-                size = vec3(1, 2, 2),
-                rotation = -20,
-                debug = false,
-                options = {
-                    {
-                        type = "client",
-                        event = "qb-ambulancejob:elevator_roof",
-                        icon = "fas fa-hand-point-up",
-                        label = Lang:t('text.el_roof'),
-                        distance = 1.5,
-                        groups = "ambulance",
-                    }
+        exports.ox_target:addBoxZone({
+            name = "roof1",
+            coords = Config.Locations["roof"][1],
+            size = vec3(1, 2, 2),
+            rotation = -20,
+            debug = false,
+            options = {
+                {
+                    type = "client",
+                    event = "qb-ambulancejob:elevator_roof",
+                    icon = "fas fa-hand-point-up",
+                    label = Lang:t('text.el_roof'),
+                    distance = 1.5,
+                    groups = "ambulance",
                 }
-            })
-        end
-        for k, v in pairs(Config.Locations["main"]) do
-            exports.ox_target:addBoxZone({
-                name = "main" .. k,
-                coords = vec3(v.x, v.y, v.z),
-                size = vec3(2, 1, 2),
-                rotation = -20,
-                debug = false,
-                options = {
-                    {
-                        type = "client",
-                        event = "qb-ambulancejob:elevator_main",
-                        icon = "fas fa-hand-point-up",
-                        label = Lang:t('text.el_roof'),
-                        distance = 1.5,
-                        groups = "ambulance",
-                    }
+            }
+        })
+        exports.ox_target:addBoxZone({
+            name = "main1",
+            coords = Config.Locations["main"][1],
+            size = vec3(2, 1, 2),
+            rotation = -20,
+            debug = false,
+            options = {
+                {
+                    type = "client",
+                    event = "qb-ambulancejob:elevator_main",
+                    icon = "fas fa-hand-point-up",
+                    label = Lang:t('text.el_roof'),
+                    distance = 1.5,
+                    groups = "ambulance",
                 }
-            })
-        end
+            }
+        })
     end)
 else
     CreateThread(function()
@@ -592,54 +588,50 @@ else
             })
         end
 
-        for _, v in pairs(Config.Locations["roof"]) do
-            local function EnteredRoofZone()
-                if playerJob.onduty then
-                    lib.showTextUI(Lang:t('text.elevator_main'))
-                    EMSControls("main")
-                else
-                    lib.showTextUI(Lang:t('error.not_ems'))
-                end
+        local function EnteredRoofZone()
+            if playerJob.onduty then
+                lib.showTextUI(Lang:t('text.elevator_main'))
+                EMSControls("main")
+            else
+                lib.showTextUI(Lang:t('error.not_ems'))
             end
-
-            local function outRoofZone()
-                check = false
-                lib.hideTextUI()
-            end
-
-            lib.zones.box({
-                coords = vec3(v.x, v.y, v.z),
-                size = vec3(1, 1, 2),
-                rotation = -20,
-                debug = false,
-                onEnter = EnteredRoofZone,
-                onExit = outRoofZone
-            })
         end
 
-        for _, v in pairs(Config.Locations["main"]) do
-            local function EnteredMainZone()
-                if playerJob.onduty then
-                    lib.showTextUI(Lang:t('text.elevator_roof'))
-                    EMSControls("roof")
-                else
-                    lib.showTextUI(Lang:t('error.not_ems'))
-                end
-            end
-
-            local function outMainZone()
-                check = false
-                lib.hideTextUI()
-            end
-
-            lib.zones.box({
-                coords = vec3(v.x, v.y, v.z),
-                size = vec3(1, 1, 2),
-                rotation = -20,
-                debug = false,
-                onEnter = EnteredMainZone,
-                onExit = outMainZone
-            })
+        local function outRoofZone()
+            check = false
+            lib.hideTextUI()
         end
+
+        lib.zones.box({
+            coords = Config.Locations["roof"][1],
+            size = vec3(1, 1, 2),
+            rotation = -20,
+            debug = false,
+            onEnter = EnteredRoofZone,
+            onExit = outRoofZone
+        })
+
+        local function EnteredMainZone()
+            if playerJob.onduty then
+                lib.showTextUI(Lang:t('text.elevator_roof'))
+                EMSControls("roof")
+            else
+                lib.showTextUI(Lang:t('error.not_ems'))
+            end
+        end
+
+        local function outMainZone()
+            check = false
+            lib.hideTextUI()
+        end
+
+        lib.zones.box({
+            coords = Config.Locations["main"][1],
+            size = vec3(1, 1, 2),
+            rotation = -20,
+            debug = false,
+            onEnter = EnteredMainZone,
+            onExit = outMainZone
+        })
     end)
 end
