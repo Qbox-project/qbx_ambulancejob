@@ -2,6 +2,7 @@ local playerJob = {}
 local currentGarage = 0
 local checkHeli = false
 local checkVehicle = false
+local check = false
 
 ---Configures and spawns a vehicle and teleports player to the driver seat
 ---@param veh any
@@ -16,19 +17,6 @@ local function takeOutVehicle(veh, platePrefix, heading)
     SetVehicleEngineOn(veh, true, true)
 end
 
----Configures and spawns an automobile and teleports player to the driver seat
----@param vehicleInfo any
-local function takeOutAuto(vehicleInfo)
-    local coords = Config.Locations["vehicle"][currentGarage]
-    QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
-        local veh = NetToVeh(netId)
-        takeOutVehicle(veh, Lang:t('info.amb_plate'), coords.w)
-        if Config.VehicleSettings[vehicleInfo] ~= nil then
-            QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
-        end
-    end, vehicleInfo, coords, true)
-end
-
 ---Configures and spawns a helicopter and teleports player to the driver seat
 ---@param location number index of the helicopter spawn location
 local function takeOutHeli(location)
@@ -40,7 +28,21 @@ local function takeOutHeli(location)
     end, Config.Helicopter, coords, true)
 end
 
-local function menuGarage()
+---Configures and spawns an automobile and teleports player to the driver seat.
+---@param vehicleName string name of vehicle to reference as config key
+RegisterNetEvent('ambulance:client:TakeOutVehicle', function(vehicleName)
+    local coords = Config.Locations["vehicle"][currentGarage]
+    QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
+        local veh = NetToVeh(netId)
+        takeOutVehicle(veh, Lang:t('info.amb_plate'), coords.w)
+        if Config.VehicleSettings[vehicleName] ~= nil then
+            QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleName].extras)
+        end
+    end, vehicleName, coords, true)
+end)
+
+---Show the garage spawn menu
+local function showGarageMenu()
     local optionsMenu = {}
 
     local authorizedVehicles = Config.AuthorizedVehicles[QBCore.Functions.GetPlayerData().job.grade.level]
@@ -48,7 +50,7 @@ local function menuGarage()
         optionsMenu[#optionsMenu + 1] = {
             title = label,
             event = "ambulance:client:TakeOutVehicle",
-            args = { vehicle = veh }
+            args = veh
         }
     end
 
@@ -60,15 +62,10 @@ local function menuGarage()
     lib.showContext('ambulance_garage_context_menu')
 end
 
--- Events
-
-RegisterNetEvent('ambulance:client:TakeOutVehicle', function(data)
-    local vehicle = data.vehicle
-    takeOutAuto(vehicle)
-end)
-
-RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
-    playerJob = JobInfo
+---Update the doctor count based on whether player is on duty or not.
+---@param jobInfo any player's job object
+RegisterNetEvent('QBCore:Client:OnJobUpdate', function(jobInfo)
+    playerJob = jobInfo
     if playerJob.name ~= 'ambulance' then return end
     if playerJob.onduty then
         TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
@@ -77,19 +74,25 @@ RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     end
 end)
 
-local function initHealthAndArmor(ped, playerId, playerData)
-    SetEntityHealth(ped, playerData.metadata["health"])
+---Initialize health and armor settings on the player's ped
+---@param ped any
+---@param playerId any
+---@param playerMetadata any
+local function initHealthAndArmor(ped, playerId, playerMetadata)
+    SetEntityHealth(ped, playerMetadata.health)
     SetPlayerHealthRechargeMultiplier(playerId, 0.0)
     SetPlayerHealthRechargeLimit(playerId, 0.0)
-    SetPedArmour(ped, playerData.metadata["armor"])
+    SetPedArmour(ped, playerMetadata.armor)
 end
 
+---starts death or last stand based off of player's metadata 
+---@param playerData any
 local function initDeathAndLastStand(playerData)
-    if (not playerData.metadata["inlaststand"] and playerData.metadata["isdead"]) then
+    if (not playerData.metadata.inlaststand and playerData.metadata.isdead) then
         deathTime = Laststand.ReviveInterval
         OnDeath()
         DeathTimer()
-    elseif (playerData.metadata["inlaststand"] and not playerData.metadata["isdead"]) then
+    elseif (playerData.metadata.inlaststand and not playerData.metadata.isdead) then
         startLastStand()
     else
         TriggerServerEvent("hospital:server:SetDeathStatus", false)
@@ -97,6 +100,7 @@ local function initDeathAndLastStand(playerData)
     end
 end
 
+---initialize settings from player object
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     exports.spawnmanager:setAutoSpawn(false)
     CreateThread(function()
@@ -105,30 +109,34 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         local playerId = cache.playerId
         local playerData = QBCore.Functions.GetPlayerData()
         playerJob = playerData.job
-        initHealthAndArmor(ped, playerId, playerData)
-        initDeathAndLastStand(playerData)
+        initHealthAndArmor(ped, playerId, playerData.metadata)
+        initDeathAndLastStand(playerData.metadata)
         if playerJob.name == 'ambulance' and playerJob.onduty then
             TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
         end
     end)
 end)
 
+---Update doctor count.
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     if playerJob.name == 'ambulance' and playerJob.onduty then
         TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
     end
 end)
 
-RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
-    if playerJob.name ~= 'ambulance' or duty == playerJob.onduty then return end
-    if duty then
+---Updates doctor count when player goes on/off duty.
+---@param onDuty boolean 
+RegisterNetEvent('QBCore:Client:SetDuty', function(onDuty)
+    if playerJob.name ~= 'ambulance' or onDuty == playerJob.onduty then return end
+    if onDuty then
         TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
     else
         TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
     end
 end)
 
-local function status()
+---show patient's treatment menu.
+local function showTreatmentMenu()
     if not IsStatusChecking then return end
     local statusMenu = {}
     for _, v in pairs(StatusChecks) do
@@ -146,8 +154,12 @@ local function status()
     lib.showContext('ambulance_status_context_menu')
 end
 
---- TODO: Refactor
-local function getPlayerStatus(k, v, result)
+---notify doctor in chat of a patient's health status.
+---TODO: Refactor
+---@param k any
+---@param v any
+---@param result any
+local function getPatientStatus(k, v, result)
     if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
         StatusChecks[#StatusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
     elseif result["WEAPONWOUNDS"] then
@@ -169,7 +181,8 @@ local function getPlayerStatus(k, v, result)
     end
 end
 
--- TODO: Refactor
+---Check status of nearest player and show treatment menu.
+---TODO: Refactor
 RegisterNetEvent('hospital:client:CheckStatus', function()
     local player, distance = GetClosestPlayer()
     if player == -1 or distance > 5.0 then
@@ -180,13 +193,14 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
     QBCore.Functions.TriggerCallback('hospital:GetPlayerStatus', function(result)
         if not result then return end
         for k, v in pairs(result) do
-            getPlayerStatus(k, v, result)
+            getPatientStatus(k, v, result)
         end
         IsStatusChecking = true
-        status()
+        showTreatmentMenu()
     end, playerId)
 end)
 
+---Use first aid on nearest player to revive them.
 RegisterNetEvent('hospital:client:RevivePlayer', function()
     if not QBCore.Functions.HasItem('firstaid') then
         lib.notify({ description = Lang:t('error.no_firstaid'), type = 'error' })
@@ -226,6 +240,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
     end
 end)
 
+---Use bandage on nearest player to treat their wounds.
 RegisterNetEvent('hospital:client:TreatWounds', function()
     if not QBCore.Functions.HasItem('bandage') then
         lib.notify({ description = Lang:t('error.no_bandage'), type = 'error' })
@@ -265,34 +280,22 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
     end
 end)
 
-local check = false
-local function EMSControls(variable)
+---Triggers event when the player presses a key
+---@param event string event name to trigger
+local function emsControls(event)
     CreateThread(function()
         check = true
         while check do
             if IsControlJustPressed(0, 38) then
                 exports['qb-core']:KeyPressed(38)
-                if variable == "sign" then
-                    TriggerEvent('EMSToggle:Duty')
-                elseif variable == "stash" then
-                    TriggerEvent('qb-ambulancejob:stash')
-                elseif variable == "armory" then
-                    TriggerEvent('qb-ambulancejob:armory')
-                elseif variable == "storeheli" then
-                    TriggerEvent('qb-ambulancejob:storeheli')
-                elseif variable == "takeheli" then
-                    TriggerEvent('qb-ambulancejob:pullheli')
-                elseif variable == "roof" then
-                    TriggerEvent('qb-ambulancejob:elevator_main')
-                elseif variable == "main" then
-                    TriggerEvent('qb-ambulancejob:elevator_roof')
-                end
+                TriggerEvent(event)
             end
             Wait(0)
         end
     end)
 end
 
+---Opens the hospital stash.
 RegisterNetEvent('qb-ambulancejob:stash', function()
     if playerJob.onduty then
         TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
@@ -300,13 +303,16 @@ RegisterNetEvent('qb-ambulancejob:stash', function()
     end
 end)
 
+---Opens the hospital armory.
 RegisterNetEvent('qb-ambulancejob:armory', function()
     if playerJob.onduty then
         TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
     end
 end)
 
-local function EMSVehicle(k)
+---while in the garage pressing a key triggers storing the current vehicle or opening spawn menu.
+---@param garageLocation number config index of the location of the garage
+local function checkGarageAction(garageLocation)
     checkVehicle = true
     CreateThread(function()
         while checkVehicle do
@@ -316,9 +322,8 @@ local function EMSVehicle(k)
                 if cache.vehicle then
                     QBCore.Functions.DeleteVehicle(cache.vehicle)
                 else
-                    local currentVehicle = k
-                    menuGarage()
-                    currentGarage = currentVehicle
+                    showGarageMenu()
+                    currentGarage = garageLocation
                 end
             end
             Wait(0)
@@ -326,7 +331,9 @@ local function EMSVehicle(k)
     end)
 end
 
-local function EMSHelicopter(k)
+---While on the helicopter pad, pressing a key triggers storing or spawning a helicopter.
+---@param padLocation number config index of the helicopter pad's location.
+local function emsHelicopter(padLocation)
     checkHeli = true
     CreateThread(function()
         while checkHeli do
@@ -336,7 +343,7 @@ local function EMSHelicopter(k)
                 if cache.vehicle then
                     QBCore.Functions.DeleteVehicle(cache.vehicle)
                 else
-                    takeOutHeli(k)
+                    takeOutHeli(padLocation)
                 end
             end
             Wait(0)
@@ -344,6 +351,8 @@ local function EMSHelicopter(k)
     end)
 end
 
+---Teleports the player with a fade in/out effect
+---@param coords vector4
 local function teleportPlayerWithFade(coords)
     local ped = cache.ped
     DoScreenFadeOut(500)
@@ -359,27 +368,31 @@ local function teleportPlayerWithFade(coords)
     DoScreenFadeIn(1000)
 end
 
+---Teleports the player to main elevator
 RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
     teleportPlayerWithFade(Config.Locations["main"][1])
 end)
 
+---Teleports the player to roof elevator
 RegisterNetEvent('qb-ambulancejob:elevator_main', function()
     teleportPlayerWithFade(Config.Locations["roof"][1])
 end)
 
+---Toggles the on duty status of the player.
 RegisterNetEvent('EMSToggle:Duty', function()
     playerJob.onduty = not playerJob.onduty
     TriggerServerEvent("QBCore:ToggleDuty")
     TriggerServerEvent("police:server:UpdateBlips")
 end)
 
-
+---Sets up targets and text interactions for interacting with things in the hospital;
+---garages, heliports, elevators, stashes, armory, on duty toggle.
 CreateThread(function()
     for k, v in pairs(Config.Locations["vehicle"]) do
         local function inVehicleZone()
             if playerJob.name == "ambulance" and playerJob.onduty then
                 lib.showTextUI(Lang:t('text.veh_button'))
-                EMSVehicle(k)
+                checkGarageAction(k)
             else
                 checkVehicle = false
                 lib.hideTextUI()
@@ -405,7 +418,7 @@ CreateThread(function()
         local function inHeliZone()
             if playerJob.name == "ambulance" and playerJob.onduty then
                 lib.showTextUI(Lang:t('text.veh_button'))
-                EMSHelicopter(k)
+                emsHelicopter(k)
             else
                 checkHeli = false
                 lib.hideTextUI()
@@ -529,10 +542,10 @@ else
             local function EnteredSignInZone()
                 if not playerJob.onduty then
                     lib.showTextUI(Lang:t('text.onduty_button'))
-                    EMSControls("sign")
+                    emsControls("EMSToggle:Duty")
                 else
                     lib.showTextUI(Lang:t('text.offduty_button'))
-                    EMSControls("sign")
+                    emsControls("EMSToggle:Duty")
                 end
             end
 
@@ -555,7 +568,7 @@ else
             local function EnteredStashZone()
                 if playerJob.onduty then
                     lib.showTextUI(Lang:t('text.pstash_button'))
-                    EMSControls("stash")
+                    emsControls("qb-ambulancejob:stash")
                 end
             end
 
@@ -578,7 +591,7 @@ else
             local function EnteredArmoryZone()
                 if playerJob.onduty then
                     lib.showTextUI(Lang:t('text.armory_button'))
-                    EMSControls("armory")
+                    emsControls("qb-ambulancejob:armory")
                 end
             end
 
@@ -600,7 +613,7 @@ else
         local function EnteredRoofZone()
             if playerJob.onduty then
                 lib.showTextUI(Lang:t('text.elevator_main'))
-                EMSControls("main")
+                emsControls("qb-ambulancejob:elevator_roof")
             else
                 lib.showTextUI(Lang:t('error.not_ems'))
             end
@@ -623,7 +636,7 @@ else
         local function EnteredMainZone()
             if playerJob.onduty then
                 lib.showTextUI(Lang:t('text.elevator_roof'))
-                EMSControls("roof")
+                emsControls("qb-ambulancejob:elevator_main")
             else
                 lib.showTextUI(Lang:t('error.not_ems'))
             end
