@@ -1,21 +1,43 @@
 local playerJob = {}
 local currentGarage = 0
+local checkHeli = false
+local checkVehicle = false
 
--- Functions
-local function takeOutVehicle(vehicleInfo)
+---Configures and spawns a vehicle and teleports player to the driver seat
+---@param veh any
+---@param platePrefix string prefix of the license plate of the vehicle
+---@param heading number direction the vehicle should face
+local function takeOutVehicle(veh, platePrefix, heading)
+    SetVehicleNumberPlateText(veh, platePrefix .. tostring(math.random(1000, 9999)))
+    SetEntityHeading(veh, heading)
+    SetVehicleFuelLevel(veh, 100.0)
+    TaskWarpPedIntoVehicle(cache.ped, veh, -1)
+    TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
+    SetVehicleEngineOn(veh, true, true)
+end
+
+---Configures and spawns an automobile and teleports player to the driver seat
+---@param vehicleInfo any
+local function takeOutAuto(vehicleInfo)
     local coords = Config.Locations["vehicle"][currentGarage]
     QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
         local veh = NetToVeh(netId)
-        SetVehicleNumberPlateText(veh, Lang:t('info.amb_plate') .. tostring(math.random(1000, 9999)))
-        SetEntityHeading(veh, coords.w)
-        SetVehicleFuelLevel(veh, 100.0)
-        TaskWarpPedIntoVehicle(cache.ped, veh, -1)
+        takeOutVehicle(veh, Lang:t('info.amb_plate'), coords.w)
         if Config.VehicleSettings[vehicleInfo] ~= nil then
             QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
         end
-        TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-        SetVehicleEngineOn(veh, true, true)
     end, vehicleInfo, coords, true)
+end
+
+---Configures and spawns a helicopter and teleports player to the driver seat
+---@param location number index of the helicopter spawn location
+local function takeOutHeli(location)
+    local coords = Config.Locations["helicopter"][location]
+    QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
+        local veh = NetToVeh(netId)
+        takeOutVehicle(veh, Lang:t('info.heli_plate'), coords.w)
+        SetVehicleLivery(veh, 1) -- Ambulance Livery
+    end, Config.Helicopter, coords, true)
 end
 
 local function menuGarage()
@@ -42,7 +64,7 @@ end
 
 RegisterNetEvent('ambulance:client:TakeOutVehicle', function(data)
     local vehicle = data.vehicle
-    takeOutVehicle(vehicle)
+    takeOutAuto(vehicle)
 end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
@@ -284,19 +306,18 @@ RegisterNetEvent('qb-ambulancejob:armory', function()
     end
 end)
 
-local CheckVehicle = false
 local function EMSVehicle(k)
-    CheckVehicle = true
+    checkVehicle = true
     CreateThread(function()
-        while CheckVehicle do
+        while checkVehicle do
             if IsControlJustPressed(0, 38) then
                 exports['qb-core']:KeyPressed(38)
-                CheckVehicle = false
+                checkVehicle = false
                 if cache.vehicle then
                     QBCore.Functions.DeleteVehicle(cache.vehicle)
                 else
                     local currentVehicle = k
-                    menuGarage(currentVehicle)
+                    menuGarage()
                     currentGarage = currentVehicle
                 end
             end
@@ -305,29 +326,17 @@ local function EMSVehicle(k)
     end)
 end
 
-local CheckHeli = false
 local function EMSHelicopter(k)
-    CheckHeli = true
+    checkHeli = true
     CreateThread(function()
-        while CheckHeli do
+        while checkHeli do
             if IsControlJustPressed(0, 38) then
                 exports['qb-core']:KeyPressed(38)
-                CheckHeli = false
+                checkHeli = false
                 if cache.vehicle then
                     QBCore.Functions.DeleteVehicle(cache.vehicle)
                 else
-                    local currentHelictoper = k
-                    local coords = Config.Locations["helicopter"][currentHelictoper]
-                    QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
-                        local veh = NetToVeh(netId)
-                        SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate') .. tostring(math.random(1000, 9999)))
-                        SetEntityHeading(veh, coords.w)
-                        SetVehicleLivery(veh, 1) -- Ambulance Livery
-                        SetVehicleFuelLevel(veh, 100.0)
-                        TaskWarpPedIntoVehicle(cache.ped, veh, -1)
-                        TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-                        SetVehicleEngineOn(veh, true, true)
-                    end, Config.Helicopter, coords, true)
+                    takeOutHeli(k)
                 end
             end
             Wait(0)
@@ -372,13 +381,13 @@ CreateThread(function()
                 lib.showTextUI(Lang:t('text.veh_button'))
                 EMSVehicle(k)
             else
-                CheckVehicle = false
+                checkVehicle = false
                 lib.hideTextUI()
             end
         end
 
         local function outVehicleZone()
-            CheckVehicle = false
+            checkVehicle = false
             lib.hideTextUI()
         end
 
@@ -398,13 +407,13 @@ CreateThread(function()
                 lib.showTextUI(Lang:t('text.veh_button'))
                 EMSHelicopter(k)
             else
-                CheckHeli = false
+                checkHeli = false
                 lib.hideTextUI()
             end
         end
 
         local function outHeliZone()
-            CheckHeli = false
+            checkHeli = false
             lib.hideTextUI()
         end
 
