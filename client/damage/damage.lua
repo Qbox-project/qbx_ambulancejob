@@ -20,8 +20,13 @@ local function isDamagingEvent(damageDone, weapon)
     return luck < (Config.HealthDamage * multi) or (damageDone >= Config.ForceInjury or multi > Config.MaxInjuryChanceMulti or Config.ForceInjuryWeapons[weapon])
 end
 
+---Sets a ragdoll effect probablistically on the player's ped.
+---@param ped any
+---@param staggerArea any
+---@param chance any
+---@param armor any
 local function applyStaggerEffect(ped, staggerArea, chance, armor)
-    if not staggerArea.armored or armor > 0 or math.random(100) > math.ceil(chance) then return end
+    if not staggerArea.chance or not staggerArea.armored or armor > 0 or math.random(100) > math.ceil(chance) then return end
     SetPedToRagdoll(ped, 1500, 2000, 3, true, true, false)
 end
 
@@ -57,7 +62,7 @@ local function applyImmediateMajorEffects(ped, bone, armor)
 
     local staggerArea = Config.StaggerAreas[bone]
     if not staggerArea then return end
-    applyStaggerEffect(ped, staggerArea, staggerArea.major)
+    applyStaggerEffect(ped, staggerArea, staggerArea.major, armor)
 end
 
 local function applyImmediateEffects(ped, bone, weapon, damageDone)
@@ -124,9 +129,9 @@ local function applyDamage(ped, damageDone, isArmorDamaged)
             end
         end
     elseif Config.AlwaysBleedChanceWeapons[weapon]
-        and math.random(100) < Config.AlwaysBleedChance 
+        and math.random(100) < Config.AlwaysBleedChance
         and not checkBodyHitOrWeakWeapon(isArmorDamaged, bodypart, weapon) then
-        
+
         ApplyBleed(1)
     end
 end
@@ -173,7 +178,7 @@ local function initHealthAndArmorIfNotSet(health, armor)
     end
 end
 
---- detects if player took damage, applies injuries, and updates health/armor values 
+--- detects if player took damage, applies injuries, and updates health/armor values
 local function checkForDamage(ped)
     local health = GetEntityHealth(ped)
     local armor = GetPedArmour(ped)
