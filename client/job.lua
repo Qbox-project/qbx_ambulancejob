@@ -35,7 +35,7 @@ RegisterNetEvent('ambulance:client:TakeOutVehicle', function(vehicleName)
     QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
         local veh = NetToVeh(netId)
         takeOutVehicle(veh, Lang:t('info.amb_plate'), coords.w)
-        if Config.VehicleSettings[vehicleName] ~= nil then
+        if Config.VehicleSettings[vehicleName] then
             QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleName].extras)
         end
     end, vehicleName, coords, true)
@@ -88,11 +88,11 @@ end
 ---starts death or last stand based off of player's metadata
 ---@param metadata any
 local function initDeathAndLastStand(metadata)
-    if (not metadata.inlaststand and metadata.isdead) then
+    if not metadata.inlaststand and metadata.isdead then
         deathTime = Laststand.ReviveInterval
         OnDeath()
         DeathTimer()
-    elseif (metadata.inlaststand and not metadata.isdead) then
+    elseif metadata.inlaststand and not metadata.isdead then
         startLastStand()
     else
         TriggerServerEvent("hospital:server:SetDeathStatus", false)
@@ -111,17 +111,15 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         playerJob = playerData.job
         initHealthAndArmor(ped, playerId, playerData.metadata)
         initDeathAndLastStand(playerData.metadata)
-        if playerJob.name == 'ambulance' and playerJob.onduty then
-            TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
-        end
+        if playerJob.name ~= 'ambulance' or not playerJob.onduty then return end
+        TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
     end)
 end)
 
 ---Update doctor count.
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    if playerJob.name == 'ambulance' and playerJob.onduty then
-        TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
-    end
+    if playerJob.name ~= 'ambulance' or not playerJob.onduty then return end
+    TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
 end)
 
 ---Updates doctor count when player goes on/off duty.
@@ -156,9 +154,9 @@ end
 
 ---notify doctor in chat of a patient's health status.
 ---TODO: Refactor
----@param k any
----@param v any
----@param result any
+---@param k string
+---@param v table | integer
+---@param result table
 local function getPatientStatus(k, v, result)
     if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
         StatusChecks[#StatusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
@@ -297,10 +295,9 @@ end
 
 ---Opens the hospital stash.
 RegisterNetEvent('qb-ambulancejob:stash', function()
-    if playerJob.onduty then
-        TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
-        TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
-    end
+    if not playerJob.onduty then return end
+    TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
+    TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
 end)
 
 ---Opens the hospital armory.
