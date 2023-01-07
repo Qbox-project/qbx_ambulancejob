@@ -118,9 +118,8 @@ end)
 
 ---Update doctor count.
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    if playerJob.name == 'ambulance' and playerJob.onduty then
-        TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
-    end
+    if playerJob.name ~= 'ambulance' or not playerJob.onduty then return end
+    TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
 end)
 
 ---Updates doctor count when player goes on/off duty.
