@@ -92,7 +92,7 @@ local function initDeathAndLastStand(metadata)
         deathTime = Laststand.ReviveInterval
         OnDeath()
         DeathTimer()
-    elseif (metadata.inlaststand and not metadata.isdead) then
+    elseif metadata.inlaststand and not metadata.isdead then
         startLastStand()
     else
         TriggerServerEvent("hospital:server:SetDeathStatus", false)
@@ -154,9 +154,9 @@ end
 
 ---notify doctor in chat of a patient's health status.
 ---TODO: Refactor
----@param k any
----@param v any
----@param result any
+---@param k string
+---@param v table | integer
+---@param result table
 local function getPatientStatus(k, v, result)
     if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
         StatusChecks[#StatusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
