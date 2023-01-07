@@ -1,0 +1,3 @@
+---@class Injury
+---@field part string body part
+---@field severity integer higher numbers are worse injuries

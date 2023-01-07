@@ -1,7 +1,10 @@
+---comment returns true if leg is considered damaged based off of injuries to leg bodyparts of a certain severity.
+---@param injury Injury
 local function isLegDamaged(injury)
     return (injury.part == 'LLEG' and injury.severity > 1) or (injury.part == 'RLEG' and injury.severity > 1) or (injury.part == 'LFOOT' and injury.severity > 2) or (injury.part == 'RFOOT' and injury.severity > 2)
 end
 
+---comment
 local function makePedFall(ped)
     ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
     SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
