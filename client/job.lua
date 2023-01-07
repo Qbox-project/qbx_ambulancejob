@@ -88,7 +88,7 @@ end
 ---starts death or last stand based off of player's metadata
 ---@param metadata any
 local function initDeathAndLastStand(metadata)
-    if (not metadata.inlaststand and metadata.isdead) then
+    if not metadata.inlaststand and metadata.isdead then
         deathTime = Laststand.ReviveInterval
         OnDeath()
         DeathTimer()
