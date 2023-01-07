@@ -111,9 +111,8 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         playerJob = playerData.job
         initHealthAndArmor(ped, playerId, playerData.metadata)
         initDeathAndLastStand(playerData.metadata)
-        if playerJob.name == 'ambulance' and playerJob.onduty then
-            TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
-        end
+        if playerJob.name ~= 'ambulance' or not playerJob.onduty then return end
+        TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
     end)
 end)
 
