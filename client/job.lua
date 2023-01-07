@@ -35,7 +35,7 @@ RegisterNetEvent('ambulance:client:TakeOutVehicle', function(vehicleName)
     QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
         local veh = NetToVeh(netId)
         takeOutVehicle(veh, Lang:t('info.amb_plate'), coords.w)
-        if Config.VehicleSettings[vehicleName] ~= nil then
+        if Config.VehicleSettings[vehicleName] then
             QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleName].extras)
         end
     end, vehicleName, coords, true)
