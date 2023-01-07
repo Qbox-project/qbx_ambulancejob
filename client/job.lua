@@ -295,10 +295,9 @@ end
 
 ---Opens the hospital stash.
 RegisterNetEvent('qb-ambulancejob:stash', function()
-    if playerJob.onduty then
-        TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
-        TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
-    end
+    if not playerJob.onduty then return end
+    TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
+    TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
 end)
 
 ---Opens the hospital armory.
