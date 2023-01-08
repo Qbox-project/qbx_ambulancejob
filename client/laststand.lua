@@ -1,18 +1,11 @@
-Laststand = Laststand or {}
-Laststand.ReviveInterval = 360
-Laststand.MinimumRevive = 300
-InLaststand = false
-LaststandTime = 0
-lastStandDict = "combat@damage@writhe"
-lastStandAnim = "writhe_loop"
-isEscorted = false
 local isEscorting = false
 
--- Functions
+---blocks until ped is no longer moving
 function WaitForPedToStopMoving(ped)
     while GetEntitySpeed(ped) > 0.5 or IsPedRagdoll(ped) do Wait(10) end
 end
 
+---resurrect player
 function ResurrectPlayer(ped)
     local pos = GetEntityCoords(ped)
     local heading = GetEntityHeading(ped)
@@ -25,13 +18,14 @@ function ResurrectPlayer(ped)
     end
 end
 
+---put player in last stand animation
 local function playLastStandAnimation(ped)
     if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
         TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 8.0, -1, 1, -1, false, false, false)
     else
-        lib.requestAnimDict(lastStandDict)
-        TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 8.0, -1, 1, -1, false, false, false)
+        lib.requestAnimDict(LastStandDict)
+        TaskPlayAnim(ped, LastStandDict, LastStandAnim, 1.0, 8.0, -1, 1, -1, false, false, false)
     end
 end
 
@@ -53,6 +47,7 @@ local function logPlayerKiller()
     TriggerServerEvent("qb-log:server:CreateLog", "death", Lang:t('logs.death_log_title', { playername = GetPlayerName(cache.playerId), playerid = GetPlayerServerId(player) }), "red", Lang:t('logs.death_log_message', { killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel, weaponname = weaponName }))
 end
 
+---count down last stand, if last stand is over, put player in death mode and log the killer.
 local function countdownLastStand()
     if LaststandTime - 1 > 0 then
         LaststandTime -= 1
@@ -61,13 +56,14 @@ local function countdownLastStand()
         lib.notify({ description = Lang:t('error.bled_out'), type = 'error' })
         endLastStand()
         logPlayerKiller()
-        deathTime = 0
+        DeathTime = 0
         OnDeath()
-        DeathTimer()
+        AllowRespawn()
     end
     Wait(1000)
 end
 
+---put player in last stand mode and notify EMS.
 function startLastStand()
     local ped = cache.ped
     Wait(1000)
@@ -87,9 +83,10 @@ function startLastStand()
     TriggerServerEvent("hospital:server:SetLaststandStatus", true)
 end
 
+---remove last stand mode from player.
 function endLastStand()
     local ped = cache.ped
-    TaskPlayAnim(ped, lastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
+    TaskPlayAnim(ped, LastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
     InLaststand = false
     LaststandTime = 0
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
@@ -102,9 +99,10 @@ RegisterNetEvent('hospital:client:SetEscortingState', function(bool)
 end)
 
 RegisterNetEvent('hospital:client:isEscorted', function(bool)
-    isEscorted = bool
+    IsEscorted = bool
 end)
 
+---use first aid pack on nearest player.
 RegisterNetEvent('hospital:client:UseFirstAid', function()
     if not isEscorting then
         local player, distance = GetClosestPlayer()

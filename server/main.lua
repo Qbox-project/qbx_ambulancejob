@@ -1,9 +1,21 @@
-local PlayerInjuries = {}
-local PlayerWeaponWounds = {}
 local QBCore = exports['qb-core']:GetCoreObject()
+
+---@class Injury
+---@field part Bone body part
+---@field severity integer higher numbers are worse injuries
+
+---@type Injury[]
+local playerInjuries = {}
+
+---@type number[] weapon hashes
+local playerWeaponWounds = {}
+
 local doctorCount = 0
 local doctorCalled = false
-local Doctors = {}
+
+---@alias source number
+---@type table<source, boolean>
+local doctors = {}
 
 -- Events
 
@@ -85,20 +97,20 @@ end)
 
 RegisterNetEvent('hospital:server:SyncInjuries', function(data)
 	local src = source
-	PlayerInjuries[src] = data
+	playerInjuries[src] = data
 end)
 
 RegisterNetEvent('hospital:server:SetWeaponDamage', function(data)
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
 	if not player then return end
-	PlayerWeaponWounds[player.PlayerData.source] = data
+	playerWeaponWounds[player.PlayerData.source] = data
 end)
 
 RegisterNetEvent('hospital:server:RestoreWeaponDamage', function()
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
-	PlayerWeaponWounds[player.PlayerData.source] = nil
+	playerWeaponWounds[player.PlayerData.source] = nil
 end)
 
 RegisterNetEvent('hospital:server:SetDeathStatus', function(isDead)
@@ -139,7 +151,7 @@ RegisterNetEvent('hospital:server:AddDoctor', function(job)
 	local src = source
 	doctorCount += 1
 	TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
-	Doctors[src] = true
+	doctors[src] = true
 end)
 
 RegisterNetEvent('hospital:server:RemoveDoctor', function(job)
@@ -148,16 +160,16 @@ RegisterNetEvent('hospital:server:RemoveDoctor', function(job)
 	local src = source
 	doctorCount -= 1
 	TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
-	Doctors[src] = nil
+	doctors[src] = nil
 end)
 
 AddEventHandler("playerDropped", function()
 	local src = source
-	if not Doctors[src] then return end
+	if not doctors[src] then return end
 
 	doctorCount -= 1
 	TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
-	Doctors[src] = nil
+	doctors[src] = nil
 end)
 
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
@@ -255,7 +267,7 @@ QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, play
 	injuries["WEAPONWOUNDS"] = {}
 	if not playerSource then cb(injuries) return end
 
-	local playerInjuries = PlayerInjuries[playerSource]
+	local playerInjuries = playerInjuries[playerSource]
 	if playerInjuries then
 		if (playerInjuries.isBleeding > 0) then
 			injuries["BLEED"] = playerInjuries.isBleeding
@@ -267,7 +279,7 @@ QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, play
 		end
 	end
 
-	local playerWeaponWounds = PlayerWeaponWounds[playerSource]
+	local playerWeaponWounds = playerWeaponWounds[playerSource]
 	if playerWeaponWounds then
 		for k, v in pairs(playerWeaponWounds) do
 			injuries["WEAPONWOUNDS"][k] = v
@@ -278,7 +290,7 @@ end)
 
 QBCore.Functions.CreateCallback('hospital:GetPlayerBleeding', function(source, cb)
 	local src = source
-	local injuries = PlayerInjuries[src]
+	local injuries = playerInjuries[src]
 	if not injuries or injuries.isBleeding == nil then
 		cb(nil)
 		return
@@ -327,7 +339,7 @@ QBCore.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function
 	triggerEventOnEmsPlayer(src, 'hospital:client:RevivePlayer')
 end)
 
---- Triggers the event on the player or src, if no target is specified
+---Triggers the event on the player or src, if no target is specified
 ---@param src number playerId of the one triggering the event
 ---@param event string event name
 ---@param targetPlayerId? string playerId of the target of the event

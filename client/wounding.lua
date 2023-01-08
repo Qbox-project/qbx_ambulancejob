@@ -1,5 +1,4 @@
 local prevPos = nil
-onPainKillers = false
 local painkillerAmount = 0
 
 local function sendBleedAlert()
@@ -7,6 +6,8 @@ local function sendBleedAlert()
     lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(IsBleeding)].label, type = 'inform' })
 end
 
+---reduce bleeding by level. Bleed level cannot be negative.
+---@param level number
 local function removeBleed(level)
     if IsBleeding == 0 then return end
     if IsBleeding - level < 0 then
@@ -17,6 +18,7 @@ local function removeBleed(level)
     sendBleedAlert()
 end
 
+---TODO: refactor as this is similar to ApplyBleed(level)
 local function applyBleed(level)
     if IsBleeding >= 4 then return end
 
@@ -55,7 +57,7 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["ifaks"], "remove")
         TriggerServerEvent('hud:server:RelieveStress', math.random(12, 24))
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
-        onPainKillers = true
+        OnPainKillers = true
         if painkillerAmount < 3 then
             painkillerAmount += 1
         end
@@ -127,7 +129,7 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         TriggerServerEvent("hospital:server:removePainkillers")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["painkillers"], "remove")
-        onPainKillers = true
+        OnPainKillers = true
         if painkillerAmount < 3 then
             painkillerAmount += 1
         end
@@ -142,13 +144,13 @@ local function consumePainKiller()
     Wait(Config.PainkillerInterval * 1000)
     if painkillerAmount > 0 then return end
     painkillerAmount = 0
-    onPainKillers = false
+    OnPainKillers = false
 end
 
 CreateThread(function()
     while true do
         Wait(1)
-        if onPainKillers then
+        if OnPainKillers then
             consumePainKiller()
         else
             Wait(3000)
@@ -179,7 +181,7 @@ CreateThread(function()
     end
 end)
 
-local function makePlayerBlackout(player)
+local function makePlayerBlackout(ped)
     SetFlash(0, 0, 100, 7000, 100)
 
     DoScreenFadeOut(500)
@@ -187,9 +189,9 @@ local function makePlayerBlackout(player)
         Wait(0)
     end
 
-    if not IsPedRagdoll(player) and IsPedOnFoot(player) and not IsPedSwimming(player) then
+    if not IsPedRagdoll(ped) and IsPedOnFoot(ped) and not IsPedSwimming(ped) then
         ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
-        SetPedToRagdollWithFall(player, 7500, 9000, 1, GetEntityForwardVector(player), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        SetPedToRagdollWithFall(ped, 7500, 9000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     end
 
     Wait(1500)
@@ -204,14 +206,14 @@ local function makePlayerFadeOut()
     DoScreenFadeIn(500)
 end
 
-local function applyBleedEffects(player)
+local function applyBleedEffects(ped)
     local bleedDamage = tonumber(IsBleeding) * Config.BleedTickDamage
-    ApplyDamageToPed(player, bleedDamage, false)
+    ApplyDamageToPed(ped, bleedDamage, false)
     sendBleedAlert()
     PlayerHealth = PlayerHealth - bleedDamage
     local randX = math.random() + math.random(-1, 1)
     local randY = math.random() + math.random(-1, 1)
-    local coords = GetOffsetFromEntityInWorldCoords(player, randX, randY, 0)
+    local coords = GetOffsetFromEntityInWorldCoords(ped, randX, randY, 0)
     TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid, QBCore.Functions.GetPlayerData().metadata["bloodtype"], coords)
 
     if AdvanceBleedTimer >= Config.AdvanceBleedTimer then
@@ -222,11 +224,11 @@ local function applyBleedEffects(player)
     end
 end
 
-local function handleBleeding(player)
+local function handleBleeding(ped)
     if IsDead or InLaststand or IsBleeding <= 0 then return end
     if FadeOutTimer + 1 == Config.FadeOutTimer then
         if BlackoutTimer + 1 == Config.BlackoutTimer then
-            makePlayerBlackout(player)
+            makePlayerBlackout(ped)
             BlackoutTimer = 0
         else
             makePlayerFadeOut()
@@ -238,12 +240,12 @@ local function handleBleeding(player)
         FadeOutTimer += 1
     end
 
-    applyBleedEffects(player)
+    applyBleedEffects(ped)
 end
 
-local function bleedTick(player)
+local function bleedTick(ped)
     if math.floor(BleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
-        local currPos = GetEntityCoords(player, true)
+        local currPos = GetEntityCoords(ped, true)
         local moving = #(prevPos.xy - currPos.xy)
         if (moving > 1 and not cache.vehicle) and IsBleeding > 2 then
             AdvanceBleedTimer += Config.BleedMovementAdvance
@@ -257,7 +259,7 @@ local function bleedTick(player)
 end
 
 local function checkBleeding()
-    if IsBleeding <= 0 or onPainKillers then return end
+    if IsBleeding <= 0 or OnPainKillers then return end
     local player = cache.ped
     if BleedTickTimer >= Config.BleedTickRate and not IsInHospitalBed then
         handleBleeding(player)

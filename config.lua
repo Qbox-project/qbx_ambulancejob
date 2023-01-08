@@ -63,6 +63,12 @@ Config.Locations = { -- Edit the various interaction points for players or creat
     ["stash"] = {
         [1] = vec3(309.78, -596.6, 43.29),
     },
+    ---@class Bed
+    ---@field coords vector4
+    ---@field taken boolean
+    ---@field model number
+
+    ---@type Bed[]
     ["beds"] = {
         [1] = { coords = vec4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868 },
         [2] = { coords = vec4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868 },
@@ -218,7 +224,11 @@ Config.CriticalAreas = { -- Define body areas that will always cause bleeding if
     ['SPINE'] = { armored = true },
 }
 
-Config.StaggerAreas = { -- Define body areas that will always cause staggering if wearing armor or not
+---@class StaggerArea Defined body areas that will always cause staggering if wearing armor or not
+---@field armored boolean
+---@field major number
+---@field minor number
+Config.StaggerAreas = {
     ['SPINE'] = { armored = true, major = 60, minor = 30 },
     ['UPPER_BODY'] = { armored = false, major = 60, minor = 30 },
     ['LLEG'] = { armored = true, major = 100, minor = 85 },
@@ -307,6 +317,7 @@ Config.Bones = { -- Correspond bone hash numbers to their label
     [52301] = 'RFOOT',
 }
 
+---@alias Bone 'NONE'|'HEAD'|'NECK'|'SPINE'|'UPPER_BODY'|'LOWER_BODY'|'LARM'|'LHAND'|'LFINGER'|'LLEG'|'LFOOT'|'RARM'|'RHAND'|'RFINGER'|'RLEG'|'RFOOT'
 Config.BoneIndexes = { -- Correspond bone labels to their hash number
     ['NONE'] = 0,
     -- ['HEAD'] = 31085,

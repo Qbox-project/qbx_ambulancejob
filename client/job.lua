@@ -75,8 +75,8 @@ RegisterNetEvent('QBCore:Client:OnJobUpdate', function(jobInfo)
 end)
 
 ---Initialize health and armor settings on the player's ped
----@param ped any
----@param playerId any
+---@param ped number
+---@param playerId number
 ---@param playerMetadata any
 local function initHealthAndArmor(ped, playerId, playerMetadata)
     SetEntityHealth(ped, playerMetadata.health)
@@ -89,9 +89,9 @@ end
 ---@param metadata any
 local function initDeathAndLastStand(metadata)
     if not metadata.inlaststand and metadata.isdead then
-        deathTime = Laststand.ReviveInterval
+        DeathTime = Laststand.ReviveInterval
         OnDeath()
-        DeathTimer()
+        AllowRespawn()
     elseif metadata.inlaststand and not metadata.isdead then
         startLastStand()
     else
@@ -438,7 +438,7 @@ CreateThread(function()
     end
 end)
 
--- Convar turns into a boolean
+---Sets up duty toggle, stash, armory, and elevator interactions using either target or zones.
 if Config.UseTarget then
     CreateThread(function()
         for k, v in pairs(Config.Locations["duty"]) do

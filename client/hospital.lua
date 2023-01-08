@@ -6,12 +6,19 @@ local bedObject = nil
 local bedOccupyingData = nil
 local cam = nil
 
+---checks if bed is available and within 500 distance of pos
+---@param pos vector3 position close to bed
+---@param bed Bed
+---@return boolean isAvailable if bed is available
 local function isBedAvailable(pos, bed)
     if bed.taken then return false end
     if #(pos - vector3(bed.coords.x, bed.coords.y, bed.coords.z)) >= 500 then return false end
     return true
 end
 
+---Gets available bedId
+---@param bedId? integer bedId to check. If not provided, checks all beds.
+---@return integer|nil availableBedId index of available bed or nil if no bed available
 local function getAvailableBed(bedId)
     local pos = GetEntityCoords(cache.ped)
 
@@ -26,6 +33,7 @@ local function getAvailableBed(bedId)
     end
 end
 
+---Triggered on player checking into the hospital. Notifies doctors, and puts player in a hospital bed.
 RegisterNetEvent('qb-ambulancejob:checkin', function()
     if DoctorCount >= Config.MinimalDoctors then
         TriggerServerEvent("hospital:server:SendDoctorAlert")
@@ -65,6 +73,7 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
     end
 end)
 
+---Puts player in the closest hospital bed if available.
 RegisterNetEvent('qb-ambulancejob:beds', function()
     if getAvailableBed(closestBed) then
         TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
@@ -73,6 +82,8 @@ RegisterNetEvent('qb-ambulancejob:beds', function()
     end
 end)
 
+---allow players to press button to check in or get put in a bed
+---@param variable "checkin"|"beds"
 local function checkInControls(variable)
     listen = true
     repeat
@@ -90,7 +101,7 @@ local function checkInControls(variable)
     until not listen
 end
 
--- Convar turns into a boolean
+---Set up check-in and getting into beds using either target or zones
 if Config.UseTarget then
     CreateThread(function()
         for k, v in pairs(Config.Locations["checking"]) do
@@ -186,6 +197,7 @@ else
     end)
 end
 
+---Find closest bed to player and set variable
 local function setClosestBed()
     if IsInHospitalBed then return end
 
@@ -204,6 +216,7 @@ local function setClosestBed()
     closestBed = current
 end
 
+---set closest bed and times status checks, resetting them when status check time reaches 0.
 CreateThread(function()
     while true do
         Wait(1000)
@@ -218,6 +231,7 @@ CreateThread(function()
     end
 end)
 
+---plays animation to get out of bed and resets variables
 local function leaveBed()
     local ped = cache.ped
 
@@ -244,7 +258,7 @@ local function leaveBed()
     end)
 end
 
---- shows leave bed text if the player can leave the bed, triggers leaving the bed if the right key is pressed.
+---Shows leave bed text if the player can leave the bed, triggers leaving the bed if the right key is pressed.
 local function givePlayerOptionToLeaveBed()
     lib.showTextUI(Lang:t('text.bed_out'))
     if not IsControlJustReleased(0, 38) then return end
@@ -254,6 +268,7 @@ local function givePlayerOptionToLeaveBed()
     lib.hideTextUI()
 end
 
+---shows player option to press key to leave bed when available.
 CreateThread(function()
     while true do
         if IsInHospitalBed and CanLeaveBed then
@@ -265,7 +280,7 @@ CreateThread(function()
     end
 end)
 
---- teleports the player to lie down in bed and sets the player's camera.
+---Teleports the player to lie down in bed and sets the player's camera.
 local function setBedCam()
     IsInHospitalBed = true
     CanLeaveBed = false
@@ -309,13 +324,13 @@ local function setBedCam()
     FreezeEntityPosition(player, true)
 end
 
---- puts the player in bed
+---Puts the player in bed
 ---@param id number the map key of the bed
----@param data any the bed object
+---@param bed Bed
 ---@param isRevive boolean if true, heals the player
-RegisterNetEvent('hospital:client:SendToBed', function(id, data, isRevive)
+RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
     BedOccupying = id
-    bedOccupyingData = data
+    bedOccupyingData = bed
     setBedCam()
     CreateThread(function()
         Wait(5)
