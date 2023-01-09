@@ -1,16 +1,19 @@
----returns true if leg is considered damaged based off of injuries to leg bodyparts of a certain severity.
+---based off of injuries to leg bodyparts of a certain severity.
 ---@param injury Injury
+---@return boolean isLegDamaged if leg is considered damaged
 local function isLegDamaged(injury)
     return (injury.part == 'LLEG' and injury.severity > 1) or (injury.part == 'RLEG' and injury.severity > 1) or (injury.part == 'LFOOT' and injury.severity > 2) or (injury.part == 'RFOOT' and injury.severity > 2)
 end
 
 ---shake camera and ragdoll player forward
+---@param ped number
 local function makePedFall(ped)
     ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
     SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 end
 
 ---makes player fall based on random number determined by leg injuries. Difference chance while player is walking vs running.
+---@param ped number
 local function chancePedFalls(ped)
     if IsPedRagdoll(ped) or not IsPedOnFoot(ped) then return end
     local chance = (IsPedRunning(ped) or IsPedSprinting(ped)) and Config.LegInjuryChance.Running or Config.LegInjuryChance.Walking
@@ -59,11 +62,14 @@ local function disableArms(ped, leftArmDamaged)
 end
 
 ---returns whether the player's head is damaged based on injury location and severity.
+---@param injury Injury
+---@return boolean
 local function isHeadDamaged(injury)
     return injury.part == 'HEAD' and injury.severity > 2
 end
 
 ---flash screen, fade out, ragdoll, fade in.
+---@param ped number
 local function playBrainDamageEffectAndRagdoll(ped)
     SetFlash(0, 0, 100, 10000, 100)
 
@@ -82,6 +88,7 @@ local function playBrainDamageEffectAndRagdoll(ped)
 end
 
 ---applies disabling status effects based on injuries to specific body parts
+---@param ped number
 function ApplyDamageEffects(ped)
     if IsDead or InLaststand or OnPainKillers or IsInHospitalBed then return end
     for _, injury in pairs(Injured) do

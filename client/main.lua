@@ -220,6 +220,8 @@ end
 -- Events
 
 ---notifies EMS of a injury at a location
+---@param coords vector3
+---@param text string
 RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
@@ -324,6 +326,9 @@ RegisterNetEvent('hospital:client:HealInjuries', function(type)
     lib.notify({ description = Lang:t('success.wounds_healed'), type = 'success' })
 end)
 
+---@param bedsKey "jailbeds"|"beds"
+---@param id number
+---@param isTaken boolean
 RegisterNetEvent('hospital:client:SetBed', function(bedsKey, id, isTaken)
     Config.Locations[bedsKey][id].taken = isTaken
 end)
@@ -351,6 +356,7 @@ RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
     end)
 end)
 
+---@param amount integer
 RegisterNetEvent('hospital:client:SetDoctorCount', function(amount)
     DoctorCount = amount
 end)

@@ -1,3 +1,4 @@
+---@param ped number
 local function playDeadAnimation(ped)
     if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
@@ -61,6 +62,8 @@ local function logDeath(victim, attacker, weapon)
 end
 
 ---when player is killed by another player, set last stand mode, or if already in last stand mode, set player to dead mode.
+---@param event string
+---@param data table
 AddEventHandler('gameEventTriggered', function(event, data)
     if event ~= "CEventNetworkEntityDamage" then return end
     local victim, attacker, victimDied, weapon = data[1], data[2], data[4], data[7]

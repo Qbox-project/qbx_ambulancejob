@@ -19,6 +19,7 @@ local function removeBleed(level)
 end
 
 ---TODO: refactor as this is similar to ApplyBleed(level)
+---@param level 1|2|3|4
 local function applyBleed(level)
     if IsBleeding >= 4 then return end
 
@@ -181,6 +182,7 @@ CreateThread(function()
     end
 end)
 
+---@param ped number
 local function makePlayerBlackout(ped)
     SetFlash(0, 0, 100, 7000, 100)
 
@@ -206,6 +208,7 @@ local function makePlayerFadeOut()
     DoScreenFadeIn(500)
 end
 
+---@param ped number
 local function applyBleedEffects(ped)
     local bleedDamage = tonumber(IsBleeding) * Config.BleedTickDamage
     ApplyDamageToPed(ped, bleedDamage, false)
@@ -224,6 +227,7 @@ local function applyBleedEffects(ped)
     end
 end
 
+---@param ped number
 local function handleBleeding(ped)
     if IsDead or InLaststand or IsBleeding <= 0 then return end
     if FadeOutTimer + 1 == Config.FadeOutTimer then
@@ -243,6 +247,7 @@ local function handleBleeding(ped)
     applyBleedEffects(ped)
 end
 
+---@param ped number
 local function bleedTick(ped)
     if math.floor(BleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
         local currPos = GetEntityCoords(ped, true)

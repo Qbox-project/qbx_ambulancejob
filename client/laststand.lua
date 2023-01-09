@@ -1,11 +1,13 @@
 local isEscorting = false
 
 ---blocks until ped is no longer moving
+---@param ped number
 function WaitForPedToStopMoving(ped)
     while GetEntitySpeed(ped) > 0.5 or IsPedRagdoll(ped) do Wait(10) end
 end
 
 ---resurrect player
+---@param ped number
 function ResurrectPlayer(ped)
     local pos = GetEntityCoords(ped)
     local heading = GetEntityHeading(ped)
@@ -19,6 +21,7 @@ function ResurrectPlayer(ped)
 end
 
 ---put player in last stand animation
+---@param ped number
 local function playLastStandAnimation(ped)
     if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
@@ -94,10 +97,12 @@ end
 
 -- Events
 
+---@param bool boolean
 RegisterNetEvent('hospital:client:SetEscortingState', function(bool)
     isEscorting = bool
 end)
 
+---@param bool boolean
 RegisterNetEvent('hospital:client:isEscorted', function(bool)
     IsEscorted = bool
 end)
@@ -115,6 +120,7 @@ RegisterNetEvent('hospital:client:UseFirstAid', function()
     end
 end)
 
+---@param helperId number playerId
 RegisterNetEvent('hospital:client:CanHelp', function(helperId)
     if InLaststand then
         if LaststandTime <= 300 then
@@ -127,6 +133,7 @@ RegisterNetEvent('hospital:client:CanHelp', function(helperId)
     end
 end)
 
+---@param targetId number playerId
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     local ped = cache.ped
     if lib.progressCircle({

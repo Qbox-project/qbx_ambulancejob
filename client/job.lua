@@ -68,9 +68,9 @@ RegisterNetEvent('QBCore:Client:OnJobUpdate', function(jobInfo)
     playerJob = jobInfo
     if playerJob.name ~= 'ambulance' then return end
     if playerJob.onduty then
-        TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
+        TriggerServerEvent("hospital:server:AddDoctor")
     else
-        TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
+        TriggerServerEvent("hospital:server:RemoveDoctor")
     end
 end)
 
@@ -112,14 +112,14 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         initHealthAndArmor(ped, playerId, playerData.metadata)
         initDeathAndLastStand(playerData.metadata)
         if playerJob.name ~= 'ambulance' or not playerJob.onduty then return end
-        TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
+        TriggerServerEvent("hospital:server:AddDoctor")
     end)
 end)
 
 ---Update doctor count.
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     if playerJob.name ~= 'ambulance' or not playerJob.onduty then return end
-    TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
+    TriggerServerEvent("hospital:server:RemoveDoctor")
 end)
 
 ---Updates doctor count when player goes on/off duty.
@@ -127,9 +127,9 @@ end)
 RegisterNetEvent('QBCore:Client:SetDuty', function(onDuty)
     if playerJob.name ~= 'ambulance' or onDuty == playerJob.onduty then return end
     if onDuty then
-        TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
+        TriggerServerEvent("hospital:server:AddDoctor")
     else
-        TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
+        TriggerServerEvent("hospital:server:RemoveDoctor")
     end
 end)
 

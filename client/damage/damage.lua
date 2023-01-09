@@ -1,6 +1,10 @@
 local playerArmor = nil
 
 ---returns true if player took damage in their upper body or if the weapon class is nothing.
+---@param isArmorDamaged boolean
+---@param bodypart BodyPart
+---@param weapon string
+---@return boolean
 local function checkBodyHitOrWeakWeapon(isArmorDamaged, bodypart, weapon)
     return isArmorDamaged and (bodypart == 'SPINE' or bodypart == 'UPPER_BODY') or weapon == Config.WeaponClasses['NOTHING']
 end
@@ -171,7 +175,7 @@ end
 
 ---searches array for weapon hash
 ---@param hash number weapon hash
----@return boolean true if weapon hash is in the array
+---@return boolean inDamageList if weapon hash is in the array
 local function isInDamageList(hash)
     if not CurrentDamageList then return false end
 
@@ -185,6 +189,7 @@ local function isInDamageList(hash)
 end
 
 ---Adds weapon hashes that damaged the ped that aren't already in the CurrentDamagedList and syncs to the server.
+---@param ped number
 local function findDamageCause(ped)
     local detected = false
     for hash, weapon in pairs(QBCore.Shared.Weapons) do
@@ -216,7 +221,8 @@ local function initHealthAndArmorIfNotSet(health, armor)
     end
 end
 
---- detects if player took damage, applies injuries, and updates health/armor values
+---detects if player took damage, applies injuries, and updates health/armor values
+---@param ped number
 local function checkForDamage(ped)
     local health = GetEntityHealth(ped)
     local armor = GetPedArmour(ped)

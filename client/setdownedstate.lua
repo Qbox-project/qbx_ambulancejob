@@ -40,6 +40,7 @@ local function displayRespawnText()
     end
 end
 
+---@param ped number
 local function playDeadAnimation(ped)
     if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
@@ -61,6 +62,7 @@ local function playDeadAnimation(ped)
     end
 end
 
+---@param ped number
 local function handleDead(ped)
     if not IsInHospitalBed then
         displayRespawnText()
@@ -70,6 +72,7 @@ local function handleDead(ped)
     SetCurrentPedWeapon(ped, `WEAPON_UNARMED`, true)
 end
 
+---@param ped number
 local function playEscortedLastStandAnimation(ped)
     if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
@@ -84,6 +87,7 @@ local function playEscortedLastStandAnimation(ped)
     end
 end
 
+---@param ped number
 local function playUnescortedLastStandAnimation(ped)
     if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
@@ -98,6 +102,7 @@ local function playUnescortedLastStandAnimation(ped)
     end
 end
 
+---@param ped number
 local function playLastStandAnimation(ped)
     if IsEscorted then
         playEscortedLastStandAnimation(ped)
@@ -106,6 +111,7 @@ local function playLastStandAnimation(ped)
     end
 end
 
+---@param ped number
 local function handleLastStand(ped)
     if LaststandTime > Laststand.MinimumRevive then
         drawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
