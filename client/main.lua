@@ -6,20 +6,11 @@ IsInHospitalBed = false
 IsBleeding = 0
 BleedTickTimer, AdvanceBleedTimer = 0, 0
 FadeOutTimer, BlackoutTimer = 0, 0
-LegCount = 0
-ArmCount = 0
-HeadCount = 0
+
+---@type number
 PlayerHealth = nil
+
 IsDead = false
-IsStatusChecking = false
-
----@class StatusCheck
----@field bone number boneId
----@field label string representing severity of the wound
-
----@type StatusCheck[]
-StatusChecks = {}
-StatusCheckTime = 0
 HealAnimDict = "mini@cpr@char_a@cpr_str"
 HealAnim = "cpr_pumpchest"
 
@@ -28,7 +19,6 @@ Injured = {}
 
 DeadAnimDict = "dead"
 DeadAnim = "dead_a"
-DoctorCount = 0
 DeathTime = 0
 EmsNotified = false
 
@@ -354,11 +344,6 @@ RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
             button = {}
         })
     end)
-end)
-
----@param amount integer
-RegisterNetEvent('hospital:client:SetDoctorCount', function(amount)
-    DoctorCount = amount
 end)
 
 RegisterNetEvent('hospital:client:adminHeal', function()

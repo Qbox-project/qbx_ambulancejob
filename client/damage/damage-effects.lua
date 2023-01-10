@@ -1,3 +1,7 @@
+local legCount = 0
+local armCount = 0
+local headCount = 0
+
 ---based off of injuries to leg bodyparts of a certain severity.
 ---@param injury Injury
 ---@return boolean isLegDamaged if leg is considered damaged
@@ -93,31 +97,31 @@ function ApplyDamageEffects(ped)
     if IsDead or InLaststand or OnPainKillers or IsInHospitalBed then return end
     for _, injury in pairs(Injured) do
         if isLegDamaged(injury) then
-            if LegCount >= Config.LegInjuryTimer then
+            if legCount >= Config.LegInjuryTimer then
                 chancePedFalls(ped)
-                LegCount = 0
+                legCount = 0
             else
-                LegCount += 1
+                legCount += 1
             end
         elseif isArmDamaged(injury) then
-            if ArmCount >= Config.ArmInjuryTimer then
+            if armCount >= Config.ArmInjuryTimer then
                 CreateThread(function()
                     disableArms(ped, isLeftArmDamaged(injury))
                 end)
-                ArmCount = 0
+                armCount = 0
             else
-                ArmCount += 1
+                armCount += 1
             end
         elseif isHeadDamaged(injury) then
-            if HeadCount >= Config.HeadInjuryTimer then
+            if headCount >= Config.HeadInjuryTimer then
                 local chance = math.random(100)
 
                 if chance <= Config.HeadInjuryChance then
                     playBrainDamageEffectAndRagdoll(ped)
                 end
-                HeadCount = 0
+                headCount = 0
             else
-                HeadCount += 1
+                headCount += 1
             end
         end
     end

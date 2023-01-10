@@ -4,6 +4,13 @@ local checkHeli = false
 local checkVehicle = false
 local check = false
 
+---@class StatusCheck
+---@field bone number boneId
+---@field label string representing severity of the wound
+
+---@type StatusCheck[]
+local statusChecks = {}
+
 ---Configures and spawns a vehicle and teleports player to the driver seat
 ---@param veh any
 ---@param platePrefix string prefix of the license plate of the vehicle
@@ -135,9 +142,8 @@ end)
 
 ---show patient's treatment menu.
 local function showTreatmentMenu()
-    if not IsStatusChecking then return end
     local statusMenu = {}
-    for _, v in pairs(StatusChecks) do
+    for _, v in pairs(statusChecks) do
         statusMenu[#statusMenu + 1] = {
             title = v.label,
             event = "hospital:client:TreatWounds",
@@ -159,7 +165,7 @@ end
 ---@param result table
 local function getPatientStatus(k, v, result)
     if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
-        StatusChecks[#StatusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
+        statusChecks[#statusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
     elseif result["WEAPONWOUNDS"] then
         for _, v2 in pairs(result["WEAPONWOUNDS"]) do
             TriggerEvent('chat:addMessage', {
@@ -193,7 +199,6 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         for k, v in pairs(result) do
             getPatientStatus(k, v, result)
         end
-        IsStatusChecking = true
         showTreatmentMenu()
     end, playerId)
 end)
