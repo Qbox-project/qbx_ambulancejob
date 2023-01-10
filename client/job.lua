@@ -200,6 +200,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
             getPatientStatus(k, v, result)
         end
         showTreatmentMenu()
+        statusChecks = {} --- TODO: refactor to make statusChecks a local variable to this function.
     end, playerId)
 end)
 
