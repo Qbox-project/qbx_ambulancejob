@@ -1,34 +1,12 @@
 local prevPos = nil
 local painkillerAmount = 0
 
-local function sendBleedAlert()
-    if IsDead or tonumber(IsBleeding) > 0 then return end
-    lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(IsBleeding)].label, type = 'inform' })
-end
-
 ---reduce bleeding by level. Bleed level cannot be negative.
 ---@param level number
 local function removeBleed(level)
     if IsBleeding == 0 then return end
-    if IsBleeding - level < 0 then
-        IsBleeding = 0
-    else
-        IsBleeding -= level
-    end
-    sendBleedAlert()
-end
-
----TODO: refactor as this is similar to ApplyBleed(level)
----@param level 1|2|3|4
-local function applyBleed(level)
-    if IsBleeding >= 4 then return end
-
-    if IsBleeding + level > 4 then
-        IsBleeding = 4
-    else
-        IsBleeding += level
-    end
-    sendBleedAlert()
+    IsBleeding = (IsBleeding - level < 0) and 0 or (IsBleeding - level)
+    SendBleedAlert()
 end
 
 -- Events
@@ -212,15 +190,15 @@ end
 local function applyBleedEffects(ped)
     local bleedDamage = tonumber(IsBleeding) * Config.BleedTickDamage
     ApplyDamageToPed(ped, bleedDamage, false)
-    sendBleedAlert()
+    SendBleedAlert()
     PlayerHealth = PlayerHealth - bleedDamage
     local randX = math.random() + math.random(-1, 1)
     local randY = math.random() + math.random(-1, 1)
     local coords = GetOffsetFromEntityInWorldCoords(ped, randX, randY, 0)
-    TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid, QBCore.Functions.GetPlayerData().metadata["bloodtype"], coords)
+    TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid, QBCore.Functions.GetPlayerData().metadata.bloodtype, coords)
 
     if AdvanceBleedTimer >= Config.AdvanceBleedTimer then
-        applyBleed(1)
+        ApplyBleed(1)
         AdvanceBleedTimer = 0
     else
         AdvanceBleedTimer += 1

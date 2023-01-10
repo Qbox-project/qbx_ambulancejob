@@ -92,7 +92,7 @@ local function doLimbAlert()
 end
 
 ---notify the player of bleeding to their body.
-local function doBleedAlert()
+function SendBleedAlert()
     if IsDead or tonumber(IsBleeding) <= 0 then return end
     lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(IsBleeding)].label, type = 'inform' })
 end
@@ -102,7 +102,7 @@ end
 function ApplyBleed(level)
     if IsBleeding == 4 then return end
     IsBleeding = (IsBleeding + level >= 4) and 4 or (IsBleeding + level)
-    doBleedAlert()
+    SendBleedAlert()
 end
 
 ---@return boolean isInjuryCausingLimp if injury causes a limp and is damaged.
@@ -155,7 +155,7 @@ function ResetPartial()
 
     MakePedLimp(cache.ped)
     doLimbAlert()
-    doBleedAlert()
+    SendBleedAlert()
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = BodyParts,
@@ -192,7 +192,7 @@ local function resetAll()
 
     MakePedLimp(cache.ped)
     doLimbAlert()
-    doBleedAlert()
+    SendBleedAlert()
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = BodyParts,
