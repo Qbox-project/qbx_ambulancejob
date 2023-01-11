@@ -131,7 +131,6 @@ local function applyDamage(ped, damageDone, isArmorDamaged)
     elseif Config.AlwaysBleedChanceWeapons[weapon]
         and math.random(100) < Config.AlwaysBleedChance
         and not checkBodyHitOrWeakWeapon(isArmorDamaged, bodypart, weapon) then
-
         ApplyBleed(1)
     end
 end
