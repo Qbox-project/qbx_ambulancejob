@@ -9,7 +9,7 @@ shared_scripts {
 	'locales/en.lua',
 	'locales/*.lua',
 	'config.lua',
-	'@ox_lib/init.lua'
+	'@ox_lib/init.lua',
 }
 
 client_scripts {
@@ -26,7 +26,7 @@ client_scripts {
 
 server_scripts {
 	'@oxmysql/lib/MySQL.lua',
-	'server/main.lua'
+	'server/main.lua',
 }
 
 lua54 'yes'

@@ -1,12 +1,19 @@
+---based off of injuries to leg bodyparts of a certain severity.
+---@param injury Injury
+---@return boolean isLegDamaged if leg is considered damaged
 local function isLegDamaged(injury)
     return (injury.part == 'LLEG' and injury.severity > 1) or (injury.part == 'RLEG' and injury.severity > 1) or (injury.part == 'LFOOT' and injury.severity > 2) or (injury.part == 'RFOOT' and injury.severity > 2)
 end
 
+---shake camera and ragdoll player forward
+---@param ped number
 local function makePedFall(ped)
     ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
     SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 end
 
+---makes player fall based on random number determined by leg injuries. Difference chance while player is walking vs running.
+---@param ped number
 local function chancePedFalls(ped)
     if IsPedRagdoll(ped) or not IsPedOnFoot(ped) then return end
     local chance = (IsPedRunning(ped) or IsPedSprinting(ped)) and Config.LegInjuryChance.Running or Config.LegInjuryChance.Walking
@@ -15,17 +22,26 @@ local function chancePedFalls(ped)
     makePedFall(ped)
 end
 
+---checks if left arm is damaged based off of injury location and severity.
+---@param injury Injury
+---@return boolean isDamaged true if the left arm is damaged
 local function isLeftArmDamaged(injury)
     return (injury.part == 'LARM' and injury.severity > 1) or (injury.part == 'LHAND' and injury.severity > 1) or (injury.part == 'LFINGER' and injury.severity > 2)
 end
 
+---checks if either arm is damaged based on injury location and severity.
+---@param injury Injury
+---@return boolean isDamaged true if either arm is damaged
 local function isArmDamaged(injury)
     return isLeftArmDamaged(injury) or (injury.part == 'RARM' and injury.severity > 1) or (injury.part == 'RHAND' and injury.severity > 1) or (injury.part == 'RFINGER' and injury.severity > 2)
 end
 
-local function disableArms(ped, injury)
+---enforce following arm disabilities on the player for a set time period:
+---Disable left turns in vehicles; disable weapon firing for left arm injuries, and weapon aiming for right arm injuries.
+---@param ped number the player's ped
+---@param leftArmDamaged boolean true if the player's left arm is damaged, false if the right arm is damaged. 
+local function disableArms(ped, leftArmDamaged)
     local disableTimer = 15
-    local isLeftArm = isLeftArmDamaged(injury)
     while disableTimer > 0 do
         if IsPedInAnyVehicle(ped, true) then
             DisableControlAction(0, 63, true) -- veh turn left
@@ -33,7 +49,7 @@ local function disableArms(ped, injury)
 
         local playerId = cache.playerId
         if IsPlayerFreeAiming(playerId) then
-            if isLeftArm then
+            if leftArmDamaged then
                 DisablePlayerFiring(playerId, true) -- Disable weapon firing
             else
                 DisableControlAction(0, 25, true) -- Disable weapon aiming
@@ -45,10 +61,15 @@ local function disableArms(ped, injury)
     end
 end
 
+---returns whether the player's head is damaged based on injury location and severity.
+---@param injury Injury
+---@return boolean
 local function isHeadDamaged(injury)
     return injury.part == 'HEAD' and injury.severity > 2
 end
 
+---flash screen, fade out, ragdoll, fade in.
+---@param ped number
 local function playBrainDamageEffectAndRagdoll(ped)
     SetFlash(0, 0, 100, 10000, 100)
 
@@ -67,9 +88,9 @@ local function playBrainDamageEffectAndRagdoll(ped)
 end
 
 ---applies disabling status effects based on injuries to specific body parts
----@param ped any
+---@param ped number
 function ApplyDamageEffects(ped)
-    if IsDead or InLaststand or onPainKillers or IsInHospitalBed then return end
+    if IsDead or InLaststand or OnPainKillers or IsInHospitalBed then return end
     for _, injury in pairs(Injured) do
         if isLegDamaged(injury) then
             if LegCount >= Config.LegInjuryTimer then
@@ -81,7 +102,7 @@ function ApplyDamageEffects(ped)
         elseif isArmDamaged(injury) then
             if ArmCount >= Config.ArmInjuryTimer then
                 CreateThread(function()
-                    disableArms(ped, injury)
+                    disableArms(ped, isLeftArmDamaged(injury))
                 end)
                 ArmCount = 0
             else

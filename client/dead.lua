@@ -1,16 +1,15 @@
-deathTime = 0
-emsNotified = false
-
-local function playDeadAnimation(player)
+---@param ped number
+local function playDeadAnimation(ped)
     if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
-        TaskPlayAnim(player, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
+        TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
     else
         lib.requestAnimDict(DeadAnimDict)
-        TaskPlayAnim(player, DeadAnimDict, DeadAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
+        TaskPlayAnim(ped, DeadAnimDict, DeadAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
     end
 end
 
+---put player in death animation, make invincible, and notify EMS.
 function OnDeath()
     if IsDead then return end
     IsDead = true
@@ -28,12 +27,13 @@ function OnDeath()
     TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_died'))
 end
 
-function DeathTimer()
+---Allow player to respawn
+function AllowRespawn()
     local hold = 5
     while IsDead do
         Wait(1000)
-        deathTime -= 1
-        if deathTime <= 0 then
+        DeathTime -= 1
+        if DeathTime <= 0 then
             if IsControlPressed(0, 38) and hold <= 0 and not IsInHospitalBed then
                 TriggerEvent("hospital:client:RespawnAtHospital")
             end
@@ -47,6 +47,10 @@ function DeathTimer()
     end
 end
 
+---log the death of a player along with the attacker and the weapon used.
+---@param victim number ped
+---@param attacker number ped
+---@param weapon string weapon hash
 local function logDeath(victim, attacker, weapon)
     local playerid = NetworkGetPlayerIndexFromPed(victim)
     local playerName = GetPlayerName(playerid) .. " " .. "(" .. GetPlayerServerId(playerid) .. ")" or Lang:t('info.self_death')
@@ -57,7 +61,9 @@ local function logDeath(victim, attacker, weapon)
     TriggerServerEvent("qb-log:server:CreateLog", "death", Lang:t('logs.death_log_title', { playername = playerName, playerid = GetPlayerServerId(playerid) }), "red", Lang:t('logs.death_log_message', { killername = killerName, playername = playerName, weaponlabel = weaponLabel, weaponname = weaponName }))
 end
 
--- Damage Handler
+---when player is killed by another player, set last stand mode, or if already in last stand mode, set player to dead mode.
+---@param event string
+---@param data table
 AddEventHandler('gameEventTriggered', function(event, data)
     if event ~= "CEventNetworkEntityDamage" then return end
     local victim, attacker, victimDied, weapon = data[1], data[2], data[4], data[7]
@@ -67,8 +73,8 @@ AddEventHandler('gameEventTriggered', function(event, data)
     elseif InLaststand and not IsDead then
         endLastStand()
         logDeath(victim, attacker, weapon)
-        deathTime = Config.DeathTime
+        DeathTime = Config.DeathTime
         OnDeath()
-        DeathTimer()
+        AllowRespawn()
     end
 end)

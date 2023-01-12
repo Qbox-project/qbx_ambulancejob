@@ -68,15 +68,15 @@ RegisterNetEvent('QBCore:Client:OnJobUpdate', function(jobInfo)
     playerJob = jobInfo
     if playerJob.name ~= 'ambulance' then return end
     if playerJob.onduty then
-        TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
+        TriggerServerEvent("hospital:server:AddDoctor")
     else
-        TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
+        TriggerServerEvent("hospital:server:RemoveDoctor")
     end
 end)
 
 ---Initialize health and armor settings on the player's ped
----@param ped any
----@param playerId any
+---@param ped number
+---@param playerId number
 ---@param playerMetadata any
 local function initHealthAndArmor(ped, playerId, playerMetadata)
     SetEntityHealth(ped, playerMetadata.health)
@@ -89,9 +89,9 @@ end
 ---@param metadata any
 local function initDeathAndLastStand(metadata)
     if not metadata.inlaststand and metadata.isdead then
-        deathTime = Laststand.ReviveInterval
+        DeathTime = Laststand.ReviveInterval
         OnDeath()
-        DeathTimer()
+        AllowRespawn()
     elseif metadata.inlaststand and not metadata.isdead then
         startLastStand()
     else
@@ -112,14 +112,14 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         initHealthAndArmor(ped, playerId, playerData.metadata)
         initDeathAndLastStand(playerData.metadata)
         if playerJob.name ~= 'ambulance' or not playerJob.onduty then return end
-        TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
+        TriggerServerEvent("hospital:server:AddDoctor")
     end)
 end)
 
 ---Update doctor count.
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     if playerJob.name ~= 'ambulance' or not playerJob.onduty then return end
-    TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
+    TriggerServerEvent("hospital:server:RemoveDoctor")
 end)
 
 ---Updates doctor count when player goes on/off duty.
@@ -127,9 +127,9 @@ end)
 RegisterNetEvent('QBCore:Client:SetDuty', function(onDuty)
     if playerJob.name ~= 'ambulance' or onDuty == playerJob.onduty then return end
     if onDuty then
-        TriggerServerEvent("hospital:server:AddDoctor", playerJob.name)
+        TriggerServerEvent("hospital:server:AddDoctor")
     else
-        TriggerServerEvent("hospital:server:RemoveDoctor", playerJob.name)
+        TriggerServerEvent("hospital:server:RemoveDoctor")
     end
 end)
 
@@ -438,7 +438,7 @@ CreateThread(function()
     end
 end)
 
--- Convar turns into a boolean
+---Sets up duty toggle, stash, armory, and elevator interactions using either target or zones.
 if Config.UseTarget then
     CreateThread(function()
         for k, v in pairs(Config.Locations["duty"]) do

@@ -12,18 +12,49 @@ HeadCount = 0
 PlayerHealth = nil
 IsDead = false
 IsStatusChecking = false
+
+---@class StatusCheck
+---@field bone number boneId
+---@field label string representing severity of the wound
+
+---@type StatusCheck[]
 StatusChecks = {}
 StatusCheckTime = 0
 HealAnimDict = "mini@cpr@char_a@cpr_str"
 HealAnim = "cpr_pumpchest"
+
+---@type Injury[]
 Injured = {}
+
 DeadAnimDict = "dead"
 DeadAnim = "dead_a"
 DoctorCount = 0
+DeathTime = 0
+EmsNotified = false
+
+---@type number[] weapon hashes
 CurrentDamageList = {}
+
 CanLeaveBed = true
 BedOccupying = nil
+Laststand = {
+    ReviveInterval = 360,
+    MinimumRevive = 300,
+}
+InLaststand = false
+LaststandTime = 0
+LastStandDict = "combat@damage@writhe"
+LastStandAnim = "writhe_loop"
+IsEscorted = false
+OnPainKillers = false
 
+---@class BodyPart
+---@field label string
+---@field causeLimp boolean
+---@field isDamaged boolean
+---@field severity integer
+
+---@type table<Bone, BodyPart>
 BodyParts = {
     ['HEAD'] = { label = Lang:t('body.head'), causeLimp = false, isDamaged = false, severity = 0 },
     ['NECK'] = { label = Lang:t('body.neck'), causeLimp = false, isDamaged = false, severity = 0 },
@@ -42,7 +73,7 @@ BodyParts = {
     ['RFOOT'] = { label = Lang:t('body.right_foot'), causeLimp = true, isDamaged = false, severity = 0 },
 }
 
--- Functions
+---notify the player of damage to their body.
 local function doLimbAlert()
     if IsDead or InLaststand or #Injured == 0 then return end
 
@@ -60,17 +91,21 @@ local function doLimbAlert()
     lib.notify({ description = limbDamageMsg, type = 'error' })
 end
 
+---notify the player of bleeding to their body.
 local function doBleedAlert()
     if IsDead or tonumber(IsBleeding) <= 0 then return end
     lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(IsBleeding)].label, type = 'inform' })
 end
 
+---adds a bleed to the player and alerts them. Total bleed level maxes at 4.
+---@param level 1|2|3|4 speed of the bleed
 function ApplyBleed(level)
     if IsBleeding == 4 then return end
     IsBleeding = (IsBleeding + level >= 4) and 4 or (IsBleeding + level)
     doBleedAlert()
 end
 
+---@return boolean isInjuryCausingLimp if injury causes a limp and is damaged.
 local function isInjuryCausingLimp()
     for _, v in pairs(BodyParts) do
         if v.causeLimp and v.isDamaged then
@@ -80,6 +115,7 @@ local function isInjuryCausingLimp()
     return false
 end
 
+---sets ped animation to limping and prevents running.
 function MakePedLimp(ped)
     if not isInjuryCausingLimp() then return end
     lib.requestAnimSet("move_m@injured")
@@ -87,7 +123,7 @@ function MakePedLimp(ped)
     SetPlayerSprint(cache.playerId, false)
 end
 
-function ResetPartial()
+function ResetMajorInjuries()
     for _, v in pairs(BodyParts) do
         if v.isDamaged and v.severity <= 2 then
             v.isDamaged = false
@@ -126,7 +162,7 @@ function ResetPartial()
     })
 end
 
-local function resetAll()
+local function resetAllInjuries()
     IsBleeding = 0
     BleedTickTimer = 0
     AdvanceBleedTimer = 0
@@ -163,6 +199,10 @@ local function resetAll()
     TriggerServerEvent("hospital:server:resetHungerThirst")
 end
 
+---creates an injury on body part with random severity between 1 and maxSeverity.
+---@param bodyPart BodyPart
+---@param bone Bone
+---@param maxSeverity number
 function CreateInjury(bodyPart, bone, maxSeverity)
     if bodyPart.isDamaged then return end
 
@@ -177,6 +217,9 @@ end
 
 -- Events
 
+---notifies EMS of a injury at a location
+---@param coords vector3
+---@param text string
 RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
@@ -215,6 +258,7 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     end
 end)
 
+---Revives player, healing all injuries
 RegisterNetEvent('hospital:client:Revive', function()
     local ped = cache.ped
 
@@ -238,15 +282,16 @@ RegisterNetEvent('hospital:client:Revive', function()
     SetEntityHealth(ped, 200)
     ClearPedBloodDamage(ped)
     SetPlayerSprint(cache.playerId, true)
-    resetAll()
+    resetAllInjuries()
     ResetPedMovementClipset(ped, 0.0)
     TriggerServerEvent('hud:server:RelieveStress', 100)
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
-    emsNotified = false
+    EmsNotified = false
     lib.notify({ description = Lang:t('info.healthy'), type = 'inform' })
 end)
 
+---Creates random injuries on the player
 RegisterNetEvent('hospital:client:SetPain', function()
     ApplyBleed(math.random(1, 4))
     local bone = Config.Bones[24816]
@@ -266,17 +311,22 @@ RegisterNetEvent('hospital:client:KillPlayer', function()
     SetEntityHealth(cache.ped, 0)
 end)
 
+---heals player wounds.
+---@param type? "full"|any heals all wounds if full otherwise heals only major wounds.
 RegisterNetEvent('hospital:client:HealInjuries', function(type)
     if type == "full" then
-        resetAll()
+        resetAllInjuries()
     else
-        ResetPartial()
+        ResetMajorInjuries()
     end
     TriggerServerEvent("hospital:server:RestoreWeaponDamage")
 
     lib.notify({ description = Lang:t('success.wounds_healed'), type = 'success' })
 end)
 
+---@param bedsKey "jailbeds"|"beds"
+---@param id number
+---@param isTaken boolean
 RegisterNetEvent('hospital:client:SetBed', function(bedsKey, id, isTaken)
     Config.Locations[bedsKey][id].taken = isTaken
 end)
@@ -289,6 +339,8 @@ RegisterNetEvent('hospital:client:RespawnAtHospital', function()
     TriggerEvent("police:client:DeEscort")
 end)
 
+---sends player phone email with hospital bill.
+---@param amount number
 RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
     SetTimeout(math.random(2500, 4000), function()
         local gender = QBCore.Functions.GetPlayerData().charinfo.gender == 1 and Lang:t('info.mrs') or Lang:t('info.mr')
@@ -302,6 +354,7 @@ RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
     end)
 end)
 
+---@param amount integer
 RegisterNetEvent('hospital:client:SetDoctorCount', function(amount)
     DoctorCount = amount
 end)
@@ -311,6 +364,7 @@ RegisterNetEvent('hospital:client:adminHeal', function()
     TriggerServerEvent("hospital:server:resetHungerThirst")
 end)
 
+---sync settings to server when player logs out.
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     local ped = cache.ped
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
@@ -320,14 +374,15 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
         TriggerServerEvent("hospital:server:LeaveBed", BedOccupying)
     end
     IsDead = false
-    deathTime = 0
+    DeathTime = 0
     SetEntityInvincible(ped, false)
     SetPedArmour(ped, 0)
-    resetAll()
+    resetAllInjuries()
 end)
 
 -- Threads
 
+---sets blips for stations on map
 CreateThread(function()
     for _, station in pairs(Config.Locations["stations"]) do
         local blip = AddBlipForCoord(station.coords.x, station.coords.y, station.coords.z)

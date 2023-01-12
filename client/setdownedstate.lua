@@ -1,3 +1,14 @@
+---displays text on the player's screen.
+---@param x number
+---@param y number
+---@param width number
+---@param height number
+---@param scale number
+---@param text string
+---@param r number
+---@param g number
+---@param b number
+---@param a number
 local function drawTxt(x, y, width, height, scale, text, r, g, b, a)
     SetTextFont(4)
     SetTextProportional(false)
@@ -22,13 +33,14 @@ local function isEmsOnDuty()
 end
 
 local function displayRespawnText()
-    if deathTime > 0 and isEmsOnDuty() then
-        drawTxt(0.93, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), 255, 255, 255, 255)
+    if DeathTime > 0 and isEmsOnDuty() then
+        drawTxt(0.93, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_txt', { deathtime = math.ceil(DeathTime) }), 255, 255, 255, 255)
     else
         drawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', { holdtime = hold, cost = Config.BillCost }), 255, 255, 255, 255)
     end
 end
 
+---@param ped number
 local function playDeadAnimation(ped)
     if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
@@ -50,6 +62,7 @@ local function playDeadAnimation(ped)
     end
 end
 
+---@param ped number
 local function handleDead(ped)
     if not IsInHospitalBed then
         displayRespawnText()
@@ -59,6 +72,7 @@ local function handleDead(ped)
     SetCurrentPedWeapon(ped, `WEAPON_UNARMED`, true)
 end
 
+---@param ped number
 local function playEscortedLastStandAnimation(ped)
     if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
@@ -66,13 +80,14 @@ local function playEscortedLastStandAnimation(ped)
             StopAnimTask(ped, "veh@low@front_ps@idle_duck", "sit", 3)
         end
     else
-        lib.requestAnimDict(lastStandDict)
-        if IsEntityPlayingAnim(ped, lastStandDict, lastStandAnim, 3) then
-            StopAnimTask(ped, lastStandDict, lastStandAnim, 3)
+        lib.requestAnimDict(LastStandDict)
+        if IsEntityPlayingAnim(ped, LastStandDict, LastStandAnim, 3) then
+            StopAnimTask(ped, LastStandDict, LastStandAnim, 3)
         end
     end
 end
 
+---@param ped number
 local function playUnescortedLastStandAnimation(ped)
     if cache.vehicle then
         lib.requestAnimDict("veh@low@front_ps@idle_duck")
@@ -80,35 +95,37 @@ local function playUnescortedLastStandAnimation(ped)
             TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
         end
     else
-        lib.requestAnimDict(lastStandDict)
-        if not IsEntityPlayingAnim(ped, lastStandDict, lastStandAnim, 3) then
-            TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
+        lib.requestAnimDict(LastStandDict)
+        if not IsEntityPlayingAnim(ped, LastStandDict, LastStandAnim, 3) then
+            TaskPlayAnim(ped, LastStandDict, LastStandAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
         end
     end
 end
 
+---@param ped number
 local function playLastStandAnimation(ped)
-    if isEscorted then
+    if IsEscorted then
         playEscortedLastStandAnimation(ped)
     else
         playUnescortedLastStandAnimation(ped)
     end
 end
 
+---@param ped number
 local function handleLastStand(ped)
     if LaststandTime > Laststand.MinimumRevive then
         drawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
     else
         drawTxt(0.845, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out_help', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
-        if not emsNotified then
+        if not EmsNotified then
             drawTxt(0.91, 1.40, 1.0, 1.0, 0.6, Lang:t('info.request_help'), 255, 255, 255, 255)
         else
             drawTxt(0.90, 1.40, 1.0, 1.0, 0.6, Lang:t('info.help_requested'), 255, 255, 255, 255)
         end
 
-        if IsControlJustPressed(0, 47) and not emsNotified and isEmsOnDuty() then
+        if IsControlJustPressed(0, 47) and not EmsNotified and isEmsOnDuty() then
             TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
-            emsNotified = true
+            EmsNotified = true
         end
     end
 
@@ -130,7 +147,7 @@ local function disableControls()
     EnableControlAction(0, 47, true)
 end
 
---- Set dead and last stand states.
+---Set dead and last stand states.
 CreateThread(function()
     while true do
         if IsDead or InLaststand then
