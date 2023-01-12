@@ -123,8 +123,7 @@ function MakePedLimp(ped)
     SetPlayerSprint(cache.playerId, false)
 end
 
----resets major injuries
-function ResetPartial()
+function ResetMajorInjuries()
     for _, v in pairs(BodyParts) do
         if v.isDamaged and v.severity <= 2 then
             v.isDamaged = false
@@ -163,8 +162,7 @@ function ResetPartial()
     })
 end
 
----resets all injuries
-local function resetAll()
+local function resetAllInjuries()
     IsBleeding = 0
     BleedTickTimer = 0
     AdvanceBleedTimer = 0
@@ -284,7 +282,7 @@ RegisterNetEvent('hospital:client:Revive', function()
     SetEntityHealth(ped, 200)
     ClearPedBloodDamage(ped)
     SetPlayerSprint(cache.playerId, true)
-    resetAll()
+    resetAllInjuries()
     ResetPedMovementClipset(ped, 0.0)
     TriggerServerEvent('hud:server:RelieveStress', 100)
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
@@ -317,9 +315,9 @@ end)
 ---@param type? "full"|any heals all wounds if full otherwise heals only major wounds.
 RegisterNetEvent('hospital:client:HealInjuries', function(type)
     if type == "full" then
-        resetAll()
+        resetAllInjuries()
     else
-        ResetPartial()
+        ResetMajorInjuries()
     end
     TriggerServerEvent("hospital:server:RestoreWeaponDamage")
 
@@ -379,7 +377,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     DeathTime = 0
     SetEntityInvincible(ped, false)
     SetPedArmour(ped, 0)
-    resetAll()
+    resetAllInjuries()
 end)
 
 -- Threads

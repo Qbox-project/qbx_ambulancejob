@@ -77,7 +77,7 @@ RegisterNetEvent('hospital:client:UseBandage', function()
         duration = 4000,
         position = 'bottom',
         label = Lang:t('progress.bandage'),
-        useWhileDead = false,
+        useWResetMajorInjuriesalse,
         canCancel = true,
         disable = {
             move = false,
