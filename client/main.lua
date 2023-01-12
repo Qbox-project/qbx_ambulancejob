@@ -6,20 +6,11 @@ IsInHospitalBed = false
 IsBleeding = 0
 BleedTickTimer, AdvanceBleedTimer = 0, 0
 FadeOutTimer, BlackoutTimer = 0, 0
-LegCount = 0
-ArmCount = 0
-HeadCount = 0
+
+---@type number
 PlayerHealth = nil
+
 IsDead = false
-IsStatusChecking = false
-
----@class StatusCheck
----@field bone number boneId
----@field label string representing severity of the wound
-
----@type StatusCheck[]
-StatusChecks = {}
-StatusCheckTime = 0
 HealAnimDict = "mini@cpr@char_a@cpr_str"
 HealAnim = "cpr_pumpchest"
 
@@ -28,7 +19,6 @@ Injured = {}
 
 DeadAnimDict = "dead"
 DeadAnim = "dead_a"
-DoctorCount = 0
 DeathTime = 0
 EmsNotified = false
 
@@ -92,7 +82,7 @@ local function doLimbAlert()
 end
 
 ---notify the player of bleeding to their body.
-local function doBleedAlert()
+function SendBleedAlert()
     if IsDead or tonumber(IsBleeding) <= 0 then return end
     lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(IsBleeding)].label, type = 'inform' })
 end
@@ -102,7 +92,7 @@ end
 function ApplyBleed(level)
     if IsBleeding == 4 then return end
     IsBleeding = (IsBleeding + level >= 4) and 4 or (IsBleeding + level)
-    doBleedAlert()
+    SendBleedAlert()
 end
 
 ---@return boolean isInjuryCausingLimp if injury causes a limp and is damaged.
@@ -154,7 +144,7 @@ function ResetMajorInjuries()
 
     MakePedLimp(cache.ped)
     doLimbAlert()
-    doBleedAlert()
+    SendBleedAlert()
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = BodyParts,
@@ -190,7 +180,7 @@ local function resetAllInjuries()
 
     MakePedLimp(cache.ped)
     doLimbAlert()
-    doBleedAlert()
+    SendBleedAlert()
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = BodyParts,
@@ -352,11 +342,6 @@ RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
             button = {}
         })
     end)
-end)
-
----@param amount integer
-RegisterNetEvent('hospital:client:SetDoctorCount', function(amount)
-    DoctorCount = amount
 end)
 
 RegisterNetEvent('hospital:client:adminHeal', function()

@@ -1,10 +1,8 @@
 local listen = false
-local closestBed = nil
-local getOutDict = 'switch@franklin@bed'
-local getOutAnim = 'sleep_getup_rubeyes'
 local bedObject = nil
 local bedOccupyingData = nil
 local cam = nil
+local doctorCount = 0
 
 ---checks if bed is available and within 500 distance of pos
 ---@param pos vector3 position close to bed
@@ -35,7 +33,7 @@ end
 
 ---Triggered on player checking into the hospital. Notifies doctors, and puts player in a hospital bed.
 RegisterNetEvent('qb-ambulancejob:checkin', function()
-    if DoctorCount >= Config.MinimalDoctors then
+    if doctorCount >= Config.MinimalDoctors then
         TriggerServerEvent("hospital:server:SendDoctorAlert")
         return
     end
@@ -73,8 +71,27 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
     end
 end)
 
+---@return integer index of the closest bed to the player.
+local function getClosestBed()
+    if IsInHospitalBed then return end
+
+    local pos = GetEntityCoords(cache.ped, true)
+    local closest = nil
+    local minDist = nil
+    for index, bed in pairs(Config.Locations["beds"]) do
+        local bedDistance = #(pos - vector3(bed.coords.x, bed.coords.y, bed.coords.z))
+        if not closest or bedDistance < minDist then
+            closest = index
+            minDist = bedDistance
+        end
+    end
+
+    return closest
+end
+
 ---Puts player in the closest hospital bed if available.
 RegisterNetEvent('qb-ambulancejob:beds', function()
+    local closestBed = getClosestBed()
     if getAvailableBed(closestBed) then
         TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
     else
@@ -148,7 +165,7 @@ else
     CreateThread(function()
         for _, v in pairs(Config.Locations["checking"]) do
             local function enterCheckInZone()
-                if DoctorCount >= Config.MinimalDoctors then
+                if doctorCount >= Config.MinimalDoctors then
                     lib.showTextUI(Lang:t('text.call_doc'))
                     CreateThread(function()
                         checkInControls("checkin")
@@ -197,43 +214,11 @@ else
     end)
 end
 
----Find closest bed to player and set variable
-local function setClosestBed()
-    if IsInHospitalBed then return end
-
-    local pos = GetEntityCoords(cache.ped, true)
-    local current = nil
-    local minDist = nil
-    for index, bed in pairs(Config.Locations["beds"]) do
-        local bedDistance = #(pos - vector3(bed.coords.x, bed.coords.y, bed.coords.z))
-        if not current or bedDistance < minDist then
-            current = index
-            minDist = bedDistance
-        end
-    end
-
-    if current == closestBed then return end
-    closestBed = current
-end
-
----set closest bed and times status checks, resetting them when status check time reaches 0.
-CreateThread(function()
-    while true do
-        Wait(1000)
-        setClosestBed()
-        if IsStatusChecking then
-            StatusCheckTime -= 1
-            if StatusCheckTime <= 0 then
-                StatusChecks = {}
-                IsStatusChecking = false
-            end
-        end
-    end
-end)
-
 ---plays animation to get out of bed and resets variables
 local function leaveBed()
     local ped = cache.ped
+    local getOutDict = 'switch@franklin@bed'
+    local getOutAnim = 'sleep_getup_rubeyes'
 
     lib.requestAnimDict(getOutDict)
     FreezeEntityPosition(ped, false)
@@ -342,4 +327,9 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
             CanLeaveBed = true
         end
     end)
+end)
+
+---@param amount integer
+RegisterNetEvent('hospital:client:SetDoctorCount', function(amount)
+    doctorCount = amount
 end)
