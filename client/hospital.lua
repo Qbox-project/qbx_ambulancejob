@@ -21,10 +21,10 @@ local function getAvailableBed(bedId)
     local pos = GetEntityCoords(cache.ped)
 
     if bedId then
-        return isBedAvailable(pos, Config.Locations["beds"][bedId]) and bedId or nil
+        return isBedAvailable(pos, Config.Locations.beds[bedId]) and bedId or nil
     end
 
-    for index, bed in pairs(Config.Locations["beds"]) do
+    for index, bed in pairs(Config.Locations.beds) do
         if isBedAvailable(pos, bed) then
             return index
         end
@@ -78,7 +78,7 @@ local function getClosestBed()
     local pos = GetEntityCoords(cache.ped, true)
     local closest = nil
     local minDist = nil
-    for index, bed in pairs(Config.Locations["beds"]) do
+    for index, bed in pairs(Config.Locations.beds) do
         local bedDistance = #(pos - vector3(bed.coords.x, bed.coords.y, bed.coords.z))
         if not closest or bedDistance < minDist then
             closest = index
@@ -121,7 +121,7 @@ end
 ---Set up check-in and getting into beds using either target or zones
 if Config.UseTarget then
     CreateThread(function()
-        for k, v in pairs(Config.Locations["checking"]) do
+        for k, v in pairs(Config.Locations.checking) do
             exports.ox_target:addBoxZone({
                 name = "checking" .. k,
                 coords = vec3(v.x, v.y, v.z),
@@ -141,7 +141,7 @@ if Config.UseTarget then
             })
         end
 
-        for k, v in pairs(Config.Locations["beds"]) do
+        for k, v in pairs(Config.Locations.beds) do
             exports.ox_target:addBoxZone({
                 name = "beds" .. k,
                 coords = vec3(v.coords.x, v.coords.y, v.coords.z),
@@ -163,7 +163,7 @@ if Config.UseTarget then
     end)
 else
     CreateThread(function()
-        for _, v in pairs(Config.Locations["checking"]) do
+        for _, v in pairs(Config.Locations.checking) do
             local function enterCheckInZone()
                 if doctorCount >= Config.MinimalDoctors then
                     lib.showTextUI(Lang:t('text.call_doc'))
@@ -189,7 +189,7 @@ else
                 onExit = outCheckInZone
             })
         end
-        for _, v in pairs(Config.Locations["beds"]) do
+        for _, v in pairs(Config.Locations.beds) do
             local function enterBedZone()
                 lib.showTextUI(Lang:t('text.lie_bed'))
                 CreateThread(function()

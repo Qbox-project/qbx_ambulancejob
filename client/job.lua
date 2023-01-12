@@ -4,13 +4,6 @@ local checkHeli = false
 local checkVehicle = false
 local check = false
 
----@class StatusCheck
----@field bone number boneId
----@field label string representing severity of the wound
-
----@type StatusCheck[]
-local statusChecks = {}
-
 ---Configures and spawns a vehicle and teleports player to the driver seat
 ---@param veh any
 ---@param platePrefix string prefix of the license plate of the vehicle
@@ -27,7 +20,7 @@ end
 ---Configures and spawns a helicopter and teleports player to the driver seat
 ---@param location number index of the helicopter spawn location
 local function takeOutHeli(location)
-    local coords = Config.Locations["helicopter"][location]
+    local coords = Config.Locations.helicopter[location]
     QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
         local veh = NetToVeh(netId)
         takeOutVehicle(veh, Lang:t('info.heli_plate'), coords.w)
@@ -38,7 +31,7 @@ end
 ---Configures and spawns an automobile and teleports player to the driver seat.
 ---@param vehicleName string name of vehicle to reference as config key
 RegisterNetEvent('ambulance:client:TakeOutVehicle', function(vehicleName)
-    local coords = Config.Locations["vehicle"][currentGarage]
+    local coords = Config.Locations.vehicle[currentGarage]
     QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
         local veh = NetToVeh(netId)
         takeOutVehicle(veh, Lang:t('info.amb_plate'), coords.w)
@@ -141,11 +134,12 @@ RegisterNetEvent('QBCore:Client:SetDuty', function(onDuty)
 end)
 
 ---show patient's treatment menu.
-local function showTreatmentMenu()
+---@param status string[]
+local function showTreatmentMenu(status)
     local statusMenu = {}
-    for _, v in pairs(statusChecks) do
-        statusMenu[#statusMenu + 1] = {
-            title = v.label,
+    for i=1, #status do
+        statusMenu[i] = {
+            title = status[i],
             event = "hospital:client:TreatWounds",
         }
     end
@@ -158,35 +152,18 @@ local function showTreatmentMenu()
     lib.showContext('ambulance_status_context_menu')
 end
 
----notify doctor in chat of a patient's health status.
----TODO: Refactor
----@param k string
----@param v table | integer
----@param result table
-local function getPatientStatus(k, v, result)
-    if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
-        statusChecks[#statusChecks + 1] = { bone = Config.BoneIndexes[k], label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
-    elseif result["WEAPONWOUNDS"] then
-        for _, v2 in pairs(result["WEAPONWOUNDS"]) do
-            TriggerEvent('chat:addMessage', {
-                color = { 255, 0, 0 },
-                multiline = false,
-                args = { Lang:t('info.status'), QBCore.Shared.Weapons[v2].damagereason }
-            })
-        end
-    elseif result["BLEED"] > 0 then
-        TriggerEvent('chat:addMessage', {
-            color = { 255, 0, 0 },
-            multiline = false,
-            args = { Lang:t('info.status'), Lang:t('info.is_status', { status = Config.BleedingStates[v].label }) }
-        })
-    else
-        lib.notify({ description = Lang:t('success.healthy_player'), type = 'success' })
+---Convert wounded body part data to a human readable form
+---@param damagedBodyParts BodyParts
+---@return string[]
+local function getPatientStatus(damagedBodyParts)
+    local status = {}
+    for _, bodyPart in pairs(damagedBodyParts) do
+        status[#status + 1] = bodyPart.label .. " (" .. Config.WoundStates[bodyPart.severity] .. ")"
     end
+    return status
 end
 
 ---Check status of nearest player and show treatment menu.
----TODO: Refactor
 RegisterNetEvent('hospital:client:CheckStatus', function()
     local player, distance = GetClosestPlayer()
     if player == -1 or distance > 5.0 then
@@ -194,13 +171,32 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         return
     end
     local playerId = GetPlayerServerId(player)
-    QBCore.Functions.TriggerCallback('hospital:GetPlayerStatus', function(result)
-        if not result then return end
-        for k, v in pairs(result) do
-            getPatientStatus(k, v, result)
+    
+    ---@param damage PlayerDamage
+    QBCore.Functions.TriggerCallback('hospital:GetPlayerStatus', function(damage)
+        if not damage or (damage.bleedLevel == 0 and #damage.damagedBodyParts == 0 and #damage.weaponWounds == 0) then
+            lib.notify({ description = Lang:t('success.healthy_player'), type = 'success' })
+            return
         end
-        showTreatmentMenu()
-        statusChecks = {} --- TODO: refactor to make statusChecks a local variable to this function.
+
+        for _, hash in pairs(damage.weaponWounds) do
+            TriggerEvent('chat:addMessage', {
+                color = { 255, 0, 0 },
+                multiline = false,
+                args = { Lang:t('info.status'), QBCore.Shared.Weapons[hash].damagereason }
+            })
+        end
+
+        if damage.bleedLevel > 0 then
+            TriggerEvent('chat:addMessage', {
+                color = { 255, 0, 0 },
+                multiline = false,
+                args = { Lang:t('info.status'), Lang:t('info.is_status', { status = Config.BleedingStates[damage.bleedLevel].label }) }
+            })
+        end
+        
+        local status = getPatientStatus(damage.damagedBodyParts)
+        showTreatmentMenu(status)
     end, playerId)
 end)
 
@@ -373,12 +369,12 @@ end
 
 ---Teleports the player to main elevator
 RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
-    teleportPlayerWithFade(Config.Locations["main"][1])
+    teleportPlayerWithFade(Config.Locations.main[1])
 end)
 
 ---Teleports the player to roof elevator
 RegisterNetEvent('qb-ambulancejob:elevator_main', function()
-    teleportPlayerWithFade(Config.Locations["roof"][1])
+    teleportPlayerWithFade(Config.Locations.roof[1])
 end)
 
 ---Toggles the on duty status of the player.
@@ -391,7 +387,7 @@ end)
 ---Sets up targets and text interactions for interacting with things in the hospital;
 ---garages, heliports, elevators, stashes, armory, on duty toggle.
 CreateThread(function()
-    for k, v in pairs(Config.Locations["vehicle"]) do
+    for k, v in pairs(Config.Locations.vehicle) do
         local function inVehicleZone()
             if playerJob.name == "ambulance" and playerJob.onduty then
                 lib.showTextUI(Lang:t('text.veh_button'))
@@ -417,7 +413,7 @@ CreateThread(function()
         })
     end
 
-    for k, v in pairs(Config.Locations["helicopter"]) do
+    for k, v in pairs(Config.Locations.helicopter) do
         local function inHeliZone()
             if playerJob.name == "ambulance" and playerJob.onduty then
                 lib.showTextUI(Lang:t('text.veh_button'))
@@ -447,7 +443,7 @@ end)
 ---Sets up duty toggle, stash, armory, and elevator interactions using either target or zones.
 if Config.UseTarget then
     CreateThread(function()
-        for k, v in pairs(Config.Locations["duty"]) do
+        for k, v in pairs(Config.Locations.duty) do
             exports.ox_target:addBoxZone({
                 name = "duty" .. k,
                 coords = vec3(v.x, v.y, v.z),
@@ -466,7 +462,7 @@ if Config.UseTarget then
                 }
             })
         end
-        for k, v in pairs(Config.Locations["stash"]) do
+        for k, v in pairs(Config.Locations.stash) do
             exports.ox_target:addBoxZone({
                 name = "stash" .. k,
                 coords = vec3(v.x, v.y, v.z),
@@ -485,7 +481,7 @@ if Config.UseTarget then
                 }
             })
         end
-        for k, v in pairs(Config.Locations["armory"]) do
+        for k, v in pairs(Config.Locations.armory) do
             exports.ox_target:addBoxZone({
                 name = "armory" .. k,
                 coords = vec3(v.x, v.y, v.z),
@@ -506,7 +502,7 @@ if Config.UseTarget then
         end
         exports.ox_target:addBoxZone({
             name = "roof1",
-            coords = Config.Locations["roof"][1],
+            coords = Config.Locations.roof[1],
             size = vec3(1, 2, 2),
             rotation = -20,
             debug = false,
@@ -523,7 +519,7 @@ if Config.UseTarget then
         })
         exports.ox_target:addBoxZone({
             name = "main1",
-            coords = Config.Locations["main"][1],
+            coords = Config.Locations.main[1],
             size = vec3(2, 1, 2),
             rotation = -20,
             debug = false,
@@ -541,7 +537,7 @@ if Config.UseTarget then
     end)
 else
     CreateThread(function()
-        for _, v in pairs(Config.Locations["duty"]) do
+        for _, v in pairs(Config.Locations.duty) do
             local function EnteredSignInZone()
                 if not playerJob.onduty then
                     lib.showTextUI(Lang:t('text.onduty_button'))
@@ -567,7 +563,7 @@ else
             })
         end
 
-        for _, v in pairs(Config.Locations["stash"]) do
+        for _, v in pairs(Config.Locations.stash) do
             local function EnteredStashZone()
                 if playerJob.onduty then
                     lib.showTextUI(Lang:t('text.pstash_button'))
@@ -590,7 +586,7 @@ else
             })
         end
 
-        for _, v in pairs(Config.Locations["armory"]) do
+        for _, v in pairs(Config.Locations.armory) do
             local function EnteredArmoryZone()
                 if playerJob.onduty then
                     lib.showTextUI(Lang:t('text.armory_button'))
@@ -628,7 +624,7 @@ else
         end
 
         lib.zones.box({
-            coords = Config.Locations["roof"][1],
+            coords = Config.Locations.roof[1],
             size = vec3(1, 1, 2),
             rotation = -20,
             debug = false,
@@ -651,7 +647,7 @@ else
         end
 
         lib.zones.box({
-            coords = Config.Locations["main"][1],
+            coords = Config.Locations.main[1],
             size = vec3(1, 1, 2),
             rotation = -20,
             debug = false,
