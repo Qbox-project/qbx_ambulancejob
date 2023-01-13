@@ -111,22 +111,27 @@ local function playLastStandAnimation(ped)
     end
 end
 
+---Player is able to send a notification to EMS there are any on duty
+local function handleRequestingEms()
+    if not isEmsOnDuty() then return end
+    if not EmsNotified then
+        drawTxt(0.91, 1.40, 1.0, 1.0, 0.6, Lang:t('info.request_help'), 255, 255, 255, 255)
+        if IsControlJustPressed(0, 47) then
+            TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
+            EmsNotified = true
+        end
+    else
+        drawTxt(0.90, 1.40, 1.0, 1.0, 0.6, Lang:t('info.help_requested'), 255, 255, 255, 255)
+    end
+end
+
 ---@param ped number
 local function handleLastStand(ped)
     if LaststandTime > Laststand.MinimumRevive then
         drawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
     else
         drawTxt(0.845, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out_help', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
-        if not EmsNotified then
-            drawTxt(0.91, 1.40, 1.0, 1.0, 0.6, Lang:t('info.request_help'), 255, 255, 255, 255)
-        else
-            drawTxt(0.90, 1.40, 1.0, 1.0, 0.6, Lang:t('info.help_requested'), 255, 255, 255, 255)
-        end
-
-        if IsControlJustPressed(0, 47) and not EmsNotified and isEmsOnDuty() then
-            TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
-            EmsNotified = true
-        end
+        handleRequestingEms()
     end
 
     playLastStandAnimation(ped)
