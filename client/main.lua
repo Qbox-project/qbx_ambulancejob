@@ -6,29 +6,14 @@ IsInHospitalBed = false
 IsBleeding = 0
 BleedTickTimer, AdvanceBleedTimer = 0, 0
 FadeOutTimer, BlackoutTimer = 0, 0
-
----@type number
-PlayerHealth = nil
-
 IsDead = false
 HealAnimDict = "mini@cpr@char_a@cpr_str"
 HealAnim = "cpr_pumpchest"
-
----@class Injury
----@field part Bone body part
----@field severity integer higher numbers are worse injuries
-
----@type Injury[]
-Injured = {}
-
+RespawnHoldTime = 5
 DeadAnimDict = "dead"
 DeadAnim = "dead_a"
 DeathTime = 0
 EmsNotified = false
-
----@type number[] weapon hashes
-CurrentDamageList = {}
-
 CanLeaveBed = true
 BedOccupying = nil
 Laststand = {
@@ -41,6 +26,20 @@ LastStandDict = "combat@damage@writhe"
 LastStandAnim = "writhe_loop"
 IsEscorted = false
 OnPainKillers = false
+
+---@type number
+PlayerHealth = nil
+
+---@class Injury
+---@field part Bone body part
+---@field severity integer higher numbers are worse injuries
+---@field label string
+
+---@type Injury[]
+Injured = {}
+
+---@type number[] weapon hashes
+CurrentDamageList = {}
 
 ---@class BodyPart
 ---@field label string
@@ -89,7 +88,7 @@ end
 ---notify the player of bleeding to their body.
 function SendBleedAlert()
     if IsDead or tonumber(IsBleeding) <= 0 then return end
-    lib.notify({ title = Lang:t('info.bleed_alert'), description = Config.BleedingStates[tonumber(IsBleeding)].label, type = 'inform' })
+    lib.notify({ title = Lang:t('info.bleed_alert', {bleedstate = Config.BleedingStates[tonumber(IsBleeding)].label}), type = 'inform' })
 end
 
 ---adds a bleed to the player and alerts them. Total bleed level maxes at 4.
@@ -163,10 +162,6 @@ local function resetAllInjuries()
     AdvanceBleedTimer = 0
     FadeOutTimer = 0
     BlackoutTimer = 0
-    onDrugs = 0
-    wasOnDrugs = false
-    onPainKiller = 0
-    wasOnPainKillers = false
     Injured = {}
 
     for _, v in pairs(BodyParts) do
@@ -262,7 +257,7 @@ RegisterNetEvent('hospital:client:Revive', function()
         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(ped), true, false)
         IsDead = false
         SetEntityInvincible(ped, false)
-        endLastStand()
+        EndLastStand()
     end
 
     if IsInHospitalBed then
@@ -290,7 +285,7 @@ end)
 RegisterNetEvent('hospital:client:SetPain', function()
     ApplyBleed(math.random(1, 4))
     local bone = Config.Bones[24816]
-    
+
     CreateInjury(BodyParts[bone], bone, 4)
 
     bone = Config.Bones[40269]

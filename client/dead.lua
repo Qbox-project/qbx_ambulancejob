@@ -29,19 +29,19 @@ end
 
 ---Allow player to respawn
 function AllowRespawn()
-    local hold = 5
+    RespawnHoldTime = 5
     while IsDead do
         Wait(1000)
         DeathTime -= 1
         if DeathTime <= 0 then
-            if IsControlPressed(0, 38) and hold <= 0 and not IsInHospitalBed then
+            if IsControlPressed(0, 38) and RespawnHoldTime <= 0 and not IsInHospitalBed then
                 TriggerEvent("hospital:client:RespawnAtHospital")
             end
             if IsControlPressed(0, 38) then
-                hold -= 1
+                RespawnHoldTime -= 1
             end
             if IsControlReleased(0, 38) then
-                hold = 5
+                RespawnHoldTime = 5
             end
         end
     end
@@ -69,9 +69,9 @@ AddEventHandler('gameEventTriggered', function(event, data)
     local victim, attacker, victimDied, weapon = data[1], data[2], data[4], data[7]
     if not IsEntityAPed(victim) or not victimDied or NetworkGetPlayerIndexFromPed(victim) ~= cache.playerId or not IsEntityDead(cache.ped) then return end
     if not InLaststand then
-        startLastStand()
+        StartLastStand()
     elseif InLaststand and not IsDead then
-        endLastStand()
+        EndLastStand()
         logDeath(victim, attacker, weapon)
         DeathTime = Config.DeathTime
         OnDeath()

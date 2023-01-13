@@ -6,7 +6,7 @@ local QBCore = exports['qb-core']:GetCoreObject()
 ---@field limbs BodyParts
 ---@field isBleeding number
 
----@type table<source, PlayerStatus> 
+---@type table<source, PlayerStatus>
 local playerStatus = {}
 
 ---@type table<source, number[]> weapon hashes
@@ -305,7 +305,7 @@ end
 ---@param playerId number
 QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, playerId)
 	local playerSource = QBCore.Functions.GetPlayer(playerId).PlayerData.source
-	
+
 	---@class PlayerDamage
 	---@field damagedBodyParts BodyParts
 	---@field bleedLevel number

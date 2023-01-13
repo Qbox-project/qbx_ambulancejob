@@ -3,7 +3,7 @@ local playerArmor = nil
 ---returns true if player took damage in their upper body or if the weapon class is nothing.
 ---@param isArmorDamaged boolean
 ---@param bodypart BodyPart
----@param weapon string
+---@param weapon number
 ---@return boolean
 local function checkBodyHitOrWeakWeapon(isArmorDamaged, bodypart, weapon)
     return isArmorDamaged and (bodypart == 'SPINE' or bodypart == 'UPPER_BODY') or weapon == Config.WeaponClasses['NOTHING']
@@ -22,7 +22,7 @@ end
 
 ---health lost becomes a damaging event if a certain weapon was used or hp lost is above the force injury threshold.
 ---Otherwise, the probability of a damaging event goes up from 0 as the damageDone increases above the minimum threshold.
----@param damageDone number hitpoints lost 
+---@param damageDone number hitpoints lost
 ---@return boolean isDamagingEvent true if player should have disabilities from damage.
 local function isDamagingEvent(damageDone, weapon)
     local luck = math.random(100)
@@ -88,7 +88,7 @@ end
 ---Apply bleeds and staggers effects on damage taken, taking into account armor.
 ---@param ped number
 ---@param bone Bone
----@param weapon string
+---@param weapon number
 ---@param damageDone number
 local function applyImmediateEffects(ped, bone, weapon, damageDone)
     local armor = GetPedArmour(ped)
@@ -127,7 +127,7 @@ end
 ---Apply bleeds, injure the body part hit, make ped limp/stagger
 ---@param ped number
 ---@param boneId integer
----@param weapon string
+---@param weapon number
 ---@param damageDone number
 local function checkDamage(ped, boneId, weapon, damageDone)
     if not weapon then return end
@@ -155,16 +155,14 @@ local function applyDamage(ped, damageDone, isArmorDamaged)
     local bodypart = Config.Bones[bone]
     local weapon = getDamagingWeapon(ped)
 
-    if not hit or bodypart == 'NONE' then return end
+    if not hit or bodypart == 'NONE' or not weapon then return end
 
     if damageDone >= Config.HealthDamage then
-        if weapon then
-            local isBodyHitOrWeakWeapon = checkBodyHitOrWeakWeapon(isArmorDamaged, bodypart, weapon)
-            if isBodyHitOrWeakWeapon and isArmorDamaged then
-                TriggerServerEvent("hospital:server:SetArmor", GetPedArmour(ped))
-            elseif not isBodyHitOrWeakWeapon and isDamagingEvent(damageDone, weapon) then
-                checkDamage(ped, bone, weapon, damageDone)
-            end
+        local isBodyHitOrWeakWeapon = checkBodyHitOrWeakWeapon(isArmorDamaged, bodypart, weapon)
+        if isBodyHitOrWeakWeapon and isArmorDamaged then
+            TriggerServerEvent("hospital:server:SetArmor", GetPedArmour(ped))
+        elseif not isBodyHitOrWeakWeapon and isDamagingEvent(damageDone, weapon) then
+            checkDamage(ped, bone, weapon, damageDone)
         end
     elseif Config.AlwaysBleedChanceWeapons[weapon]
         and math.random(100) < Config.AlwaysBleedChance

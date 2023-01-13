@@ -57,7 +57,7 @@ local function countdownLastStand()
         Config.DeathTime = LaststandTime
     else
         lib.notify({ description = Lang:t('error.bled_out'), type = 'error' })
-        endLastStand()
+        EndLastStand()
         logPlayerKiller()
         DeathTime = 0
         OnDeath()
@@ -67,7 +67,7 @@ local function countdownLastStand()
 end
 
 ---put player in last stand mode and notify EMS.
-function startLastStand()
+function StartLastStand()
     local ped = cache.ped
     Wait(1000)
     WaitForPedToStopMoving(ped)
@@ -87,7 +87,7 @@ function startLastStand()
 end
 
 ---remove last stand mode from player.
-function endLastStand()
+function EndLastStand()
     local ped = cache.ped
     TaskPlayAnim(ped, LastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
     InLaststand = false

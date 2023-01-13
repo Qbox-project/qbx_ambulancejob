@@ -36,7 +36,7 @@ local function displayRespawnText()
     if DeathTime > 0 and isEmsOnDuty() then
         drawTxt(0.93, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_txt', { deathtime = math.ceil(DeathTime) }), 255, 255, 255, 255)
     else
-        drawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', { holdtime = hold, cost = Config.BillCost }), 255, 255, 255, 255)
+        drawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', { holdtime = RespawnHoldTime, cost = Config.BillCost }), 255, 255, 255, 255)
     end
 end
 
