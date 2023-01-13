@@ -34,33 +34,33 @@ Config.DamageMinorToMajor = 35 -- How much damage would have to be applied for a
 Config.AlertShowInfo = 2 -- How many injuries a player must have before being alerted about them
 
 Config.Locations = { -- Edit the various interaction points for players or create new ones
-    ["checking"] = {
+    checking = {
         [1] = vec3(308.19, -595.35, 43.29),
         [2] = vec3(-254.54, 6331.78, 32.43),
     },
-    ["duty"] = {
+    duty = {
         [1] = vec3(311.18, -599.25, 43.29),
         [2] = vec3(-254.88, 6324.5, 32.58),
     },
-    ["vehicle"] = {
+    vehicle = {
         [1] = vec4(294.578, -574.761, 43.179, 35.79),
         [2] = vec4(-234.28, 6329.16, 32.15, 222.5),
     },
-    ["helicopter"] = {
+    helicopter = {
         [1] = vec4(351.58, -587.45, 74.16, 160.5),
         [2] = vec4(-475.43, 5988.353, 31.716, 31.34),
     },
-    ["armory"] = {
+    armory = {
         [1] = vec3(309.93, -602.94, 43.29),
         [2] = vec3(-245.13, 6315.71, 32.82),
     },
-    ["roof"] = {
+    roof = {
         [1] = vec3(338.54, -583.88, 74.17),
     },
-    ["main"] = {
+    main = {
         [1] = vec3(298.62, -599.66, 43.29),
     },
-    ["stash"] = {
+    stash = {
         [1] = vec3(309.78, -596.6, 43.29),
     },
     ---@class Bed
@@ -69,7 +69,7 @@ Config.Locations = { -- Edit the various interaction points for players or creat
     ---@field model number
 
     ---@type Bed[]
-    ["beds"] = {
+    beds = {
         [1] = { coords = vec4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868 },
         [2] = { coords = vec4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868 },
         [3] = { coords = vec4(354.12, -593.12, 43.1, 336.32), taken = false, model = 2117668672 },
@@ -83,13 +83,13 @@ Config.Locations = { -- Edit the various interaction points for players or creat
         [10] = { coords = vec4(-247.04, 6317.95, 32.34, 134.64), taken = false, model = 2117668672 },
         [11] = { coords = vec4(-255.98, 6315.67, 32.34, 313.91), taken = false, model = 2117668672 },
     },
-    ["jailbeds"] = {
+    jailbeds = {
         [1] = { coords = vec4(1761.96, 2597.74, 45.66, 270.14), taken = false, model = 2117668672 },
         [2] = { coords = vec4(1761.96, 2591.51, 45.66, 269.8), taken = false, model = 2117668672 },
         [3] = { coords = vec4(1771.8, 2598.02, 45.66, 89.05), taken = false, model = 2117668672 },
         [4] = { coords = vec4(1771.85, 2591.85, 45.66, 91.51), taken = false, model = 2117668672 },
     },
-    ["stations"] = {
+    stations = {
         [1] = { label = Lang:t('info.pb_hospital'), coords = vec4(304.27, -600.33, 43.28, 272.249) }
     }
 }

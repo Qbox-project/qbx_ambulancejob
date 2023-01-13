@@ -14,6 +14,10 @@ IsDead = false
 HealAnimDict = "mini@cpr@char_a@cpr_str"
 HealAnim = "cpr_pumpchest"
 
+---@class Injury
+---@field part Bone body part
+---@field severity integer higher numbers are worse injuries
+
 ---@type Injury[]
 Injured = {}
 
@@ -44,7 +48,8 @@ OnPainKillers = false
 ---@field isDamaged boolean
 ---@field severity integer
 
----@type table<Bone, BodyPart>
+---@alias BodyParts table<Bone, BodyPart>
+---@type BodyParts
 BodyParts = {
     ['HEAD'] = { label = Lang:t('body.head'), causeLimp = false, isDamaged = false, severity = 0 },
     ['NECK'] = { label = Lang:t('body.neck'), causeLimp = false, isDamaged = false, severity = 0 },
@@ -369,7 +374,7 @@ end)
 
 ---sets blips for stations on map
 CreateThread(function()
-    for _, station in pairs(Config.Locations["stations"]) do
+    for _, station in pairs(Config.Locations.stations) do
         local blip = AddBlipForCoord(station.coords.x, station.coords.y, station.coords.z)
         SetBlipSprite(blip, 61)
         SetBlipAsShortRange(blip, true)

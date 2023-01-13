@@ -2,14 +2,14 @@ local QBCore = exports['qb-core']:GetCoreObject()
 
 ---@class Player object from core
 
----@class Injury
----@field part Bone body part
----@field severity integer higher numbers are worse injuries
+---@class PlayerStatus
+---@field limbs BodyParts
+---@field isBleeding number
 
----@type Injury[]
-local playerInjuries = {}
+---@type table<source, PlayerStatus> 
+local playerStatus = {}
 
----@type number[] weapon hashes
+---@type table<source, number[]> weapon hashes
 local playerWeaponWounds = {}
 
 local doctorCount = 0
@@ -89,7 +89,7 @@ end)
 RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
-	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["beds"][bedId], isRevive)
+	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations.beds[bedId], isRevive)
 	TriggerClientEvent('hospital:client:SetBed', -1, "beds", bedId, true)
 	billPlayer(player)
 end)
@@ -115,10 +115,10 @@ end)
 ---@param data Injury
 RegisterNetEvent('hospital:server:SyncInjuries', function(data)
 	local src = source
-	playerInjuries[src] = data
+	playerStatus[src] = data
 end)
 
----@param data number weapon hash
+---@param data number[] weapon hashes
 RegisterNetEvent('hospital:server:SetWeaponDamage', function(data)
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
@@ -288,41 +288,52 @@ QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
 	cb(amount)
 end)
 
+---@param limbs BodyParts
+---@return BodyParts
+local function getDamagedBodyParts(limbs)
+	local bodyParts = {}
+	for bone, bodyPart in pairs(limbs) do
+		if bodyPart.isDamaged then
+			bodyParts[bone] = bodyPart
+		end
+	end
+	return bodyParts
+end
+
 ---@param _ any
----@param cb function
+---@param cb fun(damage: PlayerDamage)
 ---@param playerId number
 QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, playerId)
 	local playerSource = QBCore.Functions.GetPlayer(playerId).PlayerData.source
-	local injuries = {}
-	injuries["WEAPONWOUNDS"] = {}
-	if not playerSource then cb(injuries) return end
+	
+	---@class PlayerDamage
+	---@field damagedBodyParts BodyParts
+	---@field bleedLevel number
+	---@field weaponWounds number[]
 
-	local playerInjuries = playerInjuries[playerSource]
+	---@type PlayerDamage
+	local damage = {
+		damagedBodyParts = {},
+		bleedLevel = 0,
+		weaponWounds = {}
+	}
+	if not playerSource then cb(damage) return end
+
+	local playerInjuries = playerStatus[playerSource]
 	if playerInjuries then
-		if (playerInjuries.isBleeding > 0) then
-			injuries["BLEED"] = playerInjuries.isBleeding
-		end
-		for k, v in pairs(playerInjuries.limbs) do
-			if v.isDamaged then
-				injuries[k] = v
-			end
-		end
+		damage.bleedLevel = playerInjuries.isBleeding or 0
+		damage.damagedBodyParts = getDamagedBodyParts(playerInjuries.limbs)
 	end
 
-	local playerWeaponWounds = playerWeaponWounds[playerSource]
-	if playerWeaponWounds then
-		for k, v in pairs(playerWeaponWounds) do
-			injuries["WEAPONWOUNDS"][k] = v
-		end
-	end
-	cb(injuries)
+	damage.weaponWounds = playerWeaponWounds[playerSource] or {}
+	cb(damage)
 end)
 
 ---@param source number
 ---@param cb function
 QBCore.Functions.CreateCallback('hospital:GetPlayerBleeding', function(source, cb)
 	local src = source
-	local injuries = playerInjuries[src]
+	local injuries = playerStatus[src]
 	if not injuries or injuries.isBleeding == nil then
 		cb(nil)
 		return
