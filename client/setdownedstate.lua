@@ -1,3 +1,5 @@
+local isEmsOnDuty = false
+
 ---displays text on the player's screen.
 ---@param x number
 ---@param y number
@@ -23,17 +25,8 @@ local function drawTxt(x, y, width, height, scale, text, r, g, b, a)
     DrawText(x - width / 2, y - height / 2 + 0.005)
 end
 
-local function isEmsOnDuty()
-    local p = promise.new()
-    QBCore.Functions.TriggerCallback('hospital:GetDoctors', function(medics)
-        p:resolve(medics > 0)
-    end)
-
-    return Citizen.Await(p)
-end
-
 local function displayRespawnText()
-    if DeathTime > 0 and isEmsOnDuty() then
+    if DeathTime > 0 and isEmsOnDuty then
         drawTxt(0.93, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_txt', { deathtime = math.ceil(DeathTime) }), 255, 255, 255, 255)
     else
         drawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', { holdtime = hold, cost = Config.BillCost }), 255, 255, 255, 255)
@@ -113,7 +106,7 @@ end
 
 ---Player is able to send a notification to EMS there are any on duty
 local function handleRequestingEms()
-    if not isEmsOnDuty() then return end
+    if not isEmsOnDuty then return end
     if not EmsNotified then
         drawTxt(0.91, 1.40, 1.0, 1.0, 0.6, Lang:t('info.request_help'), 255, 255, 255, 255)
         if IsControlJustPressed(0, 47) then
@@ -166,5 +159,15 @@ CreateThread(function()
         else
             Wait(1000)
         end
+    end
+end)
+
+---fetch and cache isEmsOnDuty boolean every minute from server.
+CreateThread(function()
+    while true do
+        QBCore.Functions.TriggerCallback('hospital:GetDoctors', function(medics)
+            isEmsOnDuty = medics > 0
+        end)
+        Wait(60000)
     end
 end)
