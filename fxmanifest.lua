@@ -36,6 +36,7 @@ dependencies {
 	'ox_inventory',
 	'qb-policejob',
 	'qb-management',
+	'oxmysql',
 }
 
 lua54 'yes'
