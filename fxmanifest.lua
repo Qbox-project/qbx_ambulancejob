@@ -29,4 +29,13 @@ server_scripts {
 	'server/main.lua',
 }
 
+dependencies {
+	'ox_lib',
+	'ox_target',
+	'qb-core',
+	'ox_inventory',
+	'qb-policejob',
+	'qb-management',
+}
+
 lua54 'yes'
