@@ -171,7 +171,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         return
     end
     local playerId = GetPlayerServerId(player)
-    
+
     ---@param damage PlayerDamage
     QBCore.Functions.TriggerCallback('hospital:GetPlayerStatus', function(damage)
         if not damage or (damage.bleedLevel == 0 and #damage.damagedBodyParts == 0 and #damage.weaponWounds == 0) then
@@ -194,7 +194,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
                 args = { Lang:t('info.status'), Lang:t('info.is_status', { status = Config.BleedingStates[damage.bleedLevel].label }) }
             })
         end
-        
+
         local status = getPatientStatus(damage.damagedBodyParts)
         showTreatmentMenu(status)
     end, playerId)
