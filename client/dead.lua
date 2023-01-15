@@ -34,7 +34,7 @@ function AllowRespawn()
         Wait(1000)
         DeathTime -= 1
         if DeathTime <= 0 then
-            if IsControlPressed(0, 38) and RespawnHoldTime <= 0 and not IsInHospitalBed then
+            if IsControlPressed(0, 38) and RespawnHoldTime <= 1 and not IsInHospitalBed then
                 TriggerEvent("hospital:client:RespawnAtHospital")
             end
             if IsControlPressed(0, 38) then
