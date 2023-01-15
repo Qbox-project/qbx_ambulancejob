@@ -135,7 +135,6 @@ if Config.UseTarget then
                         icon = "fas fa-clipboard",
                         label = Lang:t('text.check'),
                         distance = 1.5,
-                        groups = "ambulance",
                     }
                 }
             })
@@ -155,7 +154,6 @@ if Config.UseTarget then
                         icon = "fas fa-clipboard",
                         label = Lang:t('text.bed'),
                         distance = 1.5,
-                        groups = "ambulance",
                     }
                 }
             })
