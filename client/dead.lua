@@ -73,7 +73,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
     elseif InLaststand and not IsDead then
         EndLastStand()
         logDeath(victim, attacker, weapon)
-        DeathTime = Config.DeathTime
+        DeathTime = 0
         OnDeath()
         AllowRespawn()
     end
