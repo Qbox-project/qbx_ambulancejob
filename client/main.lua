@@ -27,6 +27,8 @@ LastStandAnim = "writhe_loop"
 IsEscorted = false
 OnPainKillers = false
 
+DoctorCount = 0
+
 ---@type number
 PlayerHealth = nil
 
@@ -392,3 +394,13 @@ function GetClosestPlayer()
     local coords = GetEntityCoords(cache.ped)
     return QBCore.Functions.GetClosestPlayer(coords)
 end
+
+---fetch and cache DoctorCount every minute from server.
+CreateThread(function()
+    while true do
+        QBCore.Functions.TriggerCallback('hospital:GetDoctors', function(medics)
+            DoctorCount = medics
+        end)
+        Wait(60000)
+    end
+end)
