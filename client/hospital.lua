@@ -325,8 +325,3 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
         end
     end)
 end)
-
----@param amount integer
-RegisterNetEvent('hospital:client:SetDoctorCount', function(amount)
-    DoctorCount = amount
-end)
