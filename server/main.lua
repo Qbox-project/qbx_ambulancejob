@@ -226,20 +226,15 @@ RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 	local src = source
 	local target = QBCore.Functions.GetPlayer(targetId)
 	if not target then return end
+	
+	lib.callback('hospital:client:canHelp', targetId, function(canHelp)
+		if not canHelp then
+			TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.cant_help'), type = 'error' })
+			return
+		end
 
-	TriggerClientEvent('hospital:client:CanHelp', targetId, src)
-end)
-
----@param helperId number
----@param canHelp boolean
-RegisterNetEvent('hospital:server:CanHelp', function(helperId, canHelp)
-	local src = source
-	if not canHelp then
-		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.cant_help'), type = 'error' })
-		return
-	end
-
-	TriggerClientEvent('hospital:client:HelpPerson', helperId, src)
+		TriggerClientEvent('hospital:client:HelpPerson', src, targetId)
+	end)
 end)
 
 ---@param src number
