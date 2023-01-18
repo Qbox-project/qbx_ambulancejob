@@ -412,8 +412,8 @@ local function triggerItemEventOnPlayer(src, item, event)
 	local player = QBCore.Functions.GetPlayer(src)
 	if player.Functions.GetItemByName(item.name) == nil then return end
 	-- TriggerClientEvent(event, src)
-	lib.callback(event, src, function(success)
-		if success then
+	lib.callback(event, src, function(removeItem)
+		if removeItem then
 			player.Functions.RemoveItem(item.name, 1)
 		end
 	end)

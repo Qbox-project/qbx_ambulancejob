@@ -109,17 +109,16 @@ end)
 
 ---use first aid pack on nearest player.
 lib.callback.register('hospital:client:UseFirstAid', function()
-    if not isEscorting then
-        local player, distance = GetClosestPlayer()
-        if player ~= -1 and distance < 1.5 then
-            local playerId = GetPlayerServerId(player)
-            TriggerServerEvent('hospital:server:UseFirstAid', playerId)
-            return true
-        end
-    else
+    if isEscorting then
         lib.notify({ description = Lang:t('error.impossible'), type = 'error' })
+        return
     end
-    return false
+        
+    local player, distance = GetClosestPlayer()
+    if player ~= -1 and distance < 1.5 then
+        local playerId = GetPlayerServerId(player)
+        TriggerServerEvent('hospital:server:UseFirstAid', playerId)
+    end
 end)
 
 ---@param helperId number playerId
