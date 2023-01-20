@@ -411,12 +411,9 @@ end, 'admin')
 local function triggerItemEventOnPlayer(src, item, event)
 	local player = QBCore.Functions.GetPlayer(src)
 	if player.Functions.GetItemByName(item.name) == nil then return end
-	-- TriggerClientEvent(event, src)
-	lib.callback(event, src, function(removeItem)
-		if removeItem then
-			player.Functions.RemoveItem(item.name, 1)
-		end
-	end)
+	local removeItem = lib.callback.await(event, src)
+	if not removeItem then return end
+	player.Functions.RemoveItem(item.name, 1)
 end
 
 QBCore.Functions.CreateUseableItem("ifaks", function(source, item)
