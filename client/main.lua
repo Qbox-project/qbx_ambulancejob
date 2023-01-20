@@ -398,9 +398,7 @@ end
 ---fetch and cache DoctorCount every minute from server.
 CreateThread(function()
     while true do
-        QBCore.Functions.TriggerCallback('hospital:GetDoctors', function(medics)
-            DoctorCount = medics
-        end)
+        DoctorCount = lib.callback.await('hospital:GetDoctors', false)
         Wait(60000)
     end
 end)

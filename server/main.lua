@@ -250,9 +250,7 @@ end)
 
 -- Callbacks
 
----@param _ any
----@param cb function
-QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
+lib.callback.register('hospital:GetDoctors', function()
 	local amount = 0
 	local players = QBCore.Functions.GetQBPlayers()
 	for _, v in pairs(players) do
@@ -260,7 +258,7 @@ QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
 			amount += 1
 		end
 	end
-	cb(amount)
+	return amount
 end)
 
 ---@param limbs BodyParts
