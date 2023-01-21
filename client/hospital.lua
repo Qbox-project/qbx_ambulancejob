@@ -31,7 +31,7 @@ local function getAvailableBed(bedId)
 end
 
 ---Triggered on player checking into the hospital. Notifies doctors, and puts player in a hospital bed.
-RegisterNetEvent('qb-ambulancejob:checkin', function()
+AddEventHandler('qb-ambulancejob:checkin', function()
     if DoctorCount >= Config.MinimalDoctors then
         TriggerServerEvent("hospital:server:SendDoctorAlert")
         return
@@ -89,7 +89,7 @@ local function getClosestBed()
 end
 
 ---Puts player in the closest hospital bed if available.
-RegisterNetEvent('qb-ambulancejob:beds', function()
+AddEventHandler('qb-ambulancejob:beds', function()
     local closestBed = getClosestBed()
     if getAvailableBed(closestBed) then
         TriggerServerEvent("hospital:server:SendToBed", closestBed, false)

@@ -323,14 +323,6 @@ RegisterNetEvent('hospital:client:SetBed', function(bedsKey, id, isTaken)
     Config.Locations[bedsKey][id].taken = isTaken
 end)
 
-RegisterNetEvent('hospital:client:RespawnAtHospital', function()
-    TriggerServerEvent("hospital:server:RespawnAtHospital")
-    if exports["qb-policejob"]:IsHandcuffed() then
-        TriggerEvent("police:client:GetCuffed", -1)
-    end
-    TriggerEvent("police:client:DeEscort")
-end)
-
 ---sends player phone email with hospital bill.
 ---@param amount number
 RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
