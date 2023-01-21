@@ -27,6 +27,8 @@ LastStandAnim = "writhe_loop"
 IsEscorted = false
 OnPainKillers = false
 
+DoctorCount = 0
+
 ---@type number
 PlayerHealth = nil
 
@@ -321,14 +323,6 @@ RegisterNetEvent('hospital:client:SetBed', function(bedsKey, id, isTaken)
     Config.Locations[bedsKey][id].taken = isTaken
 end)
 
-RegisterNetEvent('hospital:client:RespawnAtHospital', function()
-    TriggerServerEvent("hospital:server:RespawnAtHospital")
-    if exports["qb-policejob"]:IsHandcuffed() then
-        TriggerEvent("police:client:GetCuffed", -1)
-    end
-    TriggerEvent("police:client:DeEscort")
-end)
-
 ---sends player phone email with hospital bill.
 ---@param amount number
 RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
@@ -392,3 +386,11 @@ function GetClosestPlayer()
     local coords = GetEntityCoords(cache.ped)
     return QBCore.Functions.GetClosestPlayer(coords)
 end
+
+---fetch and cache DoctorCount every minute from server.
+CreateThread(function()
+    while true do
+        DoctorCount = lib.callback.await('hospital:GetDoctors', false)
+        Wait(60000)
+    end
+end)

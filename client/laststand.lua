@@ -121,17 +121,8 @@ lib.callback.register('hospital:client:UseFirstAid', function()
     end
 end)
 
----@param helperId number playerId
-RegisterNetEvent('hospital:client:CanHelp', function(helperId)
-    if InLaststand then
-        if LaststandTime <= 300 then
-            TriggerServerEvent('hospital:server:CanHelp', helperId, true)
-        else
-            TriggerServerEvent('hospital:server:CanHelp', helperId, false)
-        end
-    else
-        TriggerServerEvent('hospital:server:CanHelp', helperId, false)
-    end
+lib.callback.register('hospital:client:canHelp', function()
+    return InLaststand and LaststandTime <= 300
 end)
 
 ---@param targetId number playerId

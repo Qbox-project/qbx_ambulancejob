@@ -30,7 +30,7 @@ end
 
 ---Configures and spawns an automobile and teleports player to the driver seat.
 ---@param vehicleName string name of vehicle to reference as config key
-RegisterNetEvent('ambulance:client:TakeOutVehicle', function(vehicleName)
+AddEventHandler('ambulance:client:TakeOutVehicle', function(vehicleName)
     local coords = Config.Locations.vehicle[currentGarage]
     QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
         local veh = NetToVeh(netId)
@@ -66,12 +66,6 @@ end
 ---@param jobInfo any player's job object
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(jobInfo)
     playerJob = jobInfo
-    if playerJob.name ~= 'ambulance' then return end
-    if playerJob.onduty then
-        TriggerServerEvent("hospital:server:AddDoctor")
-    else
-        TriggerServerEvent("hospital:server:RemoveDoctor")
-    end
 end)
 
 ---Initialize health and armor settings on the player's ped
@@ -111,26 +105,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         playerJob = playerData.job
         initHealthAndArmor(ped, playerId, playerData.metadata)
         initDeathAndLastStand(playerData.metadata)
-        if playerJob.name ~= 'ambulance' or not playerJob.onduty then return end
-        TriggerServerEvent("hospital:server:AddDoctor")
     end)
-end)
-
----Update doctor count.
-RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    if playerJob.name ~= 'ambulance' or not playerJob.onduty then return end
-    TriggerServerEvent("hospital:server:RemoveDoctor")
-end)
-
----Updates doctor count when player goes on/off duty.
----@param onDuty boolean
-RegisterNetEvent('QBCore:Client:SetDuty', function(onDuty)
-    if playerJob.name ~= 'ambulance' or onDuty == playerJob.onduty then return end
-    if onDuty then
-        TriggerServerEvent("hospital:server:AddDoctor")
-    else
-        TriggerServerEvent("hospital:server:RemoveDoctor")
-    end
 end)
 
 ---show patient's treatment menu.
@@ -296,14 +271,14 @@ local function emsControls(event)
 end
 
 ---Opens the hospital stash.
-RegisterNetEvent('qb-ambulancejob:stash', function()
+AddEventHandler('qb-ambulancejob:stash', function()
     if not playerJob.onduty then return end
     TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
     TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
 end)
 
 ---Opens the hospital armory.
-RegisterNetEvent('qb-ambulancejob:armory', function()
+AddEventHandler('qb-ambulancejob:armory', function()
     if playerJob.onduty then
         TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
     end
@@ -368,17 +343,17 @@ local function teleportPlayerWithFade(coords)
 end
 
 ---Teleports the player to main elevator
-RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
+AddEventHandler('qb-ambulancejob:elevator_roof', function()
     teleportPlayerWithFade(Config.Locations.main[1])
 end)
 
 ---Teleports the player to roof elevator
-RegisterNetEvent('qb-ambulancejob:elevator_main', function()
+AddEventHandler('qb-ambulancejob:elevator_main', function()
     teleportPlayerWithFade(Config.Locations.roof[1])
 end)
 
 ---Toggles the on duty status of the player.
-RegisterNetEvent('EMSToggle:Duty', function()
+AddEventHandler('EMSToggle:Duty', function()
     playerJob.onduty = not playerJob.onduty
     TriggerServerEvent("QBCore:ToggleDuty")
     TriggerServerEvent("police:server:UpdateBlips")

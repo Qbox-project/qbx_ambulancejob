@@ -27,6 +27,14 @@ function OnDeath()
     TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_died'))
 end
 
+local function respawn()
+    TriggerServerEvent("hospital:server:RespawnAtHospital")
+    if exports["qb-policejob"]:IsHandcuffed() then
+        TriggerEvent("police:client:GetCuffed", -1)
+    end
+    TriggerEvent("police:client:DeEscort")
+end
+
 ---Allow player to respawn
 function AllowRespawn()
     RespawnHoldTime = 5
@@ -35,7 +43,7 @@ function AllowRespawn()
         DeathTime -= 1
         if DeathTime <= 0 then
             if IsControlPressed(0, 38) and RespawnHoldTime <= 1 and not IsInHospitalBed then
-                TriggerEvent("hospital:client:RespawnAtHospital")
+                respawn()
             end
             if IsControlPressed(0, 38) then
                 RespawnHoldTime -= 1
