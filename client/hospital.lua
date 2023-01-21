@@ -2,7 +2,6 @@ local listen = false
 local bedObject = nil
 local bedOccupyingData = nil
 local cam = nil
-local doctorCount = 0
 
 ---checks if bed is available and within 500 distance of pos
 ---@param pos vector3 position close to bed
@@ -33,7 +32,7 @@ end
 
 ---Triggered on player checking into the hospital. Notifies doctors, and puts player in a hospital bed.
 RegisterNetEvent('qb-ambulancejob:checkin', function()
-    if doctorCount >= Config.MinimalDoctors then
+    if DoctorCount >= Config.MinimalDoctors then
         TriggerServerEvent("hospital:server:SendDoctorAlert")
         return
     end
@@ -163,7 +162,7 @@ else
     CreateThread(function()
         for _, v in pairs(Config.Locations.checking) do
             local function enterCheckInZone()
-                if doctorCount >= Config.MinimalDoctors then
+                if DoctorCount >= Config.MinimalDoctors then
                     lib.showTextUI(Lang:t('text.call_doc'))
                     CreateThread(function()
                         checkInControls("checkin")
@@ -325,9 +324,4 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
             CanLeaveBed = true
         end
     end)
-end)
-
----@param amount integer
-RegisterNetEvent('hospital:client:SetDoctorCount', function(amount)
-    doctorCount = amount
 end)

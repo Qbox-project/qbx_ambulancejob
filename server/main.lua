@@ -2,6 +2,8 @@ local QBCore = exports['qb-core']:GetCoreObject()
 
 ---@class Player object from core
 
+---@alias source number
+
 ---@class PlayerStatus
 ---@field limbs BodyParts
 ---@field isBleeding number
@@ -12,12 +14,8 @@ local playerStatus = {}
 ---@type table<source, number[]> weapon hashes
 local playerWeaponWounds = {}
 
-local doctorCount = 0
 local doctorCalled = false
 
----@alias source number
----@type table<source, boolean>
-local doctors = {}
 
 -- Events
 
@@ -168,29 +166,6 @@ RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	TriggerClientEvent("hospital:client:HealInjuries", patient.PlayerData.source, "full")
 end)
 
-RegisterNetEvent('hospital:server:AddDoctor', function()
-	local src = source
-	doctorCount += 1
-	TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
-	doctors[src] = true
-end)
-
-RegisterNetEvent('hospital:server:RemoveDoctor', function()
-	local src = source
-	doctorCount -= 1
-	TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
-	doctors[src] = nil
-end)
-
-AddEventHandler("playerDropped", function()
-	local src = source
-	if not doctors[src] then return end
-
-	doctorCount -= 1
-	TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
-	doctors[src] = nil
-end)
-
 ---@param playerId number
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	local player = QBCore.Functions.GetPlayer(source)
@@ -269,9 +244,7 @@ end)
 
 -- Callbacks
 
----@param _ any
----@param cb function
-QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
+lib.callback.register('hospital:GetDoctors', function()
 	local amount = 0
 	local players = QBCore.Functions.GetQBPlayers()
 	for _, v in pairs(players) do
@@ -279,7 +252,7 @@ QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
 			amount += 1
 		end
 	end
-	cb(amount)
+	return amount
 end)
 
 ---@param limbs BodyParts
@@ -447,5 +420,3 @@ QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
 	local src = source
 	triggerItemEventOnPlayer(src, item, 'hospital:client:UseFirstAid')
 end)
-
-exports('GetDoctorCount', function() return doctorCount end)
