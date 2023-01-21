@@ -11,7 +11,7 @@ end
 
 -- Events
 
-RegisterNetEvent('hospital:client:UseIfaks', function()
+lib.callback.register('hospital:client:UseIfaks', function()
     local ped = cache.ped
     if lib.progressCircle({
         duration = 3000,
@@ -32,7 +32,6 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
     })
     then
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerServerEvent("hospital:server:removeIfaks")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["ifaks"], "remove")
         TriggerServerEvent('hud:server:RelieveStress', math.random(12, 24))
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
@@ -43,13 +42,15 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
         if math.random(1, 100) < 50 then
             removeBleed(1)
         end
+        return true
     else
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        return false
     end
 end)
 
-RegisterNetEvent('hospital:client:UseBandage', function()
+lib.callback.register('hospital:client:UseBandage', function()
     local ped = cache.ped
     if lib.progressCircle({
         duration = 4000,
@@ -70,7 +71,6 @@ RegisterNetEvent('hospital:client:UseBandage', function()
     })
     then
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        TriggerServerEvent("hospital:server:removeBandage")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["bandage"], "remove")
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
         if math.random(1, 100) < 50 then
@@ -79,13 +79,15 @@ RegisterNetEvent('hospital:client:UseBandage', function()
         if math.random(1, 100) < 7 then
             ResetPartial()
         end
+        return true
     else
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
         lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        return false
     end
 end)
 
-RegisterNetEvent('hospital:client:UsePainkillers', function()
+lib.callback.register('hospital:client:UsePainkillers', function()
     local ped = cache.ped
     if lib.progressCircle({
         duration = 3000,
@@ -106,15 +108,16 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
     })
     then
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerServerEvent("hospital:server:removePainkillers")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["painkillers"], "remove")
         OnPainKillers = true
         if painkillerAmount < 3 then
             painkillerAmount += 1
         end
+        return true
     else
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        return false
     end
 end)
 

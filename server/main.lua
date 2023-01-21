@@ -211,26 +211,6 @@ RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 	TriggerClientEvent('hospital:client:HelpPerson', src, targetId)
 end)
 
----@param src number
----@param itemName string
-local function removeItem(src, itemName)
-	local player = QBCore.Functions.GetPlayer(src)
-	if not player then return end
-	player.Functions.RemoveItem(itemName, 1)
-end
-
-RegisterNetEvent('hospital:server:removeBandage', function()
-	removeItem(source, 'bandage')
-end)
-
-RegisterNetEvent('hospital:server:removeIfaks', function()
-	removeItem(source, 'ifaks')
-end)
-
-RegisterNetEvent('hospital:server:removePainkillers', function()
-	removeItem(source, 'painkillers')
-end)
-
 RegisterNetEvent('hospital:server:resetHungerThirst', function()
 	local player = QBCore.Functions.GetPlayer(source)
 
@@ -398,25 +378,25 @@ end, 'admin')
 local function triggerItemEventOnPlayer(src, item, event)
 	local player = QBCore.Functions.GetPlayer(src)
 	if player.Functions.GetItemByName(item.name) == nil then return end
-	TriggerClientEvent(event, src)
+	local removeItem = lib.callback.await(event, src)
+	if not removeItem then return end
+	player.Functions.RemoveItem(item.name, 1)
 end
 
 QBCore.Functions.CreateUseableItem("ifaks", function(source, item)
-	local src = source
-	triggerItemEventOnPlayer(src, item, 'hospital:client:UseIfaks')
+	triggerItemEventOnPlayer(source, item, 'hospital:client:UseIfaks')
 end)
 
 QBCore.Functions.CreateUseableItem("bandage", function(source, item)
-	local src = source
-	triggerItemEventOnPlayer(src, item, 'hospital:client:UseBandage')
+	triggerItemEventOnPlayer(source, item, 'hospital:client:UseBandage')
 end)
 
 QBCore.Functions.CreateUseableItem("painkillers", function(source, item)
-	local src = source
-	triggerItemEventOnPlayer(src, item, 'hospital:client:UsePainkillers')
+	triggerItemEventOnPlayer(source, item, 'hospital:client:UsePainkillers')
 end)
 
 QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
-	local src = source
-	triggerItemEventOnPlayer(src, item, 'hospital:client:UseFirstAid')
+	triggerItemEventOnPlayer(source, item, 'hospital:client:UseFirstAid')
 end)
+
+exports('GetDoctorCount', function() return doctorCount end)
