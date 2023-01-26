@@ -7,21 +7,17 @@ local check = false
 ---@param vehiclePlatePrefix string
 ---@param coords vector4
 local function takeOutVehicle(vehicleName, vehiclePlatePrefix, coords)
-    QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
-        local veh = NetToVeh(netId)
+    QBCore.Functions.SpawnVehicle(vehicleName, function(veh)
         SetVehicleNumberPlateText(veh, vehiclePlatePrefix .. tostring(math.random(1000, 9999)))
-        SetEntityHeading(veh, coords.w)
-        SetVehicleFuelLevel(veh, 100.0)
-        TaskWarpPedIntoVehicle(cache.ped, veh, -1)
         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true, true)
-        
+
         local settings = Config.VehicleSettings[vehicleName]
         if not settings then return end
         QBCore.Shared.SetDefaultVehicleExtras(veh, settings.extras)
         if not settings.livery then return end
         SetVehicleLivery(veh, settings.livery)
-    end, vehicleName, coords, true)
+    end, coords, true, true)
 end
 
 ---show the garage spawn menu
