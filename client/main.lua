@@ -72,6 +72,7 @@ BodyParts = {
 }
 
 RegisterNetEvent('QBCore:Player:SetPlayerData', function(data)
+    if GetInvokingResource() then return end
     PlayerData = data
 end)
 
