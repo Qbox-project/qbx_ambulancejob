@@ -1,56 +1,37 @@
 local playerJob = {}
-local currentGarage = 0
-local checkHeli = false
 local checkVehicle = false
 local check = false
 
----Configures and spawns a vehicle and teleports player to the driver seat
----@param veh any
----@param platePrefix string prefix of the license plate of the vehicle
----@param heading number direction the vehicle should face
-local function takeOutVehicle(veh, platePrefix, heading)
-    SetVehicleNumberPlateText(veh, platePrefix .. tostring(math.random(1000, 9999)))
-    SetEntityHeading(veh, heading)
-    SetVehicleFuelLevel(veh, 100.0)
-    TaskWarpPedIntoVehicle(cache.ped, veh, -1)
-    TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-    SetVehicleEngineOn(veh, true, true)
+---Configures and spawns a vehicle and teleports player to the driver seat.
+---@param vehicleName string
+---@param vehiclePlatePrefix string
+---@param coords vector4
+local function takeOutVehicle(vehicleName, vehiclePlatePrefix, coords)
+    QBCore.Functions.SpawnVehicle(vehicleName, function(veh)
+        SetVehicleNumberPlateText(veh, vehiclePlatePrefix .. tostring(math.random(1000, 9999)))
+        TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
+        SetVehicleEngineOn(veh, true, true, true)
+
+        local settings = Config.VehicleSettings[vehicleName]
+        if not settings then return end
+        QBCore.Shared.SetDefaultVehicleExtras(veh, settings.extras)
+        if not settings.livery then return end
+        SetVehicleLivery(veh, settings.livery)
+    end, coords, true, true)
 end
 
----Configures and spawns a helicopter and teleports player to the driver seat
----@param location number index of the helicopter spawn location
-local function takeOutHeli(location)
-    local coords = Config.Locations.helicopter[location]
-    QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
-        local veh = NetToVeh(netId)
-        takeOutVehicle(veh, Lang:t('info.heli_plate'), coords.w)
-        SetVehicleLivery(veh, 1) -- Ambulance Livery
-    end, Config.Helicopter, coords, true)
-end
-
----Configures and spawns an automobile and teleports player to the driver seat.
----@param vehicleName string name of vehicle to reference as config key
-AddEventHandler('ambulance:client:TakeOutVehicle', function(vehicleName)
-    local coords = Config.Locations.vehicle[currentGarage]
-    QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
-        local veh = NetToVeh(netId)
-        takeOutVehicle(veh, Lang:t('info.amb_plate'), coords.w)
-        if Config.VehicleSettings[vehicleName] then
-            QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleName].extras)
-        end
-    end, vehicleName, coords, true)
-end)
-
----Show the garage spawn menu
-local function showGarageMenu()
+---show the garage spawn menu
+---@param vehicles AuthorizedVehicles
+---@param vehiclePlatePrefix string
+---@param coords vector4
+local function showGarageMenu(vehicles, vehiclePlatePrefix, coords)
+    local authorizedVehicles = vehicles[QBCore.Functions.GetPlayerData().job.grade.level]
     local optionsMenu = {}
-
-    local authorizedVehicles = Config.AuthorizedVehicles[QBCore.Functions.GetPlayerData().job.grade.level]
     for veh, label in pairs(authorizedVehicles) do
         optionsMenu[#optionsMenu + 1] = {
             title = label,
-            event = "ambulance:client:TakeOutVehicle",
-            args = veh
+            onSelect = takeOutVehicle,
+            args = {veh, vehiclePlatePrefix, coords}
         }
     end
 
@@ -87,7 +68,7 @@ local function initDeathAndLastStand(metadata)
         OnDeath()
         AllowRespawn()
     elseif metadata.inlaststand and not metadata.isdead then
-        startLastStand()
+        StartLastStand()
     else
         TriggerServerEvent("hospital:server:SetDeathStatus", false)
         TriggerServerEvent("hospital:server:SetLaststandStatus", false)
@@ -285,8 +266,10 @@ AddEventHandler('qb-ambulancejob:armory', function()
 end)
 
 ---while in the garage pressing a key triggers storing the current vehicle or opening spawn menu.
----@param garageLocation number config index of the location of the garage
-local function checkGarageAction(garageLocation)
+---@param vehicles AuthorizedVehicles
+---@param vehiclePlatePrefix string
+---@param coords vector4
+local function checkGarageAction(vehicles, vehiclePlatePrefix, coords)
     checkVehicle = true
     CreateThread(function()
         while checkVehicle do
@@ -296,28 +279,7 @@ local function checkGarageAction(garageLocation)
                 if cache.vehicle then
                     QBCore.Functions.DeleteVehicle(cache.vehicle)
                 else
-                    showGarageMenu()
-                    currentGarage = garageLocation
-                end
-            end
-            Wait(0)
-        end
-    end)
-end
-
----While on the helicopter pad, pressing a key triggers storing or spawning a helicopter.
----@param padLocation number config index of the helicopter pad's location.
-local function emsHelicopter(padLocation)
-    checkHeli = true
-    CreateThread(function()
-        while checkHeli do
-            if IsControlJustPressed(0, 38) then
-                exports['qb-core']:KeyPressed(38)
-                checkHeli = false
-                if cache.vehicle then
-                    QBCore.Functions.DeleteVehicle(cache.vehicle)
-                else
-                    takeOutHeli(padLocation)
+                    showGarageMenu(vehicles, vehiclePlatePrefix, coords)
                 end
             end
             Wait(0)
@@ -359,59 +321,45 @@ AddEventHandler('EMSToggle:Duty', function()
     TriggerServerEvent("police:server:UpdateBlips")
 end)
 
----Sets up targets and text interactions for interacting with things in the hospital;
----garages, heliports, elevators, stashes, armory, on duty toggle.
-CreateThread(function()
-    for k, v in pairs(Config.Locations.vehicle) do
-        local function inVehicleZone()
-            if playerJob.name == "ambulance" and playerJob.onduty then
-                lib.showTextUI(Lang:t('text.veh_button'))
-                checkGarageAction(k)
-            else
-                checkVehicle = false
-                lib.hideTextUI()
-            end
-        end
-
-        local function outVehicleZone()
+---creates a zone that lets players store and retrieve job vehicles
+---@param vehicles AuthorizedVehicles
+---@param vehiclePlatePrefix string
+---@param coords vector4
+local function createGarage(vehicles, vehiclePlatePrefix, coords)
+    
+    local function inVehicleZone()
+        if playerJob.name == "ambulance" and playerJob.onduty then
+            lib.showTextUI(Lang:t('text.veh_button'))
+            checkGarageAction(vehicles, vehiclePlatePrefix, coords)
+        else
             checkVehicle = false
             lib.hideTextUI()
         end
-
-        lib.zones.box({
-            coords = vec3(v.x, v.y, v.z),
-            size = vec3(5, 5, 2),
-            rotation = v.w,
-            debug = false,
-            inside = inVehicleZone,
-            onExit = outVehicleZone
-        })
     end
 
-    for k, v in pairs(Config.Locations.helicopter) do
-        local function inHeliZone()
-            if playerJob.name == "ambulance" and playerJob.onduty then
-                lib.showTextUI(Lang:t('text.veh_button'))
-                emsHelicopter(k)
-            else
-                checkHeli = false
-                lib.hideTextUI()
-            end
-        end
+    local function outVehicleZone()
+        checkVehicle = false
+        lib.hideTextUI()
+    end
 
-        local function outHeliZone()
-            checkHeli = false
-            lib.hideTextUI()
-        end
+    lib.zones.box({
+        coords = vec3(coords.x, coords.y, coords.z),
+        size = vec3(5, 5, 2),
+        rotation = coords.w,
+        debug = false,
+        inside = inVehicleZone,
+        onExit = outVehicleZone
+    })
+end
 
-        lib.zones.box({
-            coords = vec3(v.x, v.y, v.z),
-            size = vec3(5, 5, 2),
-            rotation = v.w,
-            debug = false,
-            inside = inHeliZone,
-            onExit = outHeliZone
-        })
+---Creates air and land garages to spawn vehicles at for EMS personnel
+CreateThread(function()
+    for _, coords in pairs(Config.Locations.vehicle) do
+        createGarage(Config.AuthorizedVehicles, Lang:t('info.amb_plate'), coords)
+    end
+
+    for _, coords in pairs(Config.Locations.helicopter) do
+        createGarage(Config.AuthorizedHelicopters, Lang:t('info.heli_plate'), coords)
     end
 end)
 

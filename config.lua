@@ -3,7 +3,6 @@ Config.UseTarget = GetConvar('UseTarget', 'false') == 'true' -- Use qb-target in
 Config.MinimalDoctors = 2 -- How many players with the ambulance job to prevent the hospital check-in system from being used
 Config.DocCooldown = 1 -- Cooldown between doctor calls allowed, in minutes
 Config.WipeInventoryOnRespawn = true -- Enable or disable removing all the players items when they respawn at the hospital
-Config.Helicopter = "polmav" -- Helicopter model that players with the ambulance job can use
 Config.BillCost = 2000 -- Price that players are charged for using the hospital check-in system
 Config.DeathTime = 300 -- How long the timer is for players to bleed out completely and respawn at the hospital
 Config.PainkillerInterval = 60 -- Set the length of time painkillers last (per one)
@@ -94,6 +93,12 @@ Config.Locations = { -- Edit the various interaction points for players or creat
     }
 }
 
+---@alias Grade integer job grade
+---@alias VehicleName string as appears in QBCore shared config
+---@alias VehicleLabel string human friendly name for a vehicle
+---@alias AuthorizedVehicles table<Grade, table<VehicleName, VehicleLabel>>
+
+---@type AuthorizedVehicles for automobiles
 Config.AuthorizedVehicles = { -- Vehicles players can use based on their ambulance job grade level
     -- Grade 0
     [0] = {
@@ -115,6 +120,31 @@ Config.AuthorizedVehicles = { -- Vehicles players can use based on their ambulan
     -- Grade 4
     [4] = {
         ["ambulance"] = "Ambulance",
+    }
+}
+
+---@type AuthorizedVehicles for helicopters
+Config.AuthorizedHelicopters = {
+    -- Grade 0
+    [0] = {
+        ["polmav"] = "Helicopter",
+    },
+    -- Grade 1
+    [1] = {
+        ["polmav"] = "Helicopter",
+
+    },
+    -- Grade 2
+    [2] = {
+        ["polmav"] = "Helicopter",
+    },
+    -- Grade 3
+    [3] = {
+        ["polmav"] = "Helicopter",
+    },
+    -- Grade 4
+    [4] = {
+        ["polmav"] = "Helicopter",
     }
 }
 
@@ -501,7 +531,7 @@ Config.Weapons = { -- Correspond weapon names to their class number
 
 Config.VehicleSettings = { -- Enable or disable vehicle extras when pulling them from the ambulance job vehicle spawner
     ["car1"] = { -- Model name
-        ["extras"] = {
+        extras = {
             ["1"] = false, -- on/off
             ["2"] = true,
             ["3"] = true,
@@ -517,7 +547,7 @@ Config.VehicleSettings = { -- Enable or disable vehicle extras when pulling them
         }
     },
     ["car2"] = {
-        ["extras"] = {
+        extras = {
             ["1"] = false,
             ["2"] = true,
             ["3"] = true,
@@ -531,5 +561,8 @@ Config.VehicleSettings = { -- Enable or disable vehicle extras when pulling them
             ["11"] = true,
             ["12"] = true,
         }
+    },
+    ["polmav"] = {
+        livery = 1
     }
 }
