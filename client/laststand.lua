@@ -95,15 +95,15 @@ function EndLastStand()
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
 end
 
--- Events
-
 ---@param bool boolean
-RegisterNetEvent('hospital:client:SetEscortingState', function(bool)
+---TODO: this event name should be changed within qb-policejob to be generic
+AddEventHandler('hospital:client:SetEscortingState', function(bool)
     isEscorting = bool
 end)
 
 ---@param bool boolean
-RegisterNetEvent('hospital:client:isEscorted', function(bool)
+---TODO: this event name should be changed within qb-policejob to be generic
+AddEventHandler('hospital:client:isEscorted', function(bool)
     IsEscorted = bool
 end)
 
@@ -127,6 +127,7 @@ end)
 
 ---@param targetId number playerId
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
+    if GetInvokingResource() then return end
     local ped = cache.ped
     if lib.progressCircle({
         duration = math.random(30000, 60000),
