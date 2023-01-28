@@ -158,7 +158,7 @@ function ResetMajorInjuries()
     })
 end
 
-local function resetAllInjuries()
+function ResetAllInjuries()
     IsBleeding = 0
     BleedTickTimer = 0
     AdvanceBleedTimer = 0
@@ -274,7 +274,7 @@ RegisterNetEvent('hospital:client:Revive', function()
     SetEntityHealth(ped, 200)
     ClearPedBloodDamage(ped)
     SetPlayerSprint(cache.playerId, true)
-    resetAllInjuries()
+    ResetAllInjuries()
     ResetPedMovementClipset(ped, 0.0)
     TriggerServerEvent('hud:server:RelieveStress', 100)
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
@@ -307,7 +307,7 @@ end)
 ---@param type? "full"|any heals all wounds if full otherwise heals only major wounds.
 RegisterNetEvent('hospital:client:HealInjuries', function(type)
     if type == "full" then
-        resetAllInjuries()
+        ResetAllInjuries()
     else
         ResetMajorInjuries()
     end
@@ -356,7 +356,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     DeathTime = 0
     SetEntityInvincible(ped, false)
     SetPedArmour(ped, 0)
-    resetAllInjuries()
+    ResetAllInjuries()
 end)
 
 -- Threads
