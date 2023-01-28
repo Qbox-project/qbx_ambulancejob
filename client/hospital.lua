@@ -234,10 +234,8 @@ local function leaveBed()
     bedOccupyingData = nil
     IsInHospitalBed = false
 
-    QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerData.metadata.injail <= 0 then return end
-        TriggerEvent("prison:client:Enter", PlayerData.metadata.injail)
-    end)
+    if PlayerData.metadata.injail <= 0 then return end
+    TriggerEvent("prison:client:Enter", PlayerData.metadata.injail)
 end
 
 ---Shows leave bed text if the player can leave the bed, triggers leaving the bed if the right key is pressed.
