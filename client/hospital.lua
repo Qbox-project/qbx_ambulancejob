@@ -30,8 +30,8 @@ local function getAvailableBed(bedId)
     end
 end
 
----Triggered on player checking into the hospital. Notifies doctors, and puts player in a hospital bed.
-AddEventHandler('qb-ambulancejob:checkin', function()
+---Notifies doctors, and puts player in a hospital bed.
+local function checkIn()
     if DoctorCount >= Config.MinimalDoctors then
         TriggerServerEvent("hospital:server:SendDoctorAlert")
         return
@@ -68,7 +68,7 @@ AddEventHandler('qb-ambulancejob:checkin', function()
         TriggerEvent('animations:client:EmoteCommandStart', { "c" })
         lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
     end
-end)
+end
 
 ---@return integer index of the closest bed to the player.
 local function getClosestBed()
@@ -89,14 +89,14 @@ local function getClosestBed()
 end
 
 ---Puts player in the closest hospital bed if available.
-AddEventHandler('qb-ambulancejob:beds', function()
+local function putPlayerInClosestBed()
     local closestBed = getClosestBed()
     if getAvailableBed(closestBed) then
         TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
     else
         lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
     end
-end)
+end
 
 ---allow players to press button to check in or get put in a bed
 ---@param variable "checkin"|"beds"
@@ -106,10 +106,10 @@ local function checkInControls(variable)
         if IsControlJustPressed(0, 38) then
             exports['qb-core']:KeyPressed(38)
             if variable == "checkin" then
-                TriggerEvent('qb-ambulancejob:checkin')
+                checkIn()
                 listen = false
             elseif variable == "beds" then
-                TriggerEvent('qb-ambulancejob:beds')
+                putPlayerInClosestBed()
                 listen = false
             end
         end
@@ -130,7 +130,7 @@ if Config.UseTarget then
                 options = {
                     {
                         type = "client",
-                        event = "qb-ambulancejob:checkin",
+                        onSelect = checkIn,
                         icon = "fas fa-clipboard",
                         label = Lang:t('text.check'),
                         distance = 1.5,
@@ -149,7 +149,7 @@ if Config.UseTarget then
                 options = {
                     {
                         type = "client",
-                        event = "qb-ambulancejob:beds",
+                        onSelect = putPlayerInClosestBed,
                         icon = "fas fa-clipboard",
                         label = Lang:t('text.bed'),
                         distance = 1.5,
