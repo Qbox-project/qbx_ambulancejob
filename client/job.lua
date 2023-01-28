@@ -76,7 +76,7 @@ local function initDeathAndLastStand(metadata)
 end
 
 ---initialize settings from player object
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     exports.spawnmanager:setAutoSpawn(false)
     CreateThread(function()
         Wait(1000)
@@ -120,6 +120,7 @@ local function getPatientStatus(damagedBodyParts)
 end
 
 ---Check status of nearest player and show treatment menu.
+---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:CheckStatus', function()
     local player, distance = GetClosestPlayer()
     if player == -1 or distance > 5.0 then
@@ -157,6 +158,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
 end)
 
 ---Use first aid on nearest player to revive them.
+---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:RevivePlayer', function()
     if not QBCore.Functions.HasItem('firstaid') then
         lib.notify({ description = Lang:t('error.no_firstaid'), type = 'error' })
@@ -197,6 +199,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
 end)
 
 ---Use bandage on nearest player to treat their wounds.
+---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:TreatWounds', function()
     if not QBCore.Functions.HasItem('bandage') then
         lib.notify({ description = Lang:t('error.no_bandage'), type = 'error' })

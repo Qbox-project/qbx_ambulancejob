@@ -213,6 +213,7 @@ end
 ---@param coords vector3
 ---@param text string
 RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
+    if GetInvokingResource() then return end
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
@@ -251,6 +252,7 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
 end)
 
 ---Revives player, healing all injuries
+---Intended to be called from client or server.
 RegisterNetEvent('hospital:client:Revive', function()
     local ped = cache.ped
 
@@ -285,6 +287,7 @@ end)
 
 ---Creates random injuries on the player
 RegisterNetEvent('hospital:client:SetPain', function()
+    if GetInvokingResource() then return end
     ApplyBleed(math.random(1, 4))
     local bone = Config.Bones[24816]
 
@@ -300,12 +303,14 @@ RegisterNetEvent('hospital:client:SetPain', function()
 end)
 
 RegisterNetEvent('hospital:client:KillPlayer', function()
+    if GetInvokingResource() then return end
     SetEntityHealth(cache.ped, 0)
 end)
 
 ---heals player wounds.
 ---@param type? "full"|any heals all wounds if full otherwise heals only major wounds.
 RegisterNetEvent('hospital:client:HealInjuries', function(type)
+    if GetInvokingResource() then return end
     if type == "full" then
         resetAllInjuries()
     else
@@ -320,12 +325,14 @@ end)
 ---@param id number
 ---@param isTaken boolean
 RegisterNetEvent('hospital:client:SetBed', function(bedsKey, id, isTaken)
+    if GetInvokingResource() then return end
     Config.Locations[bedsKey][id].taken = isTaken
 end)
 
 ---sends player phone email with hospital bill.
 ---@param amount number
 RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
+    if GetInvokingResource() then return end
     SetTimeout(math.random(2500, 4000), function()
         local gender = QBCore.Functions.GetPlayerData().charinfo.gender == 1 and Lang:t('info.mrs') or Lang:t('info.mr')
         local charinfo = QBCore.Functions.GetPlayerData().charinfo
@@ -339,6 +346,7 @@ RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
 end)
 
 RegisterNetEvent('hospital:client:adminHeal', function()
+    if GetInvokingResource() then return end
     SetEntityHealth(cache.ped, 200)
     TriggerServerEvent("hospital:server:resetHungerThirst")
 end)

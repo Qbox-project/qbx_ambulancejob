@@ -74,6 +74,7 @@ local function respawnAtHospital(player, bedsKey)
 end
 
 RegisterNetEvent('hospital:server:RespawnAtHospital', function()
+	if GetInvokingResource() then return end
 	local player = QBCore.Functions.GetPlayer(source)
 	if player.PlayerData.metadata.injail > 0 then
 		respawnAtHospital(player, "jailbeds")
@@ -85,6 +86,7 @@ end)
 ---@param bedId integer
 ---@param isRevive boolean
 RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
+	if GetInvokingResource() then return end
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
 	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations.beds[bedId], isRevive)
@@ -94,6 +96,7 @@ end)
 
 ---@param text string
 RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
+	if GetInvokingResource() then return end
 	local src = source
 	local ped = GetPlayerPed(src)
 	local coords = GetEntityCoords(ped)
@@ -107,17 +110,20 @@ end)
 
 ---@param id integer
 RegisterNetEvent('hospital:server:LeaveBed', function(id)
+	if GetInvokingResource() then return end
 	TriggerClientEvent('hospital:client:SetBed', -1, "beds", id, false)
 end)
 
 ---@param data Injury
 RegisterNetEvent('hospital:server:SyncInjuries', function(data)
+	if GetInvokingResource() then return end
 	local src = source
 	playerStatus[src] = data
 end)
 
 ---@param data number[] weapon hashes
 RegisterNetEvent('hospital:server:SetWeaponDamage', function(data)
+	if GetInvokingResource() then return end
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
 	if not player then return end
@@ -125,6 +131,7 @@ RegisterNetEvent('hospital:server:SetWeaponDamage', function(data)
 end)
 
 RegisterNetEvent('hospital:server:RestoreWeaponDamage', function()
+	if GetInvokingResource() then return end
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
 	playerWeaponWounds[player.PlayerData.source] = nil
@@ -132,6 +139,7 @@ end)
 
 ---@param isDead boolean
 RegisterNetEvent('hospital:server:SetDeathStatus', function(isDead)
+	if GetInvokingResource() then return end
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
 	if not player then return end
@@ -140,6 +148,7 @@ end)
 
 ---@param bool boolean
 RegisterNetEvent('hospital:server:SetLaststandStatus', function(bool)
+	if GetInvokingResource() then return end
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
 	if not player then return end
@@ -148,6 +157,7 @@ end)
 
 ---@param amount number
 RegisterNetEvent('hospital:server:SetArmor', function(amount)
+	if GetInvokingResource() then return end
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
 	if not player then return end
@@ -156,6 +166,7 @@ end)
 
 ---@param playerId number
 RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
+	if GetInvokingResource() then return end
 	local src = source
 	local player = QBCore.Functions.GetPlayer(src)
 	local patient = QBCore.Functions.GetPlayer(playerId)
@@ -168,6 +179,7 @@ end)
 
 ---@param playerId number
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
+	if GetInvokingResource() then return end
 	local player = QBCore.Functions.GetPlayer(source)
 	local patient = QBCore.Functions.GetPlayer(playerId)
 
@@ -178,6 +190,7 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 end)
 
 RegisterNetEvent('hospital:server:SendDoctorAlert', function()
+	if GetInvokingResource() then return end
 	local src = source
 	if doctorCalled then
 		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('info.dr_needed'), type = 'inform' })
@@ -198,6 +211,7 @@ end)
 
 ---@param targetId number
 RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
+	if GetInvokingResource() then return end
 	local src = source
 	local target = QBCore.Functions.GetPlayer(targetId)
 	if not target then return end
@@ -212,6 +226,7 @@ RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 end)
 
 RegisterNetEvent('hospital:server:resetHungerThirst', function()
+	if GetInvokingResource() then return end
 	local player = QBCore.Functions.GetPlayer(source)
 
 	if not player then return end

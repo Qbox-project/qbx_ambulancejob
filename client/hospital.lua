@@ -311,6 +311,7 @@ end
 ---@param bed Bed
 ---@param isRevive boolean if true, heals the player
 RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
+    if GetInvokingResource() then return end
     BedOccupying = id
     bedOccupyingData = bed
     setBedCam()
