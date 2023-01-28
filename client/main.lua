@@ -26,8 +26,10 @@ LastStandDict = "combat@damage@writhe"
 LastStandAnim = "writhe_loop"
 IsEscorted = false
 OnPainKillers = false
-
 DoctorCount = 0
+PlayerData = {
+    job = nil
+}
 
 ---@type number
 PlayerHealth = nil
@@ -68,6 +70,11 @@ BodyParts = {
     ['RLEG'] = { label = Lang:t('body.right_leg'), causeLimp = true, isDamaged = false, severity = 0 },
     ['RFOOT'] = { label = Lang:t('body.right_foot'), causeLimp = true, isDamaged = false, severity = 0 },
 }
+
+RegisterNetEvent('QBCore:Player:SetPlayerData', function(data)
+    if GetInvokingResource() then return end
+    PlayerData = data
+end)
 
 ---notify the player of damage to their body.
 local function doLimbAlert()
@@ -158,7 +165,7 @@ function ResetMajorInjuries()
     })
 end
 
-local function resetAllInjuries()
+function ResetAllInjuries()
     IsBleeding = 0
     BleedTickTimer = 0
     AdvanceBleedTimer = 0
@@ -274,7 +281,7 @@ RegisterNetEvent('hospital:client:Revive', function()
     SetEntityHealth(ped, 200)
     ClearPedBloodDamage(ped)
     SetPlayerSprint(cache.playerId, true)
-    resetAllInjuries()
+    ResetAllInjuries()
     ResetPedMovementClipset(ped, 0.0)
     TriggerServerEvent('hud:server:RelieveStress', 100)
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
@@ -307,7 +314,7 @@ end)
 ---@param type? "full"|any heals all wounds if full otherwise heals only major wounds.
 RegisterNetEvent('hospital:client:HealInjuries', function(type)
     if type == "full" then
-        resetAllInjuries()
+        ResetAllInjuries()
     else
         ResetMajorInjuries()
     end
@@ -327,12 +334,12 @@ end)
 ---@param amount number
 RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
     SetTimeout(math.random(2500, 4000), function()
-        local gender = QBCore.Functions.GetPlayerData().charinfo.gender == 1 and Lang:t('info.mrs') or Lang:t('info.mr')
-        local charinfo = QBCore.Functions.GetPlayerData().charinfo
+        local charInfo = PlayerData.charinfo
+        local gender = charInfo.gender == 1 and Lang:t('info.mrs') or Lang:t('info.mr')
         TriggerServerEvent('qb-phone:server:sendNewMail', {
             sender = Lang:t('mail.sender'),
             subject = Lang:t('mail.subject'),
-            message = Lang:t('mail.message', { gender = gender, lastname = charinfo.lastname, costs = amount }),
+            message = Lang:t('mail.message', { gender = gender, lastname = charInfo.lastname, costs = amount }),
             button = {}
         })
     end)
@@ -341,22 +348,6 @@ end)
 RegisterNetEvent('hospital:client:adminHeal', function()
     SetEntityHealth(cache.ped, 200)
     TriggerServerEvent("hospital:server:resetHungerThirst")
-end)
-
----sync settings to server when player logs out.
-RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    local ped = cache.ped
-    TriggerServerEvent("hospital:server:SetDeathStatus", false)
-    TriggerServerEvent('hospital:server:SetLaststandStatus', false)
-    TriggerServerEvent("hospital:server:SetArmor", GetPedArmour(ped))
-    if BedOccupying then
-        TriggerServerEvent("hospital:server:LeaveBed", BedOccupying)
-    end
-    IsDead = false
-    DeathTime = 0
-    SetEntityInvincible(ped, false)
-    SetPedArmour(ped, 0)
-    resetAllInjuries()
 end)
 
 -- Threads

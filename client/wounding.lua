@@ -77,7 +77,7 @@ lib.callback.register('hospital:client:UseBandage', function()
             removeBleed(1)
         end
         if math.random(1, 100) < 7 then
-            ResetPartial()
+            ResetMajorInjuries()
         end
         return true
     else
@@ -198,7 +198,7 @@ local function applyBleedEffects(ped)
     local randX = math.random() + math.random(-1, 1)
     local randY = math.random() + math.random(-1, 1)
     local coords = GetOffsetFromEntityInWorldCoords(ped, randX, randY, 0)
-    TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid, QBCore.Functions.GetPlayerData().metadata.bloodtype, coords)
+    TriggerServerEvent("evidence:server:CreateBloodDrop", PlayerData.citizenid, PlayerData.metadata.bloodtype, coords)
 
     if AdvanceBleedTimer >= Config.AdvanceBleedTimer then
         ApplyBleed(1)

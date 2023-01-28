@@ -110,7 +110,7 @@ RegisterNetEvent('hospital:server:LeaveBed', function(id)
 	TriggerClientEvent('hospital:client:SetBed', -1, "beds", id, false)
 end)
 
----@param data Injury
+---@param data PlayerStatus
 RegisterNetEvent('hospital:server:SyncInjuries', function(data)
 	local src = source
 	playerStatus[src] = data
@@ -398,5 +398,3 @@ end)
 QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseFirstAid')
 end)
-
-exports('GetDoctorCount', function() return doctorCount end)
