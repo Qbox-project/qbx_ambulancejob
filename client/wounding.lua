@@ -77,7 +77,7 @@ lib.callback.register('hospital:client:UseBandage', function()
             removeBleed(1)
         end
         if math.random(1, 100) < 7 then
-            ResetPartial()
+            ResetMajorInjuries()
         end
         return true
     else
