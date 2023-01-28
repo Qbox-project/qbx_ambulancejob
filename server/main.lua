@@ -398,5 +398,3 @@ end)
 QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseFirstAid')
 end)
-
-exports('GetDoctorCount', function() return doctorCount end)
