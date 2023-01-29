@@ -11,9 +11,14 @@ local function takeOutVehicle(data)
 
         local settings = Config.VehicleSettings[data.vehicleName]
         if not settings then return end
-        QBCore.Shared.SetDefaultVehicleExtras(veh, settings.extras)
-        if not settings.livery then return end
-        SetVehicleLivery(veh, settings.livery)
+
+        if settings.extra then
+            QBCore.Shared.SetDefaultVehicleExtras(veh, settings.extras)
+        end
+
+        if settings.livery then
+            SetVehicleLivery(veh, settings.livery)
+        end
     end, data.coords, true, true)
 end
 
