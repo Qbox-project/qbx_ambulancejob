@@ -13,6 +13,7 @@ shared_scripts {
 }
 
 client_scripts {
+	'client/load-unload.lua',
 	'client/damage/damage-effects.lua',
 	'client/damage/damage.lua',
 	'client/hospital.lua',
