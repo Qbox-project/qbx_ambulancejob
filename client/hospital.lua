@@ -72,8 +72,6 @@ end
 
 ---@return integer index of the closest bed to the player.
 local function getClosestBed()
-    if IsInHospitalBed then return end
-
     local pos = GetEntityCoords(cache.ped, true)
     local closest = nil
     local minDist = nil
@@ -90,6 +88,7 @@ end
 
 ---Puts player in the closest hospital bed if available.
 local function putPlayerInClosestBed()
+    if IsInHospitalBed then return end
     local closestBed = getClosestBed()
     if getAvailableBed(closestBed) then
         TriggerServerEvent("hospital:server:SendToBed", closestBed, false)

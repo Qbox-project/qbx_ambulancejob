@@ -43,7 +43,6 @@ end
 ---@param player Player
 local function wipeInventory(player)
 	player.Functions.ClearInventory()
-	MySQL.update('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), player.PlayerData.citizenid })
 	TriggerClientEvent('ox_lib:notify', player.PlayerData.source, { description = Lang:t('error.possessions_taken'), type = 'error' })
 end
 

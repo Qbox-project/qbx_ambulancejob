@@ -2,7 +2,7 @@ local playerArmor = nil
 
 ---returns true if player took damage in their upper body or if the weapon class is nothing.
 ---@param isArmorDamaged boolean
----@param bodypart BodyPart
+---@param bodypart string
 ---@param weapon number
 ---@return boolean
 local function checkBodyHitOrWeakWeapon(isArmorDamaged, bodypart, weapon)
