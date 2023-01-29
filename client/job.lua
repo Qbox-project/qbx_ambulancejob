@@ -2,21 +2,19 @@ local checkVehicle = false
 local check = false
 
 ---Configures and spawns a vehicle and teleports player to the driver seat.
----@param vehicleName string
----@param vehiclePlatePrefix string
----@param coords vector4
-local function takeOutVehicle(vehicleName, vehiclePlatePrefix, coords)
-    QBCore.Functions.SpawnVehicle(vehicleName, function(veh)
-        SetVehicleNumberPlateText(veh, vehiclePlatePrefix .. tostring(math.random(1000, 9999)))
+---@param data { vehicleName: string, vehiclePlatePrefix: string, coords: vector4}
+local function takeOutVehicle(data)
+    QBCore.Functions.SpawnVehicle(data.vehicleName, function(veh)
+        SetVehicleNumberPlateText(veh, data.vehiclePlatePrefix .. tostring(math.random(1000, 9999)))
         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true, true)
 
-        local settings = Config.VehicleSettings[vehicleName]
+        local settings = Config.VehicleSettings[data.vehicleName]
         if not settings then return end
         QBCore.Shared.SetDefaultVehicleExtras(veh, settings.extras)
         if not settings.livery then return end
         SetVehicleLivery(veh, settings.livery)
-    end, coords, true, true)
+    end, data.coords, true, true)
 end
 
 ---show the garage spawn menu
@@ -30,7 +28,11 @@ local function showGarageMenu(vehicles, vehiclePlatePrefix, coords)
         optionsMenu[#optionsMenu + 1] = {
             title = label,
             onSelect = takeOutVehicle,
-            args = {veh, vehiclePlatePrefix, coords}
+            args = {
+                vehicleName = veh,
+                vehiclePlatePrefix = vehiclePlatePrefix,
+                coords = coords,
+            }
         }
     end
 
@@ -281,7 +283,7 @@ end
 ---@param vehiclePlatePrefix string
 ---@param coords vector4
 local function createGarage(vehicles, vehiclePlatePrefix, coords)
-    
+
     local function inVehicleZone()
         if PlayerData.job.name == "ambulance" and PlayerData.job.onduty then
             lib.showTextUI(Lang:t('text.veh_button'))
