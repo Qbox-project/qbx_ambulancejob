@@ -53,7 +53,7 @@ local function onPlayerUnloaded()
     ResetAllInjuries()
 end
 
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', onPlayerLoaded)
+AddEventHandler('QBCore:Client:OnPlayerLoaded', onPlayerLoaded)
 
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', onPlayerUnloaded)
 

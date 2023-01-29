@@ -25,7 +25,6 @@ client_scripts {
 }
 
 server_scripts {
-	'@oxmysql/lib/MySQL.lua',
 	'server/main.lua',
 }
 
@@ -36,7 +35,6 @@ dependencies {
 	'ox_inventory',
 	'qb-policejob',
 	'qb-management',
-	'oxmysql',
 }
 
 lua54 'yes'

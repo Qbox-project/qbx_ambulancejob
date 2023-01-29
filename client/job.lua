@@ -209,14 +209,14 @@ end
 
 ---Opens the hospital stash.
 local function openStash()
-    if not playerJob.onduty then return end
+    if not PlayerData.job.onduty then return end
     TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
     TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
 end
 
 ---Opens the hospital armory.
 local function openArmory()
-    if playerJob.onduty then
+    if PlayerData.job.onduty then
         TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
     end
 end
@@ -272,7 +272,6 @@ end
 
 ---Toggles the on duty status of the player.
 local function toggleDuty()
-    playerJob.onduty = not playerJob.onduty
     TriggerServerEvent("QBCore:ToggleDuty")
     TriggerServerEvent("police:server:UpdateBlips")
 end
