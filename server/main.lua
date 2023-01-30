@@ -43,7 +43,7 @@ end
 ---@param player Player
 local function wipeInventory(player)
 	player.Functions.ClearInventory()
-	TriggerClientEvent('ox_lib:notify', player.PlayerData.source, { description = Lang:t('error.possessions_taken'), type = 'error' })
+	TriggerClientEvent('ox_lib:notify', player.PlayerData.source, { description = Lang:t('error.possessions_taken'), type = 'error', position = position})
 end
 
 ---@param player Player
@@ -192,7 +192,7 @@ RegisterNetEvent('hospital:server:SendDoctorAlert', function()
 	if GetInvokingResource() then return end
 	local src = source
 	if doctorCalled then
-		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('info.dr_needed'), type = 'inform' })
+		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('info.dr_needed'), type = 'inform', position = position})
 		return
 	end
 
@@ -200,7 +200,7 @@ RegisterNetEvent('hospital:server:SendDoctorAlert', function()
 	local players = QBCore.Functions.GetQBPlayers()
 	for _, v in pairs(players) do
 		if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-			TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('info.dr_needed'), type = 'inform' })
+			TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('info.dr_needed'), type = 'inform', position = position})
 		end
 	end
 	SetTimeout(Config.DocCooldown * 60000, function()
@@ -217,7 +217,7 @@ RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 
 	local canHelp = lib.callback.await('hospital:client:canHelp', targetId)
 	if not canHelp then
-		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.cant_help'), type = 'error' })
+		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.cant_help'), type = 'error', position = position})
 		return
 	end
 
@@ -323,7 +323,7 @@ end)
 local function triggerEventOnEmsPlayer(src, event)
 	local player = QBCore.Functions.GetPlayer(src)
 	if player.PlayerData.job.name ~= "ambulance" then
-		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_ems'), type = 'error' })
+		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_ems'), type = 'error', position = position})
 		return
 	end
 
@@ -358,7 +358,7 @@ local function triggerEventOnPlayer(src, event, targetPlayerId)
 	local player = QBCore.Functions.GetPlayer(tonumber(targetPlayerId))
 
 	if not player then
-		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_online'), type = 'error' })
+		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_online'), type = 'error', position = position})
 		return
 	end
 
