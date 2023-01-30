@@ -59,14 +59,14 @@ local function checkIn()
         TriggerEvent('animations:client:EmoteCommandStart', { "c" })
         local bedId = getAvailableBed()
         if not bedId then
-            lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
+            lib.notify({ description = Lang:t('error.beds_taken'), type = 'error', position = position})
             return
         end
 
         TriggerServerEvent("hospital:server:SendToBed", bedId, true)
     else
         TriggerEvent('animations:client:EmoteCommandStart', { "c" })
-        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        lib.notify({ description = Lang:t('error.canceled'), type = 'error', position = position})
     end
 end
 
@@ -93,7 +93,7 @@ local function putPlayerInClosestBed()
     if getAvailableBed(closestBed) then
         TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
     else
-        lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
+        lib.notify({ description = Lang:t('error.beds_taken'), type = 'error', position = position})
     end
 end
 
@@ -315,7 +315,7 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
     CreateThread(function()
         Wait(5)
         if isRevive then
-            lib.notify({ description = Lang:t('success.being_helped'), type = 'success' })
+            lib.notify({ description = Lang:t('success.being_helped'), type = 'success', position = position})
             Wait(Config.AIHealTimer * 1000)
             TriggerEvent("hospital:client:Revive")
         else
