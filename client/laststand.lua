@@ -148,10 +148,10 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     })
     then
         ClearPedTasks(ped)
-        lib.notify({ description = Lang:t('success.revived'), type = 'success' })
+        lib.notify({ description = Lang:t('success.revived'), type = 'success', position = position})
         TriggerServerEvent("hospital:server:RevivePlayer", targetId)
     else
         ClearPedTasks(ped)
-        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        lib.notify({ description = Lang:t('error.canceled'), type = 'error', position = position})
     end
 end)
