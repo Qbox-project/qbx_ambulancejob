@@ -311,7 +311,7 @@ lib.addCommand('911e', {
         { name = 'message', help = Lang:t('info.message_sent'), type = 'string', optional = true},
     }
 }, function(source, args)
-	local message = args.message and table.concat(args, " ") or Lang:t('info.civ_call')
+	local message = args.message or Lang:t('info.civ_call')
 	local ped = GetPlayerPed(source)
 	local coords = GetEntityCoords(ped)
 	local players = QBCore.Functions.GetQBPlayers()
