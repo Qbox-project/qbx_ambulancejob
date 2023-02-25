@@ -305,10 +305,14 @@ end)
 
 -- Commands
 
-QBCore.Commands.Add('911e', Lang:t('info.ems_report'), { { name = 'message', help = Lang:t('info.message_sent') } }, false, function(source, args)
-	local src = source
-	local message = args[1] and table.concat(args, " ") or Lang:t('info.civ_call')
-	local ped = GetPlayerPed(src)
+lib.addCommand('911e', {
+    help = Lang:t('info.ems_report'),
+    params = {
+        { name = 'message', help = Lang:t('info.message_sent'), type = 'string', optional = true},
+    }
+}, function(source, args)
+	local message = args.message and table.concat(args, " ") or Lang:t('info.civ_call')
+	local ped = GetPlayerPed(source)
 	local coords = GetEntityCoords(ped)
 	local players = QBCore.Functions.GetQBPlayers()
 	for _, v in pairs(players) do
@@ -330,19 +334,22 @@ local function triggerEventOnEmsPlayer(src, event)
 	TriggerClientEvent(event, src)
 end
 
-QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(source, _)
-	local src = source
-	triggerEventOnEmsPlayer(src, 'hospital:client:CheckStatus')
+lib.addCommand('status', {
+    help = Lang:t('info.check_health'),
+}, function(source)
+	triggerEventOnEmsPlayer(source, 'hospital:client:CheckStatus')
 end)
 
-QBCore.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(source, _)
-	local src = source
-	triggerEventOnEmsPlayer(src, 'hospital:client:TreatWounds')
+lib.addCommand('heal', {
+    help = Lang:t('info.heal_player'),
+}, function(source)
+	triggerEventOnEmsPlayer(source, 'hospital:client:TreatWounds')
 end)
 
-QBCore.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function(source, _)
-	local src = source
-	triggerEventOnEmsPlayer(src, 'hospital:client:RevivePlayer')
+lib.addCommand('revivep', {
+    help = Lang:t('info.revive_player'),
+}, function(source)
+	triggerEventOnEmsPlayer(source, 'hospital:client:RevivePlayer')
 end)
 
 ---Triggers the event on the player or src, if no target is specified
@@ -365,25 +372,49 @@ local function triggerEventOnPlayer(src, event, targetPlayerId)
 	TriggerClientEvent(event, player.PlayerData.source)
 end
 
-QBCore.Commands.Add("revive", Lang:t('info.revive_player_a'), { { name = "id", help = Lang:t('info.player_id') } }, false, function(source, args)
-	local src = source
-	triggerEventOnPlayer(src, 'hospital:client:Revive', args[1])
-end, "admin")
+lib.addCommand('revive', {
+    help = Lang:t('info.revive_player_a'),
+	restricted = "qbcore.admin",
+	params = {
+        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId'},
+    }
+}, function(source)
+	if not args.id then return end
+	triggerEventOnPlayer(source, 'hospital:client:Revive', args.id)
+end)
 
-QBCore.Commands.Add("setpain", Lang:t('info.pain_level'), { { name = "id", help = Lang:t('info.player_id') } }, false, function(source, args)
-	local src = source
-	triggerEventOnPlayer(src, 'hospital:client:SetPain', args[1])
-end, "admin")
+lib.addCommand('setpain', {
+    help = Lang:t('info.pain_level'),
+	restricted = "qbcore.admin",
+	params = {
+        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId'},
+    }
+}, function(source)
+	if not args.id then return end
+	triggerEventOnPlayer(source, 'hospital:client:SetPain', args.id)
+end)
 
-QBCore.Commands.Add("kill", Lang:t('info.kill'), { { name = "id", help = Lang:t('info.player_id') } }, false, function(source, args)
-	local src = source
-	triggerEventOnPlayer(src, 'hospital:client:KillPlayer', args[1])
-end, "admin")
+lib.addCommand('kill', {
+    help =  Lang:t('info.kill'),
+	restricted = "qbcore.admin",
+	params = {
+        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId'},
+    }
+}, function(source)
+	if not args.id then return end
+	triggerEventOnPlayer(source, 'hospital:client:KillPlayer', args.id)
+end)
 
-QBCore.Commands.Add('aheal', Lang:t('info.heal_player_a'), { { name = 'id', help = Lang:t('info.player_id') } }, false, function(source, args)
-	local src = source
-	triggerEventOnPlayer(src, 'hospital:client:adminHeal', args[1])
-end, 'admin')
+lib.addCommand('aheal', {
+    help =  Lang:t('info.heal_player_a'),
+	restricted = "qbcore.admin",
+	params = {
+        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId'},
+    }
+}, function(source)
+	if not args.id then return end
+	triggerEventOnPlayer(source, 'hospital:client:adminHeal', args.id)
+end)
 
 -- Items
 ---@param src number
