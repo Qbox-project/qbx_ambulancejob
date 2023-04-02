@@ -374,7 +374,7 @@ end
 
 lib.addCommand('revive', {
     help = Lang:t('info.revive_player_a'),
-	restricted = "qbcore.admin",
+	restricted = "qbox.admin",
 	params = {
         { name = 'id', help = Lang:t('info.player_id'), type = 'playerId', optional = true },
     }
@@ -384,7 +384,7 @@ end)
 
 lib.addCommand('setpain', {
     help = Lang:t('info.pain_level'),
-	restricted = "qbcore.admin",
+	restricted = "qbox.admin",
 	params = {
         { name = 'id', help = Lang:t('info.player_id'), type = 'playerId', optional = true },
     }
@@ -394,7 +394,7 @@ end)
 
 lib.addCommand('kill', {
     help =  Lang:t('info.kill'),
-	restricted = "qbcore.admin",
+	restricted = "qbox.admin",
 	params = {
         { name = 'id', help = Lang:t('info.player_id'), type = 'playerId', optional = true },
     }
@@ -404,7 +404,7 @@ end)
 
 lib.addCommand('aheal', {
     help =  Lang:t('info.heal_player_a'),
-	restricted = "qbcore.admin",
+	restricted = "qbox.admin",
 	params = {
         { name = 'id', help = Lang:t('info.player_id'), type = 'playerId', optional = true },
     }
