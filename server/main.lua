@@ -376,10 +376,9 @@ lib.addCommand('revive', {
     help = Lang:t('info.revive_player_a'),
 	restricted = "qbcore.admin",
 	params = {
-        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId'},
+        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId', optional = true },
     }
-}, function(source)
-	if not args.id then return end
+}, function(source, args)
 	triggerEventOnPlayer(source, 'hospital:client:Revive', args.id)
 end)
 
@@ -387,10 +386,9 @@ lib.addCommand('setpain', {
     help = Lang:t('info.pain_level'),
 	restricted = "qbcore.admin",
 	params = {
-        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId'},
+        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId', optional = true },
     }
-}, function(source)
-	if not args.id then return end
+}, function(source, args)
 	triggerEventOnPlayer(source, 'hospital:client:SetPain', args.id)
 end)
 
@@ -398,10 +396,9 @@ lib.addCommand('kill', {
     help =  Lang:t('info.kill'),
 	restricted = "qbcore.admin",
 	params = {
-        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId'},
+        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId', optional = true },
     }
-}, function(source)
-	if not args.id then return end
+}, function(source, args)
 	triggerEventOnPlayer(source, 'hospital:client:KillPlayer', args.id)
 end)
 
@@ -409,10 +406,9 @@ lib.addCommand('aheal', {
     help =  Lang:t('info.heal_player_a'),
 	restricted = "qbcore.admin",
 	params = {
-        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId'},
+        { name = 'id', help = Lang:t('info.player_id'), type = 'playerId', optional = true },
     }
-}, function(source)
-	if not args.id then return end
+}, function(source, args)
 	triggerEventOnPlayer(source, 'hospital:client:adminHeal', args.id)
 end)
 
