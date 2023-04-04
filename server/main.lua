@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qbx-core']:GetCoreObject()
 
 ---@class Player object from core
 
@@ -36,7 +36,7 @@ end)
 ---@param player Player
 local function billPlayer(player)
 	player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-	exports['qb-management']:AddMoney("ambulance", Config.BillCost)
+	exports['qbx-management']:AddMoney("ambulance", Config.BillCost)
 	TriggerClientEvent('hospital:client:SendBillEmail', player.PlayerData.source, Config.BillCost)
 end
 

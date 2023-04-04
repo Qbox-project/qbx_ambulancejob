@@ -103,7 +103,7 @@ local function checkInControls(variable)
     listen = true
     repeat
         if IsControlJustPressed(0, 38) then
-            exports['qb-core']:KeyPressed(38)
+            exports['qbx-core']:KeyPressed(38)
             if variable == "checkin" then
                 checkIn()
                 listen = false
@@ -242,7 +242,7 @@ local function givePlayerOptionToLeaveBed()
     lib.showTextUI(Lang:t('text.bed_out'))
     if not IsControlJustReleased(0, 38) then return end
 
-    exports['qb-core']:KeyPressed(38)
+    exports['qbx-core']:KeyPressed(38)
     leaveBed()
     lib.hideTextUI()
 end

@@ -1,4 +1,4 @@
-QBCore = exports['qb-core']:GetCoreObject()
+QBCore = exports['qbx-core']:GetCoreObject()
 
 InBedDict = "anim@gangops@morgue@table@"
 InBedAnim = "body_search"

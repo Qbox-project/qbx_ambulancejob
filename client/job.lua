@@ -206,7 +206,7 @@ local function emsControls(cb)
         check = true
         while check do
             if IsControlJustPressed(0, 38) then
-                exports['qb-core']:KeyPressed(38)
+                exports['qbx-core']:KeyPressed(38)
                 cb()
             end
             Wait(0)
@@ -237,7 +237,7 @@ local function checkGarageAction(vehicles, vehiclePlatePrefix, coords)
     CreateThread(function()
         while checkVehicle do
             if IsControlJustPressed(0, 38) then
-                exports['qb-core']:KeyPressed(38)
+                exports['qbx-core']:KeyPressed(38)
                 checkVehicle = false
                 if cache.vehicle then
                     QBCore.Functions.DeleteVehicle(cache.vehicle)
