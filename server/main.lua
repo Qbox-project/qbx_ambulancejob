@@ -261,10 +261,8 @@ local function getDamagedBodyParts(limbs)
 	return bodyParts
 end
 
----@param _ any
----@param cb fun(damage: PlayerDamage)
 ---@param playerId number
-QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, playerId)
+lib.callback.register('hospital:GetPlayerStatus', function(_, playerId)
 	local playerSource = QBCore.Functions.GetPlayer(playerId).PlayerData.source
 
 	---@class PlayerDamage
@@ -278,7 +276,9 @@ QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, play
 		bleedLevel = 0,
 		weaponWounds = {}
 	}
-	if not playerSource then cb(damage) return end
+	if not playerSource then
+		return damage
+	end
 
 	local playerInjuries = playerStatus[playerSource]
 	if playerInjuries then
@@ -287,20 +287,7 @@ QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, play
 	end
 
 	damage.weaponWounds = playerWeaponWounds[playerSource] or {}
-	cb(damage)
-end)
-
----@param source number
----@param cb function
-QBCore.Functions.CreateCallback('hospital:GetPlayerBleeding', function(source, cb)
-	local src = source
-	local injuries = playerStatus[src]
-	if not injuries or injuries.isBleeding == nil then
-		cb(nil)
-		return
-	end
-
-	cb(injuries.isBleeding)
+	return damage
 end)
 
 -- Commands
