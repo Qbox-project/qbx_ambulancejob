@@ -90,31 +90,30 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
     local playerId = GetPlayerServerId(player)
 
     ---@param damage PlayerDamage
-    QBCore.Functions.TriggerCallback('hospital:GetPlayerStatus', function(damage)
-        if not damage or (damage.bleedLevel == 0 and #damage.damagedBodyParts == 0 and #damage.weaponWounds == 0) then
-            lib.notify({ description = Lang:t('success.healthy_player'), type = 'success' })
-            return
-        end
+    local damage = lib.callback.await('hospital:GetPlayerStatus', false, playerId)
+    if not damage or (damage.bleedLevel == 0 and #damage.damagedBodyParts == 0 and #damage.weaponWounds == 0) then
+        lib.notify({ description = Lang:t('success.healthy_player'), type = 'success' })
+        return
+    end
 
-        for _, hash in pairs(damage.weaponWounds) do
-            TriggerEvent('chat:addMessage', {
-                color = { 255, 0, 0 },
-                multiline = false,
-                args = { Lang:t('info.status'), QBCore.Shared.Weapons[hash].damagereason }
-            })
-        end
+    for _, hash in pairs(damage.weaponWounds) do
+        TriggerEvent('chat:addMessage', {
+            color = { 255, 0, 0 },
+            multiline = false,
+            args = { Lang:t('info.status'), QBCore.Shared.Weapons[hash].damagereason }
+        })
+    end
 
-        if damage.bleedLevel > 0 then
-            TriggerEvent('chat:addMessage', {
-                color = { 255, 0, 0 },
-                multiline = false,
-                args = { Lang:t('info.status'), Lang:t('info.is_status', { status = Config.BleedingStates[damage.bleedLevel].label }) }
-            })
-        end
+    if damage.bleedLevel > 0 then
+        TriggerEvent('chat:addMessage', {
+            color = { 255, 0, 0 },
+            multiline = false,
+            args = { Lang:t('info.status'), Lang:t('info.is_status', { status = Config.BleedingStates[damage.bleedLevel].label }) }
+        })
+    end
 
-        local status = getPatientStatus(damage.damagedBodyParts)
-        showTreatmentMenu(status)
-    end, playerId)
+    local status = getPatientStatus(damage.damagedBodyParts)
+    showTreatmentMenu(status)
 end)
 
 ---Use first aid on nearest player to revive them.
