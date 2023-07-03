@@ -246,7 +246,9 @@ CreateThread(function()
     while true do
         local ped = cache.ped
         checkForDamage(ped)
-        ApplyDamageEffects(ped)
+        if not OnPainKillers and not IsInHospitalBed then
+            ApplyDamageEffects(ped)
+        end
         Wait(100)
     end
 end)
