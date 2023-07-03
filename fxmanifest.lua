@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 description 'https://github.com/QBCore-Remastered'
-version '1.0.1'
+version '1.0.0'
 
 shared_scripts {
 	'@qbx-core/shared/locale.lua',
@@ -36,6 +36,7 @@ dependencies {
 	'qbx-core',
 	'qbx-policejob',
 	'qbx-management',
+	'qbx-medical',
 }
 
 lua54 'yes'

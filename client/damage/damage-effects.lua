@@ -94,7 +94,7 @@ end
 ---applies disabling status effects based on injuries to specific body parts
 ---@param ped number
 function ApplyDamageEffects(ped)
-    if IsDead or InLaststand or OnPainKillers or IsInHospitalBed then return end
+    if IsDead or InLaststand then return end
     for _, injury in pairs(Injured) do
         if isLegDamaged(injury) then
             if legCount >= Config.LegInjuryTimer then
