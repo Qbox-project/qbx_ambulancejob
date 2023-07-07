@@ -309,11 +309,6 @@ RegisterNetEvent('hospital:client:SetPain', function()
     })
 end)
 
-RegisterNetEvent('hospital:client:KillPlayer', function()
-    if GetInvokingResource() then return end
-    SetEntityHealth(cache.ped, 0)
-end)
-
 ---heals player wounds.
 ---@param type? "full"|any heals all wounds if full otherwise heals only major wounds.
 RegisterNetEvent('hospital:client:HealInjuries', function(type)
@@ -350,12 +345,6 @@ RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
             button = {}
         })
     end)
-end)
-
-RegisterNetEvent('hospital:client:adminHeal', function()
-    if GetInvokingResource() then return end
-    SetEntityHealth(cache.ped, 200)
-    TriggerServerEvent("hospital:server:resetHungerThirst")
 end)
 
 -- Threads
