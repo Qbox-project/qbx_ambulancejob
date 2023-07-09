@@ -4,12 +4,17 @@ game 'gta5'
 description 'https://github.com/QBCore-Remastered'
 version '1.0.0'
 
+modules {
+    'qbx-core:utils'
+}
+
 shared_scripts {
 	'@qbx-core/shared/locale.lua',
 	'locales/en.lua',
 	'locales/*.lua',
 	'config.lua',
 	'@ox_lib/init.lua',
+	'@qbx-core/import.lua',
 }
 
 client_scripts {
