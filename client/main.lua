@@ -45,32 +45,6 @@ Injured = {}
 ---@type number[] weapon hashes
 CurrentDamageList = {}
 
----@class BodyPart
----@field label string
----@field causeLimp boolean
----@field isDamaged boolean
----@field severity integer
-
----@alias BodyParts table<Bone, BodyPart>
----@type BodyParts
-BodyParts = {
-    ['HEAD'] = { label = Lang:t('body.head'), causeLimp = false, isDamaged = false, severity = 0 },
-    ['NECK'] = { label = Lang:t('body.neck'), causeLimp = false, isDamaged = false, severity = 0 },
-    ['SPINE'] = { label = Lang:t('body.spine'), causeLimp = true, isDamaged = false, severity = 0 },
-    ['UPPER_BODY'] = { label = Lang:t('body.upper_body'), causeLimp = false, isDamaged = false, severity = 0 },
-    ['LOWER_BODY'] = { label = Lang:t('body.lower_body'), causeLimp = true, isDamaged = false, severity = 0 },
-    ['LARM'] = { label = Lang:t('body.left_arm'), causeLimp = false, isDamaged = false, severity = 0 },
-    ['LHAND'] = { label = Lang:t('body.left_hand'), causeLimp = false, isDamaged = false, severity = 0 },
-    ['LFINGER'] = { label = Lang:t('body.left_fingers'), causeLimp = false, isDamaged = false, severity = 0 },
-    ['LLEG'] = { label = Lang:t('body.left_leg'), causeLimp = true, isDamaged = false, severity = 0 },
-    ['LFOOT'] = { label = Lang:t('body.left_foot'), causeLimp = true, isDamaged = false, severity = 0 },
-    ['RARM'] = { label = Lang:t('body.right_arm'), causeLimp = false, isDamaged = false, severity = 0 },
-    ['RHAND'] = { label = Lang:t('body.right_hand'), causeLimp = false, isDamaged = false, severity = 0 },
-    ['RFINGER'] = { label = Lang:t('body.right_fingers'), causeLimp = false, isDamaged = false, severity = 0 },
-    ['RLEG'] = { label = Lang:t('body.right_leg'), causeLimp = true, isDamaged = false, severity = 0 },
-    ['RFOOT'] = { label = Lang:t('body.right_foot'), causeLimp = true, isDamaged = false, severity = 0 },
-}
-
 RegisterNetEvent('QBCore:Player:SetPlayerData', function(data)
     if GetInvokingResource() then return end
     PlayerData = data
@@ -108,31 +82,9 @@ function ApplyBleed(level)
     SendBleedAlert()
 end
 
----@return boolean isInjuryCausingLimp if injury causes a limp and is damaged.
-local function isInjuryCausingLimp()
-    for _, v in pairs(BodyParts) do
-        if v.causeLimp and v.isDamaged then
-            return true
-        end
-    end
-    return false
-end
-
----sets ped animation to limping and prevents running.
-function MakePedLimp(ped)
-    if not isInjuryCausingLimp() then return end
-    lib.requestAnimSet("move_m@injured")
-    SetPedMovementClipset(ped, "move_m@injured", 1)
-    SetPlayerSprint(cache.playerId, false)
-end
-
+--- TODO: This name is misleading, as it only resets injuries of lower severity, so it should be reset minor injuries
 function ResetMajorInjuries()
-    for _, v in pairs(BodyParts) do
-        if v.isDamaged and v.severity <= 2 then
-            v.isDamaged = false
-            v.severity = 0
-        end
-    end
+    exports['qbx-medical']:resetMinorInjuries()
 
     for k, v in pairs(Injured) do
         if v.severity <= 2 then
@@ -149,20 +101,14 @@ function ResetMajorInjuries()
         BlackoutTimer = 0
     end
 
-    -- TODO: do we need to sync twice?
     TriggerServerEvent('hospital:server:SyncInjuries', {
-        limbs = BodyParts,
+        limbs = exports['qbx-medical']:getBodyPartsDeprecated(),
         isBleeding = tonumber(IsBleeding)
     })
 
-    MakePedLimp(cache.ped)
+    exports['qbx-medical']:makePedLimp()
     doLimbAlert()
     SendBleedAlert()
-
-    TriggerServerEvent('hospital:server:SyncInjuries', {
-        limbs = BodyParts,
-        isBleeding = tonumber(IsBleeding)
-    })
 end
 
 function ResetAllInjuries()
@@ -173,28 +119,19 @@ function ResetAllInjuries()
     BlackoutTimer = 0
     Injured = {}
 
-    for _, v in pairs(BodyParts) do
-        v.isDamaged = false
-        v.severity = 0
-    end
+    exports['qbx-medical']:ResetAllInjuries()
 
-    -- TODO: do we need to sync twice?
     TriggerServerEvent('hospital:server:SyncInjuries', {
-        limbs = BodyParts,
+        limbs = exports['qbx-medical']:getBodyPartsDeprecated(),
         isBleeding = tonumber(IsBleeding)
     })
 
     CurrentDamageList = {}
     TriggerServerEvent('hospital:server:SetWeaponDamage', CurrentDamageList)
 
-    MakePedLimp(cache.ped)
+    exports['qbx-medical']:makePedLimp()
     doLimbAlert()
     SendBleedAlert()
-
-    TriggerServerEvent('hospital:server:SyncInjuries', {
-        limbs = BodyParts,
-        isBleeding = tonumber(IsBleeding)
-    })
     TriggerServerEvent("hospital:server:resetHungerThirst")
 end
 
@@ -205,12 +142,12 @@ end
 function CreateInjury(bodyPart, bone, maxSeverity)
     if bodyPart.isDamaged then return end
 
-    bodyPart.isDamaged = true
-    bodyPart.severity = math.random(1, maxSeverity)
+    local severity = math.random(1, maxSeverity)
+    exports['qbx-medical']:damageBodyPart(bone, severity)
     Injured[#Injured + 1] = {
         part = bone,
         label = bodyPart.label,
-        severity = bodyPart.severity
+        severity = severity,
     }
 end
 
@@ -298,13 +235,13 @@ RegisterNetEvent('hospital:client:SetPain', function()
     ApplyBleed(math.random(1, 4))
     local bone = Config.Bones[24816]
 
-    CreateInjury(BodyParts[bone], bone, 4)
+    CreateInjury(exports['qbx-medical']:getBodyPartsDeprecated()[bone], bone, 4)
 
     bone = Config.Bones[40269]
-    CreateInjury(BodyParts[bone], bone, 4)
+    CreateInjury(exports['qbx-medical']:getBodyPartsDeprecated()[bone], bone, 4)
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
-        limbs = BodyParts,
+        limbs = exports['qbx-medical']:getBodyPartsDeprecated(),
         isBleeding = tonumber(IsBleeding)
     })
 end)

@@ -106,6 +106,7 @@ local function upgradeInjury(bodyPart, bone)
     if bodyPart.severity >= 4 then return end
 
     bodyPart.severity += 1
+    exports['qbx-medical']:damageBodyPart(bone, bodyPart.severity)
     for _, injury in pairs(Injured) do
         if injury.part == bone then
             injury.severity = bodyPart.severity
@@ -116,7 +117,7 @@ end
 ---create/upgrade injury at bone.
 ---@param bone Bone
 local function injureBodyPart(bone)
-    local bodyPart = BodyParts[bone]
+    local bodyPart = exports['qbx-medical']:getBodyPartsDeprecated()[bone]
     if not bodyPart.isDamaged then
         CreateInjury(bodyPart, bone, 3)
     else
@@ -139,11 +140,11 @@ local function checkDamage(ped, boneId, weapon, damageDone)
     injureBodyPart(bone)
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
-        limbs = BodyParts,
+        limbs = exports['qbx-medical']:getBodyPartsDeprecated(),
         isBleeding = tonumber(IsBleeding)
     })
 
-    MakePedLimp(ped)
+    exports['qbx-medical']:makePedLimp()
 end
 
 ---Apply damage to health and armor based off of damage done and weapon used.
