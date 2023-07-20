@@ -1,33 +1,8 @@
----displays text on the player's screen.
----@param x number
----@param y number
----@param width number
----@param height number
----@param scale number
----@param text string
----@param r number
----@param g number
----@param b number
----@param a number
-local function drawTxt(x, y, width, height, scale, text, r, g, b, a)
-    SetTextFont(4)
-    SetTextProportional(false)
-    SetTextScale(scale, scale)
-    SetTextColour(r, g, b, a)
-    SetTextDropShadow(0, 0, 0, 0, 255)
-    SetTextEdge(2, 0, 0, 0, 255)
-    SetTextDropShadow()
-    SetTextOutline()
-    SetTextEntry("STRING")
-    AddTextComponentString(text)
-    DrawText(x - width / 2, y - height / 2 + 0.005)
-end
-
 local function displayRespawnText()
     if DeathTime > 0 and DoctorCount > 0 then
-        drawTxt(0.93, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_txt', { deathtime = math.ceil(DeathTime) }), 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.respawn_txt', { deathtime = math.ceil(DeathTime) }), vec2(0.93, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
-        drawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', { holdtime = RespawnHoldTime, cost = Config.BillCost }), 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.respawn_revive', { holdtime = RespawnHoldTime, cost = Config.BillCost }), vec2(0.865, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     end
 end
 
@@ -106,22 +81,22 @@ end
 local function handleRequestingEms()
     if DoctorCount == 0 then return end
     if not EmsNotified then
-        drawTxt(0.91, 1.40, 1.0, 1.0, 0.6, Lang:t('info.request_help'), 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.request_help'), vec2(0.91, 1.40), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
         if IsControlJustPressed(0, 47) then
             TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
             EmsNotified = true
         end
     else
-        drawTxt(0.90, 1.40, 1.0, 1.0, 0.6, Lang:t('info.help_requested'), 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.help_requested'), vec2(0.90, 1.40), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     end
 end
 
 ---@param ped number
 local function handleLastStand(ped)
     if LaststandTime > Laststand.MinimumRevive then
-        drawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(LaststandTime) }), vec2(0.94, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
-        drawTxt(0.845, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out_help', { time = math.ceil(LaststandTime) }), 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.bleed_out_help', { time = math.ceil(LaststandTime) }), vec2(0.845, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
         handleRequestingEms()
     end
 
