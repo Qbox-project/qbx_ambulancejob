@@ -281,13 +281,6 @@ Config.BleedingStates = { -- Translate bleeding alerts
     [4] = { label = Lang:t('states.big_bleed') },
 }
 
-Config.MovementRate = { -- Set the player movement rate based on the level of damage they have
-    0.98,
-    0.96,
-    0.94,
-    0.92,
-}
-
 Config.Bones = { -- Correspond bone hash numbers to their label
     [0]     = 'NONE',
     [31085] = 'HEAD',

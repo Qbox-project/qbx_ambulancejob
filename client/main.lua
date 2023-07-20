@@ -34,14 +34,6 @@ PlayerData = {
 ---@type number
 PlayerHealth = nil
 
----@class Injury
----@field part Bone body part
----@field severity integer higher numbers are worse injuries
----@field label string
-
----@type Injury[]
-Injured = {}
-
 ---@type number[] weapon hashes
 CurrentDamageList = {}
 
@@ -52,13 +44,14 @@ end)
 
 ---notify the player of damage to their body.
 local function doLimbAlert()
-    if IsDead or InLaststand or #Injured == 0 then return end
+    local injuries = exports['qbx-medical']:getInjuries()
+    if IsDead or InLaststand or #injuries == 0 then return end
 
     local limbDamageMsg = ''
-    if #Injured <= Config.AlertShowInfo then
-        for k, v in pairs(Injured) do
+    if #injuries <= Config.AlertShowInfo then
+        for k, v in pairs(injuries) do
             limbDamageMsg = limbDamageMsg .. Lang:t('info.pain_message', { limb = v.label, severity = Config.WoundStates[v.severity] })
-            if k < #Injured then
+            if k < #injuries then
                 limbDamageMsg = limbDamageMsg .. " | "
             end
         end
@@ -86,13 +79,6 @@ end
 function ResetMajorInjuries()
     exports['qbx-medical']:resetMinorInjuries()
 
-    for k, v in pairs(Injured) do
-        if v.severity <= 2 then
-            v.severity = 0
-            table.remove(Injured, k)
-        end
-    end
-
     if IsBleeding <= 2 then
         IsBleeding = 0
         BleedTickTimer = 0
@@ -117,7 +103,6 @@ function ResetAllInjuries()
     AdvanceBleedTimer = 0
     FadeOutTimer = 0
     BlackoutTimer = 0
-    Injured = {}
 
     exports['qbx-medical']:ResetAllInjuries()
 
@@ -133,22 +118,6 @@ function ResetAllInjuries()
     doLimbAlert()
     SendBleedAlert()
     TriggerServerEvent("hospital:server:resetHungerThirst")
-end
-
----creates an injury on body part with random severity between 1 and maxSeverity.
----@param bodyPart BodyPart
----@param bone Bone
----@param maxSeverity number
-function CreateInjury(bodyPart, bone, maxSeverity)
-    if bodyPart.isDamaged then return end
-
-    local severity = math.random(1, maxSeverity)
-    exports['qbx-medical']:damageBodyPart(bone, severity)
-    Injured[#Injured + 1] = {
-        part = bone,
-        label = bodyPart.label,
-        severity = severity,
-    }
 end
 
 -- Events
@@ -233,12 +202,12 @@ end)
 RegisterNetEvent('hospital:client:SetPain', function()
     if GetInvokingResource() then return end
     ApplyBleed(math.random(1, 4))
+    
     local bone = Config.Bones[24816]
-
-    CreateInjury(exports['qbx-medical']:getBodyPartsDeprecated()[bone], bone, 4)
+    exports['qbx-medical']:createInjury(exports['qbx-medical']:getBodyPartsDeprecated()[bone], bone, 4)
 
     bone = Config.Bones[40269]
-    CreateInjury(exports['qbx-medical']:getBodyPartsDeprecated()[bone], bone, 4)
+    exports['qbx-medical']:createInjury(exports['qbx-medical']:getBodyPartsDeprecated()[bone], bone, 4)
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = exports['qbx-medical']:getBodyPartsDeprecated(),

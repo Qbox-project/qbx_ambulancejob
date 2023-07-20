@@ -99,32 +99,6 @@ local function applyImmediateEffects(ped, bone, weapon, damageDone)
     end
 end
 
----Increases severity of an injury
----@param bodyPart BodyPart
----@param bone Bone
-local function upgradeInjury(bodyPart, bone)
-    if bodyPart.severity >= 4 then return end
-
-    bodyPart.severity += 1
-    exports['qbx-medical']:damageBodyPart(bone, bodyPart.severity)
-    for _, injury in pairs(Injured) do
-        if injury.part == bone then
-            injury.severity = bodyPart.severity
-        end
-    end
-end
-
----create/upgrade injury at bone.
----@param bone Bone
-local function injureBodyPart(bone)
-    local bodyPart = exports['qbx-medical']:getBodyPartsDeprecated()[bone]
-    if not bodyPart.isDamaged then
-        CreateInjury(bodyPart, bone, 3)
-    else
-        upgradeInjury(bodyPart, bone)
-    end
-end
-
 ---Apply bleeds, injure the body part hit, make ped limp/stagger
 ---@param ped number
 ---@param boneId integer
@@ -137,7 +111,7 @@ local function checkDamage(ped, boneId, weapon, damageDone)
     if not bone or IsDead or InLaststand then return end
 
     applyImmediateEffects(ped, bone, weapon, damageDone)
-    injureBodyPart(bone)
+    exports['qbx-medical']:injureBodyPart(bone)
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = exports['qbx-medical']:getBodyPartsDeprecated(),
