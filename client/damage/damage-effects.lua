@@ -95,7 +95,7 @@ end
 ---@param ped number
 function ApplyDamageEffects(ped)
     if IsDead or InLaststand then return end
-    for _, injury in pairs(Injured) do
+    for _, injury in pairs(exports['qbx-medical']:getInjuries()) do
         if isLegDamaged(injury) then
             if legCount >= Config.LegInjuryTimer then
                 chancePedFalls(ped)
