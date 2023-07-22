@@ -146,41 +146,6 @@ local function applyDamage(ped, damageDone, isArmorDamaged)
     end
 end
 
----searches array for weapon hash
----@param hash number weapon hash
----@return boolean inDamageList if weapon hash is in the array
-local function isInDamageList(hash)
-    if not CurrentDamageList then return false end
-
-    for _, v in pairs(CurrentDamageList) do
-        if v == hash then
-            return true
-        end
-    end
-
-    return false
-end
-
----Adds weapon hashes that damaged the ped that aren't already in the CurrentDamagedList and syncs to the server.
----@param ped number
-local function findDamageCause(ped)
-    local detected = false
-    for hash, weapon in pairs(QBCore.Shared.Weapons) do
-        if HasPedBeenDamagedByWeapon(ped, hash, 0) and not isInDamageList(hash) then
-            detected = true
-            TriggerEvent('chat:addMessage', {
-                color = { 255, 0, 0 },
-                multiline = false,
-                args = { Lang:t('info.status'), weapon.damagereason }
-            })
-            CurrentDamageList[#CurrentDamageList + 1] = hash
-        end
-    end
-    if detected then
-        TriggerServerEvent("hospital:server:SetWeaponDamage", CurrentDamageList)
-    end
-end
-
 ---If the player health and armor haven't already been set, initialize them.
 ---@param health number
 ---@param armor number
@@ -208,7 +173,7 @@ local function checkForDamage(ped)
     if isArmorDamaged or isHealthDamaged then
         local damageDone = (PlayerHealth - health)
         applyDamage(ped, damageDone, isArmorDamaged)
-        findDamageCause(ped)
+        exports['qbx-medical']:findDamageCause()
         ClearEntityLastDamageEntity(ped)
     end
 
