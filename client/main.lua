@@ -31,9 +31,6 @@ PlayerData = {
 ---@type number
 PlayerHealth = nil
 
----@type number[] weapon hashes
-CurrentDamageList = {}
-
 RegisterNetEvent('QBCore:Player:SetPlayerData', function(data)
     if GetInvokingResource() then return end
     PlayerData = data
@@ -85,10 +82,6 @@ end
 
 function ResetAllInjuries()
     exports['qbx-medical']:ResetAllInjuries()
-
-    CurrentDamageList = {}
-    TriggerServerEvent('hospital:server:SetWeaponDamage', CurrentDamageList)
-
     exports['qbx-medical']:makePedLimp()
     doLimbAlert()
     SendBleedAlert()
