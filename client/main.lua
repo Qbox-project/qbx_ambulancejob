@@ -3,9 +3,6 @@ QBCore = exports['qbx-core']:GetCoreObject()
 InBedDict = "anim@gangops@morgue@table@"
 InBedAnim = "body_search"
 IsInHospitalBed = false
-IsBleeding = 0
-BleedTickTimer, AdvanceBleedTimer = 0, 0
-FadeOutTimer, BlackoutTimer = 0, 0
 IsDead = false
 HealAnimDict = "mini@cpr@char_a@cpr_str"
 HealAnim = "cpr_pumpchest"
@@ -60,54 +57,31 @@ end
 
 ---notify the player of bleeding to their body.
 function SendBleedAlert()
-    if IsDead or tonumber(IsBleeding) <= 0 then return end
-    lib.notify({ title = Lang:t('info.bleed_alert', {bleedstate = Config.BleedingStates[tonumber(IsBleeding)].label}), type = 'inform' })
+    local bleedLevel = exports['qbx-core']:getBleedLevel()
+    if IsDead or bleedLevel == 0 then return end
+    lib.notify({ title = Lang:t('info.bleed_alert', {bleedstate = Config.BleedingStates[bleedLevel].label}), type = 'inform' })
 end
 
 ---adds a bleed to the player and alerts them. Total bleed level maxes at 4.
 ---@param level 1|2|3|4 speed of the bleed
 function ApplyBleed(level)
-    if IsBleeding == 4 then return end
-    IsBleeding = (IsBleeding + level >= 4) and 4 or (IsBleeding + level)
+    local bleedLevel = exports['qbx-core']:getBleedLevel()
+    if bleedLevel == 4 then return end
+    bleedLevel += level
+    exports['qbx-medical']:setBleedLevel((bleedLevel >= 4) and 4 or bleedLevel)
     SendBleedAlert()
 end
 
 --- TODO: This name is misleading, as it only resets injuries of lower severity, so it should be reset minor injuries
 function ResetMajorInjuries()
     exports['qbx-medical']:resetMinorInjuries()
-
-    if IsBleeding <= 2 then
-        IsBleeding = 0
-        BleedTickTimer = 0
-        AdvanceBleedTimer = 0
-        FadeOutTimer = 0
-        BlackoutTimer = 0
-    end
-
-    TriggerServerEvent('hospital:server:SyncInjuries', {
-        limbs = exports['qbx-medical']:getBodyPartsDeprecated(),
-        isBleeding = tonumber(IsBleeding)
-    })
-
     exports['qbx-medical']:makePedLimp()
     doLimbAlert()
     SendBleedAlert()
 end
 
 function ResetAllInjuries()
-    IsBleeding = 0
-    BleedTickTimer = 0
-    AdvanceBleedTimer = 0
-    FadeOutTimer = 0
-    BlackoutTimer = 0
-
     exports['qbx-medical']:ResetAllInjuries()
-
-    TriggerServerEvent('hospital:server:SyncInjuries', {
-        limbs = exports['qbx-medical']:getBodyPartsDeprecated(),
-        isBleeding = tonumber(IsBleeding)
-    })
-
     exports['qbx-medical']:makePedLimp()
     doLimbAlert()
     SendBleedAlert()
@@ -205,7 +179,7 @@ RegisterNetEvent('hospital:client:SetPain', function()
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = exports['qbx-medical']:getBodyPartsDeprecated(),
-        isBleeding = tonumber(IsBleeding)
+        isBleeding = exports['qbx-medical']:getBleedLevel()
     })
 end)
 

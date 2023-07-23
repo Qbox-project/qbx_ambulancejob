@@ -4,8 +4,10 @@ local painkillerAmount = 0
 ---reduce bleeding by level. Bleed level cannot be negative.
 ---@param level number
 local function removeBleed(level)
-    if IsBleeding == 0 then return end
-    IsBleeding = (IsBleeding - level < 0) and 0 or (IsBleeding - level)
+    local bleedLevel = exports['qbx-medical']:getBleedLevel()
+    if bleedLevel == 0 then return end
+    bleedLevel -= level
+    exports['qbx-medical']:setBleedLevel((bleedLevel < 0) and 0 or bleedLevel)
     SendBleedAlert()
 end
 
@@ -141,34 +143,8 @@ CreateThread(function()
 end)
 
 ---@param ped number
-local function makePlayerBlackout(ped)
-    SetFlash(0, 0, 100, 7000, 100)
-
-    DoScreenFadeOut(500)
-    while not IsScreenFadedOut() do
-        Wait(0)
-    end
-
-    if not IsPedRagdoll(ped) and IsPedOnFoot(ped) and not IsPedSwimming(ped) then
-        ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.08) -- change this float to increase/decrease camera shake
-        SetPedToRagdollWithFall(ped, 7500, 9000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    end
-
-    Wait(1500)
-    DoScreenFadeIn(1000)
-end
-
-local function makePlayerFadeOut()
-    DoScreenFadeOut(500)
-    while not IsScreenFadedOut() do
-        Wait(0)
-    end
-    DoScreenFadeIn(500)
-end
-
----@param ped number
 local function applyBleedEffects(ped)
-    local bleedDamage = tonumber(IsBleeding) * Config.BleedTickDamage
+    local bleedDamage = exports['qbx-medical']:getBleedLevel() * Config.BleedTickDamage
     ApplyDamageToPed(ped, bleedDamage, false)
     SendBleedAlert()
     PlayerHealth = PlayerHealth - bleedDamage
@@ -177,56 +153,47 @@ local function applyBleedEffects(ped)
     local coords = GetOffsetFromEntityInWorldCoords(ped, randX, randY, 0)
     TriggerServerEvent("evidence:server:CreateBloodDrop", PlayerData.citizenid, PlayerData.metadata.bloodtype, coords)
 
-    if AdvanceBleedTimer >= Config.AdvanceBleedTimer then
+    local advanceBleedTimer = exports['qbx-medical']:getAdvanceBleedTimerDeprecated()
+    if advanceBleedTimer >= Config.AdvanceBleedTimer then
         ApplyBleed(1)
-        AdvanceBleedTimer = 0
+        exports['qbx-medical']:setAdvanceBleedTimerDeprecated(0)
     else
-        AdvanceBleedTimer += 1
+        exports['qbx-medical']:setAdvanceBleedTimerDeprecated(advanceBleedTimer + 1)
     end
 end
 
 ---@param ped number
 local function handleBleeding(ped)
-    if IsDead or InLaststand or IsBleeding <= 0 then return end
-    if FadeOutTimer + 1 == Config.FadeOutTimer then
-        if BlackoutTimer + 1 == Config.BlackoutTimer then
-            makePlayerBlackout(ped)
-            BlackoutTimer = 0
-        else
-            makePlayerFadeOut()
-            BlackoutTimer += IsBleeding > 3 and 2 or 1
-        end
-
-        FadeOutTimer = 0
-    else
-        FadeOutTimer += 1
-    end
-
+    local bleedLevel = exports['qbx-medical']:getBleedLevel()
+    if IsDead or InLaststand or bleedLevel <= 0 then return end
+    exports['qbx-medical']:handleBloodLossEffectsDeprecated()
     applyBleedEffects(ped)
 end
 
 ---@param ped number
 local function bleedTick(ped)
-    if math.floor(BleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
+    local bleedTickTimer = exports['qbx-medical']:getBleedTickTimerDeprecated()
+    if math.floor(bleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
         local currPos = GetEntityCoords(ped, true)
         local moving = #(prevPos.xy - currPos.xy)
-        if (moving > 1 and not cache.vehicle) and IsBleeding > 2 then
-            AdvanceBleedTimer += Config.BleedMovementAdvance
-            BleedTickTimer += Config.BleedMovementTick
+        if (moving > 1 and not cache.vehicle) and exports['qbx-medical']:getBleedLevel() > 2 then
+            exports['qbx-medical']:setAdvanceBleedTimerDeprecated(exports['qbx-medical']:getAdvanceBleedTimerDeprecated() + Config.BleedMovementAdvance)
+            bleedTickTimer += Config.BleedMovementTick
             prevPos = currPos
         else
-            BleedTickTimer += 1
+            bleedTickTimer += 1
         end
     end
-    BleedTickTimer += 1
+    bleedTickTimer += 1
+    exports['qbx-medical']:setBleedTickTimerDeprecated(bleedTickTimer)
 end
 
 local function checkBleeding()
-    if IsBleeding <= 0 or OnPainKillers then return end
+    if exports['qbx-medical']:getBleedLevel() == 0 or OnPainKillers then return end
     local player = cache.ped
-    if BleedTickTimer >= Config.BleedTickRate and not IsInHospitalBed then
+    if exports['qbx-medical']:getBleedTickTimerDeprecated() >= Config.BleedTickRate and not IsInHospitalBed then
         handleBleeding(player)
-        BleedTickTimer = 0
+        exports['qbx-medical']:setBleedTickTimerDeprecated(0)
     else
         bleedTick(player)
     end

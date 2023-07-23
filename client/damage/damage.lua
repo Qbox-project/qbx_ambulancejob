@@ -115,7 +115,7 @@ local function checkDamage(ped, boneId, weapon, damageDone)
 
     TriggerServerEvent('hospital:server:SyncInjuries', {
         limbs = exports['qbx-medical']:getBodyPartsDeprecated(),
-        isBleeding = tonumber(IsBleeding)
+        isBleeding = exports['qbx-medical']:getBleedLevel()
     })
 
     exports['qbx-medical']:makePedLimp()
