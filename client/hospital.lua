@@ -37,7 +37,7 @@ local function checkIn()
         return
     end
 
-    TriggerEvent('animations:client:EmoteCommandStart', { "notepad" })
+    exports.scully_emotemenu:playEmoteByCommand('notepad')
     if lib.progressCircle({
         duration = 2000,
         position = 'bottom',
@@ -56,7 +56,7 @@ local function checkIn()
         },
     })
     then
-        TriggerEvent('animations:client:EmoteCommandStart', { "c" })
+        exports.scully_emotemenu:cancelEmote()
         local bedId = getAvailableBed()
         if not bedId then
             lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
@@ -65,7 +65,7 @@ local function checkIn()
 
         TriggerServerEvent("hospital:server:SendToBed", bedId, true)
     else
-        TriggerEvent('animations:client:EmoteCommandStart', { "c" })
+        exports.scully_emotemenu:cancelEmote()
         lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
     end
 end
