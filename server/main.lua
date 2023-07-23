@@ -22,7 +22,7 @@ end
 ---@param player Player
 ---@param bedsKey "beds"|"jailbeds"
 ---@param i integer
----@param bed Bed
+---@param bed table Bed
 local function respawnAtBed(player, bedsKey, i, bed)
 	TriggerClientEvent('hospital:client:SendToBed', player.PlayerData.source, i, bed, true)
 	TriggerClientEvent('hospital:client:SetBed', -1, bedsKey, i, true)
@@ -36,13 +36,14 @@ end
 ---@param bedsKey "beds"|"jailbeds"
 local function respawnAtHospital(player, bedsKey)
 	local beds = Config.Locations[bedsKey]
+	local closest, bedIndex = nil, 0
 	for i, bed in pairs(beds) do
-		if not bed.taken then
-			respawnAtBed(player, bedsKey, i, bed)
-			return
+		if (not closest or closest > #(GetEntityCoords(cache.ped) - bed.coords)) and not bed.taken then
+			closest = #(GetEntityCoords(cache.ped) - bed.coords)
+			bedIndex = i
 		end
 	end
-	respawnAtBed(player, bedsKey)
+	respawnAtBed(player, bedsKey, bedIndex, beds[bedIndex])
 end
 
 RegisterNetEvent('hospital:server:RespawnAtHospital', function()
