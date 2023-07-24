@@ -46,7 +46,7 @@ local function onPlayerUnloaded()
     if BedOccupying then
         TriggerServerEvent("hospital:server:LeaveBed", BedOccupying)
     end
-    IsDead = false
+    exports['qbx-medical']:setIsDeadDeprecated(false)
     DeathTime = 0
     SetEntityInvincible(ped, false)
     SetPedArmour(ped, 0)

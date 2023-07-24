@@ -3,7 +3,6 @@ QBCore = exports['qbx-core']:GetCoreObject()
 InBedDict = "anim@gangops@morgue@table@"
 InBedAnim = "body_search"
 IsInHospitalBed = false
-IsDead = false
 HealAnimDict = "mini@cpr@char_a@cpr_str"
 HealAnim = "cpr_pumpchest"
 RespawnHoldTime = 5
@@ -36,7 +35,7 @@ end)
 ---notify the player of damage to their body.
 local function doLimbAlert()
     local injuries = exports['qbx-medical']:getInjuries()
-    if IsDead or InLaststand or #injuries == 0 then return end
+    if exports['qbx-medical']:isDead() or InLaststand or #injuries == 0 then return end
 
     local limbDamageMsg = ''
     if #injuries <= Config.AlertShowInfo then
@@ -52,36 +51,17 @@ local function doLimbAlert()
     lib.notify({ description = limbDamageMsg, type = 'error' })
 end
 
----notify the player of bleeding to their body.
-function SendBleedAlert()
-    local bleedLevel = exports['qbx-core']:getBleedLevel()
-    if IsDead or bleedLevel == 0 then return end
-    lib.notify({ title = Lang:t('info.bleed_alert', {bleedstate = Config.BleedingStates[bleedLevel].label}), type = 'inform' })
-end
-
----adds a bleed to the player and alerts them. Total bleed level maxes at 4.
----@param level 1|2|3|4 speed of the bleed
-function ApplyBleed(level)
-    local bleedLevel = exports['qbx-core']:getBleedLevel()
-    if bleedLevel == 4 then return end
-    bleedLevel += level
-    exports['qbx-medical']:setBleedLevel((bleedLevel >= 4) and 4 or bleedLevel)
-    SendBleedAlert()
-end
-
 --- TODO: This name is misleading, as it only resets injuries of lower severity, so it should be reset minor injuries
 function ResetMajorInjuries()
     exports['qbx-medical']:resetMinorInjuries()
     exports['qbx-medical']:makePedLimp()
     doLimbAlert()
-    SendBleedAlert()
 end
 
 function ResetAllInjuries()
     exports['qbx-medical']:ResetAllInjuries()
     exports['qbx-medical']:makePedLimp()
     doLimbAlert()
-    SendBleedAlert()
     TriggerServerEvent("hospital:server:resetHungerThirst")
 end
 
@@ -134,10 +114,10 @@ end)
 RegisterNetEvent('hospital:client:Revive', function()
     local ped = cache.ped
 
-    if IsDead or InLaststand then
+    if exports['qbx-medical']:isDead() or InLaststand then
         local pos = GetEntityCoords(ped, true)
         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(ped), true, false)
-        IsDead = false
+        exports['qbx-medical']:setIsDeadDeprecated(false)
         SetEntityInvincible(ped, false)
         EndLastStand()
     end
@@ -161,23 +141,6 @@ RegisterNetEvent('hospital:client:Revive', function()
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
     EmsNotified = false
     lib.notify({ description = Lang:t('info.healthy'), type = 'inform' })
-end)
-
----Creates random injuries on the player
-RegisterNetEvent('hospital:client:SetPain', function()
-    if GetInvokingResource() then return end
-    ApplyBleed(math.random(1, 4))
-    
-    local bone = Config.Bones[24816]
-    exports['qbx-medical']:createInjury(exports['qbx-medical']:getBodyPartsDeprecated()[bone], bone, 4)
-
-    bone = Config.Bones[40269]
-    exports['qbx-medical']:createInjury(exports['qbx-medical']:getBodyPartsDeprecated()[bone], bone, 4)
-
-    TriggerServerEvent('hospital:server:SyncInjuries', {
-        limbs = exports['qbx-medical']:getBodyPartsDeprecated(),
-        isBleeding = exports['qbx-medical']:getBleedLevel()
-    })
 end)
 
 ---heals player wounds.

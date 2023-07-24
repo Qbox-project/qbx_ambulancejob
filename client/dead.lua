@@ -11,8 +11,9 @@ end
 
 ---put player in death animation, make invincible, and notify EMS.
 function OnDeath()
-    if IsDead then return end
-    IsDead = true
+    local isDead = exports['qbx-medical']:isDead()
+    if isDead then return end
+    exports['qbx-medical']:kill()
     TriggerServerEvent("hospital:server:SetDeathStatus", true)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
     local player = cache.ped
@@ -38,7 +39,7 @@ end
 ---Allow player to respawn
 function AllowRespawn()
     RespawnHoldTime = 5
-    while IsDead do
+    while exports['qbx-medical']:isDead() do
         Wait(1000)
         DeathTime -= 1
         if DeathTime <= 0 then
@@ -78,7 +79,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
     if not IsEntityAPed(victim) or not victimDied or NetworkGetPlayerIndexFromPed(victim) ~= cache.playerId or not IsEntityDead(cache.ped) then return end
     if not InLaststand then
         StartLastStand()
-    elseif InLaststand and not IsDead then
+    elseif InLaststand and not exports['qbx-medical']:isDead() then
         EndLastStand()
         logDeath(victim, attacker, weapon)
         DeathTime = 0
