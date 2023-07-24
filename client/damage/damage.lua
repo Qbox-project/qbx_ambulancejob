@@ -150,8 +150,8 @@ end
 ---@param health number
 ---@param armor number
 local function initHealthAndArmorIfNotSet(health, armor)
-    if not PlayerHealth then
-        PlayerHealth = health
+    if not exports['qbx-medical']:getHp() then
+        exports['qbx-medical']:setHp(health)
     end
 
     if not playerArmor then
@@ -168,16 +168,16 @@ local function checkForDamage(ped)
     initHealthAndArmorIfNotSet(health, armor)
 
     local isArmorDamaged = (playerArmor ~= armor and armor < (playerArmor - Config.ArmorDamage) and armor > 0) -- Players armor was damaged
-    local isHealthDamaged = (PlayerHealth ~= health) -- Players health was damaged
+    local isHealthDamaged = (exports['qbx-medical']:getHp() ~= health) -- Players health was damaged
 
     if isArmorDamaged or isHealthDamaged then
-        local damageDone = (PlayerHealth - health)
+        local damageDone = (exports['qbx-medical']:getHp() - health)
         applyDamage(ped, damageDone, isArmorDamaged)
         exports['qbx-medical']:findDamageCause()
         ClearEntityLastDamageEntity(ped)
     end
 
-    PlayerHealth = health
+    exports['qbx-medical']:setHp(health)
     playerArmor = armor
 end
 

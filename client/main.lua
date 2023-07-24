@@ -28,9 +28,6 @@ PlayerData = {
     job = nil
 }
 
----@type number
-PlayerHealth = nil
-
 RegisterNetEvent('QBCore:Player:SetPlayerData', function(data)
     if GetInvokingResource() then return end
     PlayerData = data

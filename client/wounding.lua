@@ -147,7 +147,7 @@ local function applyBleedEffects(ped)
     local bleedDamage = exports['qbx-medical']:getBleedLevel() * Config.BleedTickDamage
     ApplyDamageToPed(ped, bleedDamage, false)
     SendBleedAlert()
-    PlayerHealth = PlayerHealth - bleedDamage
+    exports['qbx-medical']:setHp(exports['qbx-medical']:getHp() - bleedDamage)
     local randX = math.random() + math.random(-1, 1)
     local randY = math.random() + math.random(-1, 1)
     local coords = GetOffsetFromEntityInWorldCoords(ped, randX, randY, 0)
