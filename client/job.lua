@@ -108,7 +108,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { Lang:t('info.status'), Lang:t('info.is_status', { status = Config.BleedingStates[damage.bleedLevel].label }) }
+            args = { Lang:t('info.status'), Lang:t('info.is_status', { status = exports['qbx-medical']:getBleedStateLabelDeprecated(damage.bleedLevel)}) }
         })
     end
 
