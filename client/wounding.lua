@@ -132,7 +132,8 @@ CreateThread(function()
     end
 end)
 
-local function handleBleeding()
+---@param ped number
+local function handleBleeding(ped)
     local bleedLevel = exports['qbx-medical']:getBleedLevel()
     if exports['qbx-medical']:isDead() or InLaststand or bleedLevel <= 0 then return end
     exports['qbx-medical']:handleBloodLossEffectsDeprecated()
