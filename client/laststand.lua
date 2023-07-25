@@ -76,10 +76,10 @@ function StartLastStand()
     ResurrectPlayer(ped)
     SetEntityHealth(ped, 150)
     playLastStandAnimation(ped)
-    InLaststand = true
+    exports['qbx-medical']:setLaststand(true)
     TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
     CreateThread(function()
-        while InLaststand do
+        while exports['qbx-medical']:getLaststand() do
             countdownLastStand()
         end
     end)
@@ -90,7 +90,7 @@ end
 function EndLastStand()
     local ped = cache.ped
     TaskPlayAnim(ped, LastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
-    InLaststand = false
+    exports['qbx-medical']:setLaststand(false)
     LaststandTime = 0
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
 end
@@ -122,7 +122,7 @@ lib.callback.register('hospital:client:UseFirstAid', function()
 end)
 
 lib.callback.register('hospital:client:canHelp', function()
-    return InLaststand and LaststandTime <= 300
+    return exports['qbx-medical']:getLaststand() and LaststandTime <= 300
 end)
 
 ---@param targetId number playerId

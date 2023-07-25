@@ -16,7 +16,6 @@ Laststand = {
     ReviveInterval = 360,
     MinimumRevive = 300,
 }
-InLaststand = false
 LaststandTime = 0
 LastStandDict = "combat@damage@writhe"
 LastStandAnim = "writhe_loop"
@@ -31,39 +30,6 @@ RegisterNetEvent('QBCore:Player:SetPlayerData', function(data)
     if GetInvokingResource() then return end
     PlayerData = data
 end)
-
----notify the player of damage to their body.
-local function doLimbAlert()
-    local injuries = exports['qbx-medical']:getInjuries()
-    if exports['qbx-medical']:isDead() or InLaststand or #injuries == 0 then return end
-
-    local limbDamageMsg = ''
-    if #injuries <= Config.AlertShowInfo then
-        for k, v in pairs(injuries) do
-            limbDamageMsg = limbDamageMsg .. Lang:t('info.pain_message', { limb = v.label, severity = Config.WoundStates[v.severity] })
-            if k < #injuries then
-                limbDamageMsg = limbDamageMsg .. " | "
-            end
-        end
-    else
-        limbDamageMsg = Lang:t('info.many_places')
-    end
-    lib.notify({ description = limbDamageMsg, type = 'error' })
-end
-
---- TODO: This name is misleading, as it only resets injuries of lower severity, so it should be reset minor injuries
-function ResetMajorInjuries()
-    exports['qbx-medical']:resetMinorInjuries()
-    exports['qbx-medical']:makePedLimp()
-    doLimbAlert()
-end
-
-function ResetAllInjuries()
-    exports['qbx-medical']:ResetAllInjuries()
-    exports['qbx-medical']:makePedLimp()
-    doLimbAlert()
-    TriggerServerEvent("hospital:server:resetHungerThirst")
-end
 
 -- Events
 
@@ -114,7 +80,7 @@ end)
 RegisterNetEvent('hospital:client:Revive', function()
     local ped = cache.ped
 
-    if exports['qbx-medical']:isDead() or InLaststand then
+    if exports['qbx-medical']:isDead() or exports['qbx-medical']:inLaststand() then
         local pos = GetEntityCoords(ped, true)
         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(ped), true, false)
         exports['qbx-medical']:setIsDeadDeprecated(false)
@@ -134,27 +100,13 @@ RegisterNetEvent('hospital:client:Revive', function()
     SetEntityHealth(ped, 200)
     ClearPedBloodDamage(ped)
     SetPlayerSprint(cache.playerId, true)
-    ResetAllInjuries()
+    exports['qbx-medical']:resetAllInjuries()
     ResetPedMovementClipset(ped, 0.0)
     TriggerServerEvent('hud:server:RelieveStress', 100)
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
     EmsNotified = false
     lib.notify({ description = Lang:t('info.healthy'), type = 'inform' })
-end)
-
----heals player wounds.
----@param type? "full"|any heals all wounds if full otherwise heals only major wounds.
-RegisterNetEvent('hospital:client:HealInjuries', function(type)
-    if GetInvokingResource() then return end
-    if type == "full" then
-        ResetAllInjuries()
-    else
-        ResetMajorInjuries()
-    end
-    TriggerServerEvent("hospital:server:RestoreWeaponDamage")
-
-    lib.notify({ description = Lang:t('success.wounds_healed'), type = 'success' })
 end)
 
 ---@param bedsKey "jailbeds"|"beds"
@@ -194,13 +146,6 @@ CreateThread(function()
         BeginTextCommandSetBlipName("STRING")
         AddTextComponentString(station.label)
         EndTextCommandSetBlipName(blip)
-    end
-end)
-
-CreateThread(function()
-    while true do
-        Wait((1000 * Config.MessageTimer))
-        doLimbAlert()
     end
 end)
 

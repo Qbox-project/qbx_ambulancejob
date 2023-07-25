@@ -69,7 +69,7 @@ lib.callback.register('hospital:client:UseBandage', function()
             exports['qbx-medical']:removeBleed(1)
         end
         if math.random(1, 100) < 7 then
-            ResetMajorInjuries()
+            exports['qbx-medical']:resetMinorInjuries()
         end
         return true
     else
@@ -133,14 +133,6 @@ CreateThread(function()
 end)
 
 ---@param ped number
-local function handleBleeding(ped)
-    local bleedLevel = exports['qbx-medical']:getBleedLevel()
-    if exports['qbx-medical']:isDead() or InLaststand or bleedLevel <= 0 then return end
-    exports['qbx-medical']:handleBloodLossEffectsDeprecated()
-    exports['qbx-medical']:applyBleedEffectsDeprecated()
-end
-
----@param ped number
 local function bleedTick(ped)
     local bleedTickTimer = exports['qbx-medical']:getBleedTickTimerDeprecated()
     if math.floor(bleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
@@ -162,7 +154,7 @@ local function checkBleeding()
     if exports['qbx-medical']:getBleedLevel() == 0 or OnPainKillers then return end
     local player = cache.ped
     if exports['qbx-medical']:getBleedTickTimerDeprecated() >= Config.BleedTickRate and not IsInHospitalBed then
-        handleBleeding()
+        exports['qbx-medical']:handleBleedingDeprecated()
         exports['qbx-medical']:setBleedTickTimerDeprecated(0)
     else
         bleedTick(player)

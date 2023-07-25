@@ -7,20 +7,10 @@ Config.BillCost = 2000 -- Price that players are charged for using the hospital 
 Config.DeathTime = 300 -- How long the timer is for players to bleed out completely and respawn at the hospital
 Config.PainkillerInterval = 60 -- Set the length of time painkillers last (per one)
 Config.ArmorDamage = 5 -- Minumum damage done to armor before checking for injuries
-Config.MessageTimer = 12 -- How long it will take to display limb/bleed message
 Config.AIHealTimer = 20 -- How long it will take to be healed after checking in, in seconds
 Config.BleedTickRate = 30 -- How much time, in seconds, between bleed ticks
 Config.BleedMovementTick = 10 -- How many seconds is taken away from the bleed tick rate if the player is walking, jogging, or sprinting
 Config.BleedMovementAdvance = 3 -- How much time moving while bleeding adds
-Config.HeadInjuryTimer = 30 -- How much time, in seconds, do head injury effects chance occur
-Config.ArmInjuryTimer = 30 -- How much time, in seconds, do arm injury effects chance occur
-Config.LegInjuryTimer = 15 -- How much time, in seconds, do leg injury effects chance occur
-Config.HeadInjuryChance = 25 -- The chance, in percent, that head injury side-effects get applied
-Config.LegInjuryChance = { -- The chance, in percent, that leg injury side-effects get applied
-    Running = 50,
-    Walking = 15
-}
-Config.AlertShowInfo = 2 -- How many injuries a player must have before being alerted about them
 
 Config.Locations = { -- Edit the various interaction points for players or create new ones
     checking = {
@@ -207,13 +197,6 @@ Config.WeaponClasses = { -- Define gta weapon classe numbers
     ['OTHER'] = 11,
     ['WILDLIFE'] = 12,
     ['NOTHING'] = 13
-}
-
-Config.WoundStates = { -- Translate wound alerts
-    Lang:t('states.irritated'),
-    Lang:t('states.quite_painful'),
-    Lang:t('states.painful'),
-    Lang:t('states.really_painful'),
 }
 
 ---@alias Bone 'NONE'|'HEAD'|'NECK'|'SPINE'|'UPPER_BODY'|'LOWER_BODY'|'LARM'|'LHAND'|'LFINGER'|'LLEG'|'LFOOT'|'RARM'|'RHAND'|'RFINGER'|'RLEG'|'RFOOT'
