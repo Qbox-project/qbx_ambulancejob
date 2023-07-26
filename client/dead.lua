@@ -77,9 +77,10 @@ AddEventHandler('gameEventTriggered', function(event, data)
     if event ~= "CEventNetworkEntityDamage" then return end
     local victim, attacker, victimDied, weapon = data[1], data[2], data[4], data[7]
     if not IsEntityAPed(victim) or not victimDied or NetworkGetPlayerIndexFromPed(victim) ~= cache.playerId or not IsEntityDead(cache.ped) then return end
-    if not InLaststand then
+    local inLaststand = exports['qbx-medical']:inLaststand()
+    if not inLaststand then
         StartLastStand()
-    elseif InLaststand and not exports['qbx-medical']:isDead() then
+    elseif inLaststand and not exports['qbx-medical']:isDead() then
         EndLastStand()
         logDeath(victim, attacker, weapon)
         DeathTime = 0

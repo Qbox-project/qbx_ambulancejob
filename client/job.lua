@@ -68,17 +68,6 @@ local function showTreatmentMenu(status)
     lib.showContext('ambulance_status_context_menu')
 end
 
----Convert wounded body part data to a human readable form
----@param damagedBodyParts BodyParts
----@return string[]
-local function getPatientStatus(damagedBodyParts)
-    local status = {}
-    for _, bodyPart in pairs(damagedBodyParts) do
-        status[#status + 1] = bodyPart.label .. " (" .. Config.WoundStates[bodyPart.severity] .. ")"
-    end
-    return status
-end
-
 ---Check status of nearest player and show treatment menu.
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:CheckStatus', function()
@@ -112,7 +101,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         })
     end
 
-    local status = getPatientStatus(damage.damagedBodyParts)
+    local status = exports['qbx-medical']:getPatientStatus(damage.damagedBodyParts)
     showTreatmentMenu(status)
 end)
 

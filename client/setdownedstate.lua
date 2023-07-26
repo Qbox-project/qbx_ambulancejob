@@ -122,11 +122,12 @@ end
 CreateThread(function()
     while true do
         local isDead = exports['qbx-medical']:isDead()
-        if isDead or InLaststand then
+        local inLaststand = exports['qbx-medical']:inLaststand()
+        if isDead or inLaststand then
             disableControls()
             if isDead then
                 handleDead(cache.ped)
-            elseif InLaststand then
+            elseif inLaststand then
                 handleLastStand(cache.ped)
             end
             Wait(0)

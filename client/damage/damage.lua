@@ -41,7 +41,7 @@ CreateThread(function()
         local ped = cache.ped
         checkForDamage(ped)
         if not OnPainKillers and not IsInHospitalBed then
-            ApplyDamageEffects(ped)
+            exports['qbx-medical']:applyDamageEffectsDeprecated()
         end
         Wait(100)
     end
