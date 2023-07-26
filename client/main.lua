@@ -78,7 +78,7 @@ end)
 RegisterNetEvent('hospital:client:Revive', function()
     local ped = cache.ped
 
-    if exports['qbx-medical']:isDead() or exports['qbx-medical']:inLaststand() then
+    if exports['qbx-medical']:isDead() or exports['qbx-medical']:getLaststand() then
         local pos = GetEntityCoords(ped, true)
         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(ped), true, false)
         exports['qbx-medical']:setIsDeadDeprecated(false)
