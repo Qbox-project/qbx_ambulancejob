@@ -8,7 +8,6 @@ HealAnim = "cpr_pumpchest"
 RespawnHoldTime = 5
 DeadAnimDict = "dead"
 DeadAnim = "dead_a"
-DeathTime = 0
 EmsNotified = false
 CanLeaveBed = true
 BedOccupying = nil
@@ -16,7 +15,6 @@ Laststand = {
     ReviveInterval = 360,
     MinimumRevive = 300,
 }
-LaststandTime = 0
 LastStandDict = "combat@damage@writhe"
 LastStandAnim = "writhe_loop"
 IsEscorted = false

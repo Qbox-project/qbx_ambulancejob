@@ -151,7 +151,7 @@ local function bleedTick(ped)
 end
 
 local function checkBleeding()
-    if exports['qbx-medical']:getBleedLevel() == 0 or OnPainKillers then return end
+    if exports['qbx-medical']:getBleedLevel() == 0 then return end
     local player = cache.ped
     if exports['qbx-medical']:getBleedTickTimerDeprecated() >= Config.BleedTickRate and not IsInHospitalBed then
         exports['qbx-medical']:handleBleedingDeprecated()
@@ -166,6 +166,8 @@ CreateThread(function()
     prevPos = GetEntityCoords(cache.ped, true)
     while true do
         Wait(1000)
-        checkBleeding()
+        if not OnPainKillers then
+            checkBleeding()
+        end
     end
 end)

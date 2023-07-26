@@ -13,7 +13,7 @@ end
 ---@param metadata any
 local function initDeathAndLastStand(metadata)
     if not metadata.inlaststand and metadata.isdead then
-        DeathTime = Laststand.ReviveInterval
+        exports['qbx-medical']:setDeathTime(Laststand.ReviveInterval)
         OnDeath()
         AllowRespawn()
     elseif metadata.inlaststand and not metadata.isdead then
@@ -47,7 +47,7 @@ local function onPlayerUnloaded()
         TriggerServerEvent("hospital:server:LeaveBed", BedOccupying)
     end
     exports['qbx-medical']:setIsDeadDeprecated(false)
-    DeathTime = 0
+    exports['qbx-medical']:setDeathTime(0)
     SetEntityInvincible(ped, false)
     SetPedArmour(ped, 0)
     exports['qbx-medical']:resetAllInjuries()
