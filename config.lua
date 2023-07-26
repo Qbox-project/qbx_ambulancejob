@@ -6,7 +6,6 @@ Config.WipeInventoryOnRespawn = true -- Enable or disable removing all the playe
 Config.BillCost = 2000 -- Price that players are charged for using the hospital check-in system
 Config.DeathTime = 300 -- How long the timer is for players to bleed out completely and respawn at the hospital
 Config.PainkillerInterval = 60 -- Set the length of time painkillers last (per one)
-Config.ArmorDamage = 5 -- Minumum damage done to armor before checking for injuries
 Config.AIHealTimer = 20 -- How long it will take to be healed after checking in, in seconds
 Config.BleedTickRate = 30 -- How much time, in seconds, between bleed ticks
 Config.BleedMovementTick = 10 -- How many seconds is taken away from the bleed tick rate if the player is walking, jogging, or sprinting

@@ -41,8 +41,8 @@ function AllowRespawn()
     RespawnHoldTime = 5
     while exports['qbx-medical']:isDead() do
         Wait(1000)
-        DeathTime -= 1
-        if DeathTime <= 0 then
+        exports['qbx-medical']:setDeathTime(exports['qbx-medical']:getDeathTime() - 1)
+        if exports['qbx-medical']:getDeathTime() <= 0 then
             if IsControlPressed(0, 38) and RespawnHoldTime <= 1 and not IsInHospitalBed then
                 respawn()
             end
@@ -83,7 +83,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
     elseif inLaststand and not exports['qbx-medical']:isDead() then
         EndLastStand()
         logDeath(victim, attacker, weapon)
-        DeathTime = 0
+        exports['qbx-medical']:setDeathTime(0)
         OnDeath()
         AllowRespawn()
     end

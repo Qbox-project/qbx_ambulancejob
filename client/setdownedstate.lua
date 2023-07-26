@@ -1,6 +1,7 @@
 local function displayRespawnText()
-    if DeathTime > 0 and DoctorCount > 0 then
-        DrawText2D(Lang:t('info.respawn_txt', { deathtime = math.ceil(DeathTime) }), vec2(0.93, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+    local deathTime = exports['qbx-medical']:getDeathTime()
+    if deathTime > 0 and DoctorCount > 0 then
+        DrawText2D(Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), vec2(0.93, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
         DrawText2D(Lang:t('info.respawn_revive', { holdtime = RespawnHoldTime, cost = Config.BillCost }), vec2(0.865, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     end
@@ -93,10 +94,11 @@ end
 
 ---@param ped number
 local function handleLastStand(ped)
-    if LaststandTime > Laststand.MinimumRevive then
-        DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(LaststandTime) }), vec2(0.94, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+    local laststandTime = exports['qbx-medical']:getLaststandTime()
+    if laststandTime > Laststand.MinimumRevive then
+        DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(0.94, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
-        DrawText2D(Lang:t('info.bleed_out_help', { time = math.ceil(LaststandTime) }), vec2(0.845, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.bleed_out_help', { time = math.ceil(laststandTime) }), vec2(0.845, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
         handleRequestingEms()
     end
 

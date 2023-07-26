@@ -52,14 +52,17 @@ end
 
 ---count down last stand, if last stand is over, put player in death mode and log the killer.
 local function countdownLastStand()
-    if LaststandTime - 1 > 0 then
-        LaststandTime -= 1
-        Config.DeathTime = LaststandTime
+    
+    local laststandTime = exports['qbx-medical']:getLaststandTime()
+    if laststandTime - 1 > 0 then
+        laststandTime -= 1
+        Config.DeathTime = laststandTime
+        exports['qbx-medical']:setLaststandTime(laststandTime)
     else
         lib.notify({ description = Lang:t('error.bled_out'), type = 'error' })
         EndLastStand()
         logPlayerKiller()
-        DeathTime = 0
+        exports['qbx-medical']:setDeathTime(0)
         OnDeath()
         AllowRespawn()
     end
@@ -72,7 +75,7 @@ function StartLastStand()
     Wait(1000)
     WaitForPedToStopMoving(ped)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
-    LaststandTime = Laststand.ReviveInterval
+    exports['qbx-medical']:setLaststandTime(Laststand.ReviveInterval)
     ResurrectPlayer(ped)
     SetEntityHealth(ped, 150)
     playLastStandAnimation(ped)
@@ -91,7 +94,7 @@ function EndLastStand()
     local ped = cache.ped
     TaskPlayAnim(ped, LastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
     exports['qbx-medical']:setLaststand(false)
-    LaststandTime = 0
+    exports['qbx-medical']:setLaststandTime(0)
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
 end
 
@@ -122,7 +125,7 @@ lib.callback.register('hospital:client:UseFirstAid', function()
 end)
 
 lib.callback.register('hospital:client:canHelp', function()
-    return exports['qbx-medical']:getLaststand() and LaststandTime <= 300
+    return exports['qbx-medical']:getLaststand() and exports['qbx-medical']:getLaststandTime() <= 300
 end)
 
 ---@param targetId number playerId
