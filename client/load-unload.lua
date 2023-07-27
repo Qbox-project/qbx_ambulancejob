@@ -50,7 +50,7 @@ local function onPlayerUnloaded()
     exports['qbx-medical']:setDeathTime(0)
     SetEntityInvincible(ped, false)
     SetPedArmour(ped, 0)
-    exports['qbx-medical']:resetAllInjuries()
+    exports['qbx-medical']:ResetAllInjuries()
 end
 
 AddEventHandler('QBCore:Client:OnPlayerLoaded', onPlayerLoaded)
