@@ -9,23 +9,13 @@ end
 
 ---@param ped number
 local function playDeadAnimation(ped)
-    if cache.vehicle then
-        lib.requestAnimDict("veh@low@front_ps@idle_duck")
-        if not IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
-            TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
+    if IsInHospitalBed then
+        if not IsEntityPlayingAnim(ped, InBedDict, InBedAnim, 3) then
+            lib.requestAnimDict(InBedDict)
+            TaskPlayAnim(ped, InBedDict, InBedAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
         end
     else
-        if IsInHospitalBed then
-            if not IsEntityPlayingAnim(ped, InBedDict, InBedAnim, 3) then
-                lib.requestAnimDict(InBedDict)
-                TaskPlayAnim(ped, InBedDict, InBedAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
-            end
-        else
-            if not IsEntityPlayingAnim(ped, DeadAnimDict, DeadAnim, 3) then
-                lib.requestAnimDict(DeadAnimDict)
-                TaskPlayAnim(ped, DeadAnimDict, DeadAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
-            end
-        end
+        exports['qbx-medical']:playDeadAnimation()
     end
 end
 

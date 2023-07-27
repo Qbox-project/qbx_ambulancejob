@@ -63,7 +63,7 @@ local function countdownLastStand()
         EndLastStand()
         logPlayerKiller()
         exports['qbx-medical']:setDeathTime(0)
-        OnDeath()
+        exports['qbx-medical']:killPlayer()
         AllowRespawn()
     end
     Wait(1000)

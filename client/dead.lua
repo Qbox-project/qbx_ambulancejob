@@ -1,33 +1,3 @@
----@param ped number
-local function playDeadAnimation(ped)
-    if cache.vehicle then
-        lib.requestAnimDict("veh@low@front_ps@idle_duck")
-        TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
-    else
-        lib.requestAnimDict(DeadAnimDict)
-        TaskPlayAnim(ped, DeadAnimDict, DeadAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
-    end
-end
-
----put player in death animation, make invincible, and notify EMS.
-function OnDeath()
-    local isDead = exports['qbx-medical']:isDead()
-    if isDead then return end
-    exports['qbx-medical']:kill()
-    TriggerServerEvent("hospital:server:SetDeathStatus", true)
-    TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
-    local player = cache.ped
-
-    WaitForPedToStopMoving(player)
-
-    ResurrectPlayer(player)
-    playDeadAnimation(player)
-    SetEntityInvincible(player, true)
-    SetEntityHealth(player, GetEntityMaxHealth(player))
-
-    TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_died'))
-end
-
 local function respawn()
     TriggerServerEvent("hospital:server:RespawnAtHospital")
     if exports["qb-policejob"]:IsHandcuffed() then
@@ -84,7 +54,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
         EndLastStand()
         logDeath(victim, attacker, weapon)
         exports['qbx-medical']:setDeathTime(0)
-        OnDeath()
+        exports['qbx-medical']:killPlayer()
         AllowRespawn()
     end
 end)
