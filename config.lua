@@ -7,9 +7,6 @@ Config.BillCost = 2000 -- Price that players are charged for using the hospital 
 Config.DeathTime = 300 -- How long the timer is for players to bleed out completely and respawn at the hospital
 Config.PainkillerInterval = 60 -- Set the length of time painkillers last (per one)
 Config.AIHealTimer = 20 -- How long it will take to be healed after checking in, in seconds
-Config.BleedTickRate = 30 -- How much time, in seconds, between bleed ticks
-Config.BleedMovementTick = 10 -- How many seconds is taken away from the bleed tick rate if the player is walking, jogging, or sprinting
-Config.BleedMovementAdvance = 3 -- How much time moving while bleeding adds
 
 Config.Locations = { -- Edit the various interaction points for players or create new ones
     checking = {

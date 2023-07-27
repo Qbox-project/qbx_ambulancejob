@@ -1,4 +1,3 @@
-local prevPos = nil
 local painkillerAmount = 0
 
 -- Events
@@ -132,42 +131,12 @@ CreateThread(function()
     end
 end)
 
----@param ped number
-local function bleedTick(ped)
-    local bleedTickTimer = exports['qbx-medical']:getBleedTickTimerDeprecated()
-    if math.floor(bleedTickTimer % (Config.BleedTickRate / 10)) == 0 then
-        local currPos = GetEntityCoords(ped, true)
-        local moving = #(prevPos.xy - currPos.xy)
-        if (moving > 1 and not cache.vehicle) and exports['qbx-medical']:getBleedLevel() > 2 then
-            exports['qbx-medical']:setAdvanceBleedTimerDeprecated(exports['qbx-medical']:getAdvanceBleedTimerDeprecated() + Config.BleedMovementAdvance)
-            bleedTickTimer += Config.BleedMovementTick
-            prevPos = currPos
-        else
-            bleedTickTimer += 1
-        end
-    end
-    bleedTickTimer += 1
-    exports['qbx-medical']:setBleedTickTimerDeprecated(bleedTickTimer)
-end
-
-local function checkBleeding()
-    if exports['qbx-medical']:getBleedLevel() == 0 then return end
-    local player = cache.ped
-    if exports['qbx-medical']:getBleedTickTimerDeprecated() >= Config.BleedTickRate and not IsInHospitalBed then
-        exports['qbx-medical']:handleBleedingDeprecated()
-        exports['qbx-medical']:setBleedTickTimerDeprecated(0)
-    else
-        bleedTick(player)
-    end
-end
-
 CreateThread(function()
     Wait(2500)
-    prevPos = GetEntityCoords(cache.ped, true)
     while true do
         Wait(1000)
         if not OnPainKillers then
-            checkBleeding()
+            exports['qbx-medical']:checkBleedingDeprecated()
         end
     end
 end)
