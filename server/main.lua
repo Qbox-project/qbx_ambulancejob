@@ -67,10 +67,7 @@ RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
 	billPlayer(player)
 end)
 
----@param text string
-RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
-	if GetInvokingResource() then return end
-	local src = source
+local function alertAmbulance(src, text)
 	local ped = GetPlayerPed(src)
 	local coords = GetEntityCoords(ped)
 	local players = QBCore.Functions.GetQBPlayers()
@@ -79,6 +76,12 @@ RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
 			TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
 		end
 	end
+end
+
+RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
+	if GetInvokingResource() then return end
+	local src = source
+	alertAmbulance(src, text)
 end)
 
 ---@param id integer
@@ -236,4 +239,10 @@ end)
 
 QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseFirstAid')
+end)
+
+RegisterNetEvent('qbx-medical:server:playerDied', function(source)
+	if GetInvokingResource() then return end
+	local src = source
+	alertAmbulance(src, Lang:t('info.civ_died'))
 end)
