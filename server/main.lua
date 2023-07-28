@@ -46,15 +46,16 @@ local function respawnAtHospital(player, bedsKey)
 	respawnAtBed(player, bedsKey, bedIndex, beds[bedIndex])
 end
 
-RegisterNetEvent('hospital:server:RespawnAtHospital', function()
-	if GetInvokingResource() then return end
-	local player = QBCore.Functions.GetPlayer(source)
+local function respawn(src)
+	local player = QBCore.Functions.GetPlayer(src)
 	if player.PlayerData.metadata.injail > 0 then
 		respawnAtHospital(player, "jailbeds")
 	else
 		respawnAtHospital(player, "beds")
 	end
-end)
+end
+
+exports('respawnDeprecated', respawn)
 
 ---@param bedId integer
 ---@param isRevive boolean

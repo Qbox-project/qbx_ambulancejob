@@ -5,7 +5,6 @@ InBedAnim = "body_search"
 IsInHospitalBed = false
 HealAnimDict = "mini@cpr@char_a@cpr_str"
 HealAnim = "cpr_pumpchest"
-RespawnHoldTime = 5
 EmsNotified = false
 CanLeaveBed = true
 BedOccupying = nil

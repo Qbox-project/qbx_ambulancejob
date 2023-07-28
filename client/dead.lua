@@ -1,31 +1,3 @@
-local function respawn()
-    TriggerServerEvent("hospital:server:RespawnAtHospital")
-    if exports["qb-policejob"]:IsHandcuffed() then
-        TriggerEvent("police:client:GetCuffed", -1)
-    end
-    TriggerEvent("police:client:DeEscort")
-end
-
----Allow player to respawn
-function AllowRespawn()
-    RespawnHoldTime = 5
-    while exports['qbx-medical']:isDead() do
-        Wait(1000)
-        exports['qbx-medical']:setDeathTime(exports['qbx-medical']:getDeathTime() - 1)
-        if exports['qbx-medical']:getDeathTime() <= 0 then
-            if IsControlPressed(0, 38) and RespawnHoldTime <= 1 and not IsInHospitalBed then
-                respawn()
-            end
-            if IsControlPressed(0, 38) then
-                RespawnHoldTime -= 1
-            end
-            if IsControlReleased(0, 38) then
-                RespawnHoldTime = 5
-            end
-        end
-    end
-end
-
 ---log the death of a player along with the attacker and the weapon used.
 ---@param victim number ped
 ---@param attacker number ped
@@ -55,6 +27,6 @@ AddEventHandler('gameEventTriggered', function(event, data)
         logDeath(victim, attacker, weapon)
         exports['qbx-medical']:setDeathTime(0)
         exports['qbx-medical']:killPlayer()
-        AllowRespawn()
+        exports['qbx-medical']:AllowRespawn(IsInHospitalBed)
     end
 end)
