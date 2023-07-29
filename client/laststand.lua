@@ -1,25 +1,5 @@
 local isEscorting = false
 
----blocks until ped is no longer moving
----@param ped number
-function WaitForPedToStopMoving(ped)
-    while GetEntitySpeed(ped) > 0.5 or IsPedRagdoll(ped) do Wait(10) end
-end
-
----resurrect player
----@param ped number
-function ResurrectPlayer(ped)
-    local pos = GetEntityCoords(ped)
-    local heading = GetEntityHeading(ped)
-    local veh = cache.vehicle
-    local seat = cache.seat
-
-    NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
-    if veh then
-        SetPedIntoVehicle(ped, veh, seat)
-    end
-end
-
 ---put player in last stand animation
 ---@param ped number
 local function playLastStandAnimation(ped)
@@ -73,10 +53,10 @@ end
 function StartLastStand()
     local ped = cache.ped
     Wait(1000)
-    WaitForPedToStopMoving(ped)
+    exports['qbx-medical']:waitForPlayerToStopMovingDeprecated()
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
     exports['qbx-medical']:setLaststandTime(Laststand.ReviveInterval)
-    ResurrectPlayer(ped)
+    exports['qbx-medical']:resurrectPlayerDeprecated()
     SetEntityHealth(ped, 150)
     playLastStandAnimation(ped)
     exports['qbx-medical']:setLaststand(true)
