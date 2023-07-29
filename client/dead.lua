@@ -23,7 +23,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
     if not inLaststand then
         StartLastStand()
     elseif inLaststand and not exports['qbx-medical']:isDead() then
-        EndLastStand()
+        exports['qbx-medical']:endLastStandDeprecated()
         logDeath(victim, attacker, weapon)
         exports['qbx-medical']:setDeathTime(0)
         exports['qbx-medical']:killPlayer()
