@@ -1,17 +1,5 @@
 local isEscorting = false
 
----put player in last stand animation
----@param ped number
-local function playLastStandAnimation(ped)
-    if cache.vehicle then
-        lib.requestAnimDict("veh@low@front_ps@idle_duck")
-        TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 8.0, -1, 1, -1, false, false, false)
-    else
-        lib.requestAnimDict(LastStandDict)
-        TaskPlayAnim(ped, LastStandDict, LastStandAnim, 1.0, 8.0, -1, 1, -1, false, false, false)
-    end
-end
-
 local function logPlayerKiller()
     local ped = cache.ped
     local player = cache.playerId
@@ -40,7 +28,7 @@ local function countdownLastStand()
         exports['qbx-medical']:setLaststandTime(laststandTime)
     else
         lib.notify({ description = Lang:t('error.bled_out'), type = 'error' })
-        EndLastStand()
+        exports['qbx-medical']:endLastStandDeprecated()
         logPlayerKiller()
         exports['qbx-medical']:setDeathTime(0)
         exports['qbx-medical']:killPlayer()
@@ -58,7 +46,7 @@ function StartLastStand()
     exports['qbx-medical']:setLaststandTime(Laststand.ReviveInterval)
     exports['qbx-medical']:resurrectPlayerDeprecated()
     SetEntityHealth(ped, 150)
-    playLastStandAnimation(ped)
+    exports['qbx-medical']:playUnescortedLastStandAnimationDeprecated()
     exports['qbx-medical']:setLaststand(true)
     TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
     CreateThread(function()
@@ -69,25 +57,10 @@ function StartLastStand()
     TriggerServerEvent("hospital:server:SetLaststandStatus", true)
 end
 
----remove last stand mode from player.
-function EndLastStand()
-    local ped = cache.ped
-    TaskPlayAnim(ped, LastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
-    exports['qbx-medical']:setLaststand(false)
-    exports['qbx-medical']:setLaststandTime(0)
-    TriggerServerEvent("hospital:server:SetLaststandStatus", false)
-end
-
 ---@param bool boolean
 ---TODO: this event name should be changed within qb-policejob to be generic
 AddEventHandler('hospital:client:SetEscortingState', function(bool)
     isEscorting = bool
-end)
-
----@param bool boolean
----TODO: this event name should be changed within qb-policejob to be generic
-AddEventHandler('hospital:client:isEscorted', function(bool)
-    IsEscorted = bool
 end)
 
 ---use first aid pack on nearest player.

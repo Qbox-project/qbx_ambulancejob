@@ -12,9 +12,6 @@ Laststand = {
     ReviveInterval = 360,
     MinimumRevive = 300,
 }
-LastStandDict = "combat@damage@writhe"
-LastStandAnim = "writhe_loop"
-IsEscorted = false
 OnPainKillers = false
 DoctorCount = 0
 PlayerData = {
@@ -80,7 +77,7 @@ RegisterNetEvent('hospital:client:Revive', function()
         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(ped), true, false)
         exports['qbx-medical']:setIsDeadDeprecated(false)
         SetEntityInvincible(ped, false)
-        EndLastStand()
+        exports['qbx-medical']:endLastStandDeprecated()
     end
 
     if IsInHospitalBed then

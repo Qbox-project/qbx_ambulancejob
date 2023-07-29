@@ -29,45 +29,6 @@ local function handleDead(ped)
     SetCurrentPedWeapon(ped, `WEAPON_UNARMED`, true)
 end
 
----@param ped number
-local function playEscortedLastStandAnimation(ped)
-    if cache.vehicle then
-        lib.requestAnimDict("veh@low@front_ps@idle_duck")
-        if IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
-            StopAnimTask(ped, "veh@low@front_ps@idle_duck", "sit", 3)
-        end
-    else
-        lib.requestAnimDict(LastStandDict)
-        if IsEntityPlayingAnim(ped, LastStandDict, LastStandAnim, 3) then
-            StopAnimTask(ped, LastStandDict, LastStandAnim, 3)
-        end
-    end
-end
-
----@param ped number
-local function playUnescortedLastStandAnimation(ped)
-    if cache.vehicle then
-        lib.requestAnimDict("veh@low@front_ps@idle_duck")
-        if not IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
-            TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, false, false, false)
-        end
-    else
-        lib.requestAnimDict(LastStandDict)
-        if not IsEntityPlayingAnim(ped, LastStandDict, LastStandAnim, 3) then
-            TaskPlayAnim(ped, LastStandDict, LastStandAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
-        end
-    end
-end
-
----@param ped number
-local function playLastStandAnimation(ped)
-    if IsEscorted then
-        playEscortedLastStandAnimation(ped)
-    else
-        playUnescortedLastStandAnimation(ped)
-    end
-end
-
 ---Player is able to send a notification to EMS there are any on duty
 local function handleRequestingEms()
     if DoctorCount == 0 then return end
@@ -82,8 +43,7 @@ local function handleRequestingEms()
     end
 end
 
----@param ped number
-local function handleLastStand(ped)
+local function handleLastStand()
     local laststandTime = exports['qbx-medical']:getLaststandTime()
     if laststandTime > Laststand.MinimumRevive then
         DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(0.94, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
@@ -92,7 +52,7 @@ local function handleLastStand(ped)
         handleRequestingEms()
     end
 
-    playLastStandAnimation(ped)
+    exports['qbx-medical']:playLastStandAnimationDeprecated()
 end
 
 local function disableControls()
@@ -120,7 +80,7 @@ CreateThread(function()
             if isDead then
                 handleDead(cache.ped)
             elseif inLaststand then
-                handleLastStand(cache.ped)
+                handleLastStand()
             end
             Wait(0)
         else
