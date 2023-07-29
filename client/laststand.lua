@@ -64,7 +64,7 @@ local function countdownLastStand()
         logPlayerKiller()
         exports['qbx-medical']:setDeathTime(0)
         exports['qbx-medical']:killPlayer()
-        AllowRespawn()
+        exports['qbx-medical']:AllowRespawn(IsInHospitalBed)
     end
     Wait(1000)
 end
