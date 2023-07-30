@@ -55,7 +55,9 @@ local function respawn(src)
 	end
 end
 
-exports('respawnDeprecated', respawn)
+AddEventHandler('qbx-medical:server:playerRespawned', function(source)
+	respawn(source)
+end)
 
 ---@param bedId integer
 ---@param isRevive boolean
