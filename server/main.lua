@@ -79,7 +79,13 @@ local function alertAmbulance(src, text)
 	end
 end
 
-RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
+RegisterNetEvent('hospital:server:ambulanceAlert', function()
+	if GetInvokingResource() then return end
+	local src = source
+	alertAmbulance(src, Lang:t('info.civ_down'))
+end)
+
+RegisterNetEvent('qbx-medical:server:onPlayerLaststand', function(text)
 	if GetInvokingResource() then return end
 	local src = source
 	alertAmbulance(src, text)
@@ -242,7 +248,7 @@ QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseFirstAid')
 end)
 
-RegisterNetEvent('qbx-medical:server:playerDied', function(source)
+RegisterNetEvent('qbx-medical:server:playerDied', function()
 	if GetInvokingResource() then return end
 	local src = source
 	alertAmbulance(src, Lang:t('info.civ_died'))

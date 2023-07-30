@@ -4,7 +4,6 @@ Config.MinimalDoctors = 2 -- How many players with the ambulance job to prevent 
 Config.DocCooldown = 1 -- Cooldown between doctor calls allowed, in minutes
 Config.WipeInventoryOnRespawn = true -- Enable or disable removing all the players items when they respawn at the hospital
 Config.BillCost = 2000 -- Price that players are charged for using the hospital check-in system
-Config.DeathTime = 300 -- How long the timer is for players to bleed out completely and respawn at the hospital
 Config.PainkillerInterval = 60 -- Set the length of time painkillers last (per one)
 Config.AIHealTimer = 20 -- How long it will take to be healed after checking in, in seconds
 

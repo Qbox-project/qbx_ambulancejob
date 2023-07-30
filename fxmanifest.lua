@@ -26,7 +26,6 @@ client_scripts {
 	'client/wounding.lua',
 	'client/laststand.lua',
 	'client/job.lua',
-	'client/dead.lua',
 	'client/setdownedstate.lua',
 }
 

@@ -261,8 +261,6 @@ end)
 
 ---Teleports the player to lie down in bed and sets the player's camera.
 local function setBedCam()
-    IsInHospitalBed = true
-    CanLeaveBed = false
     local player = cache.ped
 
     DoScreenFadeOut(1000)
@@ -311,6 +309,9 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
     if GetInvokingResource() then return end
     BedOccupying = id
     bedOccupyingData = bed
+    IsInHospitalBed = true
+    exports['qbx-medical']:disableRespawn()
+    CanLeaveBed = false
     setBedCam()
     CreateThread(function()
         Wait(5)
