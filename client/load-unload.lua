@@ -15,7 +15,7 @@ local function initDeathAndLastStand(metadata)
     if not metadata.inlaststand and metadata.isdead then
         exports['qbx-medical']:setDeathTime(Laststand.ReviveInterval)
         exports['qbx-medical']:killPlayer()
-        exports['qbx-medical']:AllowRespawn(IsInHospitalBed)
+        exports['qbx-medical']:AllowRespawn()
     elseif metadata.inlaststand and not metadata.isdead then
         StartLastStand()
     else
