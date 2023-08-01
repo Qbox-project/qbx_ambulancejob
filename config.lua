@@ -6,6 +6,7 @@ Config.WipeInventoryOnRespawn = true -- Enable or disable removing all the playe
 Config.BillCost = 2000 -- Price that players are charged for using the hospital check-in system
 Config.PainkillerInterval = 60 -- Set the length of time painkillers last (per one)
 Config.AIHealTimer = 20 -- How long it will take to be healed after checking in, in seconds
+Config.LaststandMinimumRevive = 300
 
 Config.Locations = { -- Edit the various interaction points for players or create new ones
     checking = {

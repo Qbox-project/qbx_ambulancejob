@@ -1,6 +1,7 @@
 local listen = false
 local bedObject = nil
 local bedOccupyingData = nil
+local bedOccupying = nil
 local cam = nil
 
 ---checks if bed is available and within 500 distance of pos
@@ -223,12 +224,12 @@ local function leaveBed()
     TaskPlayAnim(ped, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, false, false, false)
     Wait(4000)
     ClearPedTasks(ped)
-    TriggerServerEvent('hospital:server:LeaveBed', BedOccupying)
+    TriggerServerEvent('hospital:server:LeaveBed', bedOccupying)
     FreezeEntityPosition(bedObject, true)
     RenderScriptCams(false, true, 200, true, true)
     DestroyCam(cam, false)
 
-    BedOccupying = nil
+    bedOccupying = nil
     bedObject = nil
     bedOccupyingData = nil
     IsInHospitalBed = false
@@ -307,7 +308,7 @@ end
 ---@param isRevive boolean if true, heals the player
 RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
     if GetInvokingResource() then return end
-    BedOccupying = id
+    bedOccupying = id
     bedOccupyingData = bed
     IsInHospitalBed = true
     exports['qbx-medical']:disableRespawn()
@@ -323,4 +324,18 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
             CanLeaveBed = true
         end
     end)
+end)
+
+---reset player settings that the server is storing
+local function onPlayerUnloaded()
+    if bedOccupying then
+        TriggerServerEvent("hospital:server:LeaveBed", bedOccupying)
+    end
+end
+
+RegisterNetEvent('QBCore:Client:OnPlayerUnload', onPlayerUnloaded)
+
+AddEventHandler('onResourceStop', function(resourceName)
+    if GetCurrentResourceName() ~= resourceName then return end
+    onPlayerUnloaded()
 end)

@@ -7,11 +7,6 @@ HealAnimDict = "mini@cpr@char_a@cpr_str"
 HealAnim = "cpr_pumpchest"
 EmsNotified = false
 CanLeaveBed = true
-BedOccupying = nil
-Laststand = {
-    ReviveInterval = 360,
-    MinimumRevive = 300,
-}
 OnPainKillers = false
 DoctorCount = 0
 PlayerData = {
@@ -71,15 +66,6 @@ end)
 ---Intended to be called from client or server.
 RegisterNetEvent('hospital:client:Revive', function()
     local ped = cache.ped
-
-    if exports['qbx-medical']:isDead() or exports['qbx-medical']:getLaststand() then
-        local pos = GetEntityCoords(ped, true)
-        NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(ped), true, false)
-        exports['qbx-medical']:setIsDeadDeprecated(false)
-        SetEntityInvincible(ped, false)
-        exports['qbx-medical']:endLastStandDeprecated()
-    end
-
     if IsInHospitalBed then
         lib.requestAnimDict(InBedDict)
         TaskPlayAnim(ped, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, 0, 0, 0)
@@ -87,18 +73,7 @@ RegisterNetEvent('hospital:client:Revive', function()
         CanLeaveBed = true
     end
 
-    TriggerServerEvent("hospital:server:RestoreWeaponDamage")
-    SetEntityMaxHealth(ped, 200)
-    SetEntityHealth(ped, 200)
-    ClearPedBloodDamage(ped)
-    SetPlayerSprint(cache.playerId, true)
-    exports['qbx-medical']:resetAllInjuries()
-    ResetPedMovementClipset(ped, 0.0)
-    TriggerServerEvent('hud:server:RelieveStress', 100)
-    TriggerServerEvent("hospital:server:SetDeathStatus", false)
-    TriggerServerEvent("hospital:server:SetLaststandStatus", false)
     EmsNotified = false
-    lib.notify({ description = Lang:t('info.healthy'), type = 'inform' })
 end)
 
 ---@param bedsKey "jailbeds"|"beds"
