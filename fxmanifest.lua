@@ -18,7 +18,6 @@ shared_scripts {
 }
 
 client_scripts {
-	'client/damage/damage-effects.lua',
 	'client/damage/damage.lua',
 	'client/hospital.lua',
 	'client/main.lua',
