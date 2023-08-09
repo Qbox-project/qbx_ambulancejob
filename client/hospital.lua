@@ -33,10 +33,8 @@ end
 
 ---Notifies doctors, and puts player in a hospital bed.
 local function checkIn()
-    if DoctorCount >= Config.MinimalDoctors then
-        TriggerServerEvent("hospital:server:SendDoctorAlert")
-        return
-    end
+    local canCheckIn = lib.callback.await('qbx-ambulancejob:server:onCheckIn')
+    if not canCheckIn then return end
 
     exports.scully_emotemenu:playEmoteByCommand('notepad')
     if lib.progressCircle({
@@ -162,7 +160,8 @@ else
     CreateThread(function()
         for _, v in pairs(Config.Locations.checking) do
             local function enterCheckInZone()
-                if DoctorCount >= Config.MinimalDoctors then
+                local numDoctors = lib.callback.await('hospital:GetDoctors')
+                if numDoctors >= Config.MinimalDoctors then
                     lib.showTextUI(Lang:t('text.call_doc'))
                     CreateThread(function()
                         checkInControls("checkin")
