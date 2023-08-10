@@ -1,264 +1,8 @@
-local listen = false
 local bedObject = nil
 local bedOccupyingData = nil
-local bedOccupying = nil
 local cam = nil
-
----checks if bed is available and within 500 distance of pos
----@param pos vector3 position close to bed
----@param bed Bed
----@return boolean isAvailable if bed is available
-local function isBedAvailable(pos, bed)
-    if bed.taken then return false end
-    if #(pos - vector3(bed.coords.x, bed.coords.y, bed.coords.z)) >= 500 then return false end
-    return true
-end
-
----Gets available bedId
----@param bedId? integer bedId to check. If not provided, checks all beds.
----@return integer|nil availableBedId index of available bed or nil if no bed available
-local function getAvailableBed(bedId)
-    local pos = GetEntityCoords(cache.ped)
-
-    if bedId then
-        return isBedAvailable(pos, Config.Locations.beds[bedId]) and bedId or nil
-    end
-
-    for index, bed in pairs(Config.Locations.beds) do
-        if isBedAvailable(pos, bed) then
-            return index
-        end
-    end
-end
-
----Notifies doctors, and puts player in a hospital bed.
-local function checkIn()
-    if DoctorCount >= Config.MinimalDoctors then
-        TriggerServerEvent("hospital:server:SendDoctorAlert")
-        return
-    end
-
-    exports.scully_emotemenu:playEmoteByCommand('notepad')
-    if lib.progressCircle({
-        duration = 2000,
-        position = 'bottom',
-        label = Lang:t('progress.checking_in'),
-        useWhileDead = false,
-        canCancel = true,
-        disable = {
-            move = false,
-            car = false,
-            combat = true,
-            mouse = false,
-        },
-        anim = {
-            dict = HealAnimDict,
-            clip = HealAnim,
-        },
-    })
-    then
-        exports.scully_emotemenu:cancelEmote()
-        local bedId = getAvailableBed()
-        if not bedId then
-            lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
-            return
-        end
-
-        TriggerServerEvent("hospital:server:SendToBed", bedId, true)
-    else
-        exports.scully_emotemenu:cancelEmote()
-        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
-    end
-end
-
----@return integer index of the closest bed to the player.
-local function getClosestBed()
-    local pos = GetEntityCoords(cache.ped, true)
-    local closest = nil
-    local minDist = nil
-    for index, bed in pairs(Config.Locations.beds) do
-        local bedDistance = #(pos - vector3(bed.coords.x, bed.coords.y, bed.coords.z))
-        if not closest or bedDistance < minDist then
-            closest = index
-            minDist = bedDistance
-        end
-    end
-
-    return closest
-end
-
----Puts player in the closest hospital bed if available.
-local function putPlayerInClosestBed()
-    if IsInHospitalBed then return end
-    local closestBed = getClosestBed()
-    if getAvailableBed(closestBed) then
-        TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
-    else
-        lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
-    end
-end
-
----allow players to press button to check in or get put in a bed
----@param variable "checkin"|"beds"
-local function checkInControls(variable)
-    listen = true
-    repeat
-        if IsControlJustPressed(0, 38) then
-            exports['qbx-core']:KeyPressed(38)
-            if variable == "checkin" then
-                checkIn()
-                listen = false
-            elseif variable == "beds" then
-                putPlayerInClosestBed()
-                listen = false
-            end
-        end
-        Wait(0)
-    until not listen
-end
-
----Set up check-in and getting into beds using either target or zones
-if Config.UseTarget then
-    CreateThread(function()
-        for k, v in pairs(Config.Locations.checking) do
-            exports.ox_target:addBoxZone({
-                name = "checking" .. k,
-                coords = vec3(v.x, v.y, v.z),
-                size = vec3(2, 1, 2),
-                rotation = 18,
-                debug = false,
-                options = {
-                    {
-                        type = "client",
-                        onSelect = checkIn,
-                        icon = "fas fa-clipboard",
-                        label = Lang:t('text.check'),
-                        distance = 1.5,
-                    }
-                }
-            })
-        end
-
-        for k, v in pairs(Config.Locations.beds) do
-            exports.ox_target:addBoxZone({
-                name = "beds" .. k,
-                coords = vec3(v.coords.x, v.coords.y, v.coords.z),
-                size = vec3(1.7, 1.9, 2),
-                rotation = v.coords.w,
-                debug = false,
-                options = {
-                    {
-                        type = "client",
-                        onSelect = putPlayerInClosestBed,
-                        icon = "fas fa-clipboard",
-                        label = Lang:t('text.bed'),
-                        distance = 1.5,
-                    }
-                }
-            })
-        end
-    end)
-else
-    CreateThread(function()
-        for _, v in pairs(Config.Locations.checking) do
-            local function enterCheckInZone()
-                if DoctorCount >= Config.MinimalDoctors then
-                    lib.showTextUI(Lang:t('text.call_doc'))
-                    CreateThread(function()
-                        checkInControls("checkin")
-                    end)
-                else
-                    lib.showTextUI(Lang:t('text.check_in'))
-                end
-            end
-
-            local function outCheckInZone()
-                listen = false
-                lib.hideTextUI()
-            end
-
-            lib.zones.box({
-                coords = vec3(v.x, v.y, v.z),
-                size = vec3(2, 1, 2),
-                rotation = 18,
-                debug = false,
-                onEnter = enterCheckInZone,
-                onExit = outCheckInZone
-            })
-        end
-        for _, v in pairs(Config.Locations.beds) do
-            local function enterBedZone()
-                lib.showTextUI(Lang:t('text.lie_bed'))
-                CreateThread(function()
-                    checkInControls("beds")
-                end)
-            end
-
-            local function outBedZone()
-                listen = false
-                lib.hideTextUI()
-            end
-
-            lib.zones.box({
-                coords = vec3(v.coords.x, v.coords.y, v.coords.z),
-                size = vec3(1.9, 2.1, 2),
-                rotation = v.coords.w,
-                debug = false,
-                onEnter = enterBedZone,
-                onExit = outBedZone
-            })
-        end
-    end)
-end
-
----plays animation to get out of bed and resets variables
-local function leaveBed()
-    local ped = cache.ped
-    local getOutDict = 'switch@franklin@bed'
-    local getOutAnim = 'sleep_getup_rubeyes'
-
-    lib.requestAnimDict(getOutDict)
-    FreezeEntityPosition(ped, false)
-    SetEntityInvincible(ped, false)
-    SetEntityHeading(ped, bedOccupyingData.coords.w + 90)
-    TaskPlayAnim(ped, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, false, false, false)
-    Wait(4000)
-    ClearPedTasks(ped)
-    TriggerServerEvent('hospital:server:LeaveBed', bedOccupying)
-    FreezeEntityPosition(bedObject, true)
-    RenderScriptCams(false, true, 200, true, true)
-    DestroyCam(cam, false)
-
-    bedOccupying = nil
-    bedObject = nil
-    bedOccupyingData = nil
-    IsInHospitalBed = false
-
-    if PlayerData.metadata.injail <= 0 then return end
-    TriggerEvent("prison:client:Enter", PlayerData.metadata.injail)
-end
-
----Shows leave bed text if the player can leave the bed, triggers leaving the bed if the right key is pressed.
-local function givePlayerOptionToLeaveBed()
-    lib.showTextUI(Lang:t('text.bed_out'))
-    if not IsControlJustReleased(0, 38) then return end
-
-    exports['qbx-core']:KeyPressed(38)
-    leaveBed()
-    lib.hideTextUI()
-end
-
----shows player option to press key to leave bed when available.
-CreateThread(function()
-    while true do
-        if IsInHospitalBed and CanLeaveBed then
-            givePlayerOptionToLeaveBed()
-            Wait(0)
-        else
-            Wait(1000)
-        end
-    end
-end)
+local hospitalOccupying = nil
+local bedIndexOccupying = nil
 
 ---Teleports the player to lie down in bed and sets the player's camera.
 local function setBedCam()
@@ -302,14 +46,18 @@ local function setBedCam()
     FreezeEntityPosition(player, true)
 end
 
----Puts the player in bed
----@param id number the map key of the bed
----@param bed Bed
----@param isRevive boolean if true, heals the player
-RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
-    if GetInvokingResource() then return end
-    bedOccupying = id
-    bedOccupyingData = bed
+local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
+    if IsInHospitalBed then return end
+    if not skipOpenCheck then
+        if lib.callback.await('qbx-ambulancejob:server:isBedTaken', false, hospitalName, bedIndex) then
+            lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
+            return
+        end
+    end
+
+    hospitalOccupying = hospitalName
+    bedIndexOccupying = bedIndex
+    bedOccupyingData = Config.Locations.hospitals[hospitalName].beds[bedIndex]
     IsInHospitalBed = true
     exports['qbx-medical']:disableRespawn()
     CanLeaveBed = false
@@ -324,12 +72,223 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, bed, isRevive)
             CanLeaveBed = true
         end
     end)
+    TriggerServerEvent('qbx-ambulancejob:server:playerEnteredBed', hospitalName, bedIndex)
+end
+
+RegisterNetEvent('qbx-ambulancejob:client:onPlayerRespawn', function(hospitalName, bedIndex)
+    putPlayerInBed(hospitalName, bedIndex, true, true)
+end)
+
+---Notifies doctors, and puts player in a hospital bed.
+local function checkIn(hospitalName)
+    if DoctorCount >= Config.MinimalDoctors then
+        TriggerServerEvent("hospital:server:SendDoctorAlert")
+        return
+    end
+
+    exports.scully_emotemenu:playEmoteByCommand('notepad')
+    if lib.progressCircle({
+        duration = 2000,
+        position = 'bottom',
+        label = Lang:t('progress.checking_in'),
+        useWhileDead = false,
+        canCancel = true,
+        disable = {
+            move = false,
+            car = false,
+            combat = true,
+            mouse = false,
+        },
+        anim = {
+            dict = HealAnimDict,
+            clip = HealAnim,
+        },
+    })
+    then
+        exports.scully_emotemenu:cancelEmote()
+        --- ask server for first non taken bed
+        local bedIndex = lib.callback.await('qbx-ambulancejob:server:getOpenBed', false, hospitalName)
+        if not bedIndex then
+            lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
+            return
+        end
+
+        putPlayerInBed(hospitalName, bedIndex, true, true)
+    else
+        exports.scully_emotemenu:cancelEmote()
+        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+    end
+end
+
+---Set up check-in and getting into beds using either target or zones
+if Config.UseTarget then
+    CreateThread(function()
+        for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+            if hospital.checkIn then
+                exports.ox_target:addBoxZone({
+                    name = hospitalName.."_checkin",
+                    coords = hospital.checkIn,
+                    size = vec3(2, 1, 2),
+                    rotation = 18,
+                    debug = false,
+                    options = {
+                        {
+                            onSelect = function()
+                                checkIn(hospitalName)
+                            end,
+                            icon = "fas fa-clipboard",
+                            label = Lang:t('text.check'),
+                            distance = 1.5,
+                        }
+                    }
+                })
+            end
+        end
+
+        for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+            for i = 1, #hospital.beds do
+                local bed = hospital.beds[i]
+                exports.ox_target:addBoxZone({
+                    name = hospitalName.."_bed_"..i,
+                    coords = bed.coords.xyz,
+                    size = vec3(1.7, 1.9, 2),
+                    rotation = bed.coords.w,
+                    debug = false,
+                    options = {
+                        {
+                            onSelect = function()
+                                putPlayerInBed(hospitalName, i, false)
+                            end,
+                            icon = "fas fa-clipboard",
+                            label = Lang:t('text.bed'),
+                            distance = 1.5,
+                        }
+                    }
+                })
+            end
+        end
+    end)
+else
+    CreateThread(function()
+        for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+
+            if hospital.checkIn then
+                local function enterCheckInZone()
+                    if DoctorCount >= Config.MinimalDoctors then
+                        lib.showTextUI(Lang:t('text.call_doc'))
+                    else
+                        lib.showTextUI(Lang:t('text.check_in'))
+                    end
+                end
+
+                local function outCheckInZone()
+                    lib.hideTextUI()
+                end
+
+                local function insideZone()
+                    if IsControlJustPressed(0, 38) and DoctorCount >= Config.MinimalDoctors then
+                        exports['qbx-core']:KeyPressed(38)
+                        checkIn(hospitalName)
+                    end
+                end
+
+                lib.zones.box({
+                    coords = hospital.checkIn,
+                    size = vec3(2, 1, 2),
+                    rotation = 18,
+                    debug = false,
+                    onEnter = enterCheckInZone,
+                    onExit = outCheckInZone,
+                    inside = insideZone,
+                })
+            end
+        end
+        for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+            for i = 1, #hospital.beds do
+                local bed = hospital.beds[i]
+                local function enterBedZone()
+                    lib.showTextUI(Lang:t('text.lie_bed'))
+                end
+
+                local function outBedZone()
+                    lib.hideTextUI()
+                end
+
+                local function insideZone()
+                    if IsControlJustPressed(0, 38) then
+                        exports['qbx-core']:KeyPressed(38)
+                        putPlayerInBed(hospitalName, i, false)
+                    end
+                end
+
+                lib.zones.box({
+                    coords = bed.coords.xyz,
+                    size = vec3(1.9, 2.1, 2),
+                    rotation = bed.coords.w,
+                    debug = false,
+                    onEnter = enterBedZone,
+                    onExit = outBedZone,
+                    inside = insideZone,
+                })
+            end
+        end
+    end)
+end
+
+---plays animation to get out of bed and resets variables
+local function leaveBed()
+    local ped = cache.ped
+    local getOutDict = 'switch@franklin@bed'
+    local getOutAnim = 'sleep_getup_rubeyes'
+
+    lib.requestAnimDict(getOutDict)
+    FreezeEntityPosition(ped, false)
+    SetEntityInvincible(ped, false)
+    SetEntityHeading(ped, bedOccupyingData.coords.w + 90)
+    TaskPlayAnim(ped, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, false, false, false)
+    Wait(4000)
+    ClearPedTasks(ped)
+    TriggerServerEvent('qbx-ambulancejob:server:playerLeftBed', hospitalOccupying, bedIndexOccupying)
+    FreezeEntityPosition(bedObject, true)
+    RenderScriptCams(false, true, 200, true, true)
+    DestroyCam(cam, false)
+
+    hospitalOccupying = nil
+    bedIndexOccupying = nil
+    bedObject = nil
+    bedOccupyingData = nil
+    IsInHospitalBed = false
+
+    if PlayerData.metadata.injail <= 0 then return end
+    TriggerEvent("prison:client:Enter", PlayerData.metadata.injail)
+end
+
+---Shows leave bed text if the player can leave the bed, triggers leaving the bed if the right key is pressed.
+local function givePlayerOptionToLeaveBed()
+    lib.showTextUI(Lang:t('text.bed_out'))
+    if not IsControlJustReleased(0, 38) then return end
+
+    exports['qbx-core']:KeyPressed(38)
+    leaveBed()
+    lib.hideTextUI()
+end
+
+---shows player option to press key to leave bed when available.
+CreateThread(function()
+    while true do
+        if IsInHospitalBed and CanLeaveBed then
+            givePlayerOptionToLeaveBed()
+            Wait(0)
+        else
+            Wait(1000)
+        end
+    end
 end)
 
 ---reset player settings that the server is storing
 local function onPlayerUnloaded()
-    if bedOccupying then
-        TriggerServerEvent("hospital:server:LeaveBed", bedOccupying)
+    if bedIndexOccupying then
+        TriggerServerEvent('qbx-ambulancejob:server:playerLeftBed', hospitalOccupying, bedIndexOccupying)
     end
 end
 

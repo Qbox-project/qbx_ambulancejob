@@ -6,6 +6,15 @@ local QBCore = exports['qbx-core']:GetCoreObject()
 
 local doctorCalled = false
 
+---@type table<string, table<number, boolean>>
+local hospitalBedsTaken = {}
+for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+	hospitalBedsTaken[hospitalName] = {}
+	for i = 1, #hospital.beds do
+		hospitalBedsTaken[hospitalName][i] = false
+	end
+end
+
 ---@param player Player
 local function billPlayer(player)
 	player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
@@ -19,55 +28,53 @@ local function wipeInventory(player)
 	TriggerClientEvent('ox_lib:notify', player.PlayerData.source, { description = Lang:t('error.possessions_taken'), type = 'error' })
 end
 
----@param player Player
----@param bedsKey "beds"|"jailbeds"
----@param i integer
----@param bed table Bed
-local function respawnAtBed(player, bedsKey, i, bed)
-	TriggerClientEvent('hospital:client:SendToBed', player.PlayerData.source, i, bed, true)
-	TriggerClientEvent('hospital:client:SetBed', -1, bedsKey, i, true)
-	if Config.WipeInventoryOnRespawn then
-		wipeInventory(player)
+local function getOpenBed(hospitalName)
+	local beds = hospitalBedsTaken[hospitalName]
+	for i = 1, #beds do
+		local isTaken = beds[i]
+		if not isTaken then return i end
 	end
-	billPlayer(player)
 end
 
----@param player Player
----@param bedsKey "beds"|"jailbeds"
-local function respawnAtHospital(player, bedsKey)
-	local beds = Config.Locations[bedsKey]
-	local closest, bedIndex = nil, 0
-	for i, bed in pairs(beds) do
-		if (not closest or closest > #(GetEntityCoords(cache.ped) - bed.coords)) and not bed.taken then
-			closest = #(GetEntityCoords(cache.ped) - bed.coords)
-			bedIndex = i
-		end
-	end
-	respawnAtBed(player, bedsKey, bedIndex, beds[bedIndex])
-end
+lib.callback.register('qbx-ambulancejob:server:getOpenBed', function(hospitalName)
+	return getOpenBed(hospitalName)
+end)
 
 local function respawn(src)
 	local player = QBCore.Functions.GetPlayer(src)
+	local closestHospital = nil
 	if player.PlayerData.metadata.injail > 0 then
-		respawnAtHospital(player, "jailbeds")
+		closestHospital = "jail"
 	else
-		respawnAtHospital(player, "beds")
+		local coords = GetEntityCoords(GetPlayerPed(src))
+		local closest = nil
+
+		for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+			if not closest or #(coords - hospital.coords) < closest then
+				closest = hospital.coords
+				closestHospital = hospitalName
+			end
+		end
 	end
+
+	local bedIndex = getOpenBed(closestHospital)
+	if not bedIndex then
+		---TODO: handle hospital being out of beds. Could send them to backup hospital or notify to wait.
+		return
+	end
+
+	if Config.WipeInventoryOnRespawn then
+		wipeInventory(player)
+	end
+	TriggerClientEvent('qbx-ambulancejob:client:onPlayerRespawn', src, closestHospital, bedIndex)
 end
 
 AddEventHandler('qbx-medical:server:playerRespawned', function(source)
 	respawn(source)
 end)
 
----@param bedId integer
----@param isRevive boolean
-RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
-	if GetInvokingResource() then return end
-	local src = source
-	local player = QBCore.Functions.GetPlayer(src)
-	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations.beds[bedId], isRevive)
-	TriggerClientEvent('hospital:client:SetBed', -1, "beds", bedId, true)
-	billPlayer(player)
+lib.callback.register('qbx-ambulancejob:server:isBedTaken', function(hospitalName, bedIndex)
+	return hospitalBedsTaken[hospitalName][bedIndex]
 end)
 
 local function alertAmbulance(src, text)
@@ -93,10 +100,17 @@ RegisterNetEvent('qbx-medical:server:onPlayerLaststand', function(text)
 	alertAmbulance(src, text)
 end)
 
----@param id integer
-RegisterNetEvent('hospital:server:LeaveBed', function(id)
+RegisterNetEvent('qbx-ambulancejob:server:playerEnteredBed', function(hospitalName, bedIndex)
 	if GetInvokingResource() then return end
-	TriggerClientEvent('hospital:client:SetBed', -1, "beds", id, false)
+	local src = source
+	local player = QBCore.Functions.GetPlayer(src)
+	billPlayer(player)
+	hospitalBedsTaken[hospitalName][bedIndex] = true
+end)
+
+RegisterNetEvent('qbx-ambulancejob:server:playerLeftBed', function(hospitalName, bedIndex)
+	if GetInvokingResource() then return end
+	hospitalBedsTaken[hospitalName][bedIndex] = false
 end)
 
 ---@param playerId number

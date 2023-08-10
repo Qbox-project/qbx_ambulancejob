@@ -76,14 +76,6 @@ RegisterNetEvent('hospital:client:Revive', function()
     EmsNotified = false
 end)
 
----@param bedsKey "jailbeds"|"beds"
----@param id number
----@param isTaken boolean
-RegisterNetEvent('hospital:client:SetBed', function(bedsKey, id, isTaken)
-    if GetInvokingResource() then return end
-    Config.Locations[bedsKey][id].taken = isTaken
-end)
-
 ---sends player phone email with hospital bill.
 ---@param amount number
 RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
