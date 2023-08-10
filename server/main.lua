@@ -50,9 +50,11 @@ local function respawn(src)
 		local closest = nil
 
 		for hospitalName, hospital in pairs(Config.Locations.hospitals) do
-			if not closest or #(coords - hospital.coords) < closest then
-				closest = hospital.coords
-				closestHospital = hospitalName
+			if hospitalName ~= 'jail' then
+				if not closest or #(coords - hospital.coords) < closest then
+					closest = hospital.coords
+					closestHospital = hospitalName
+				end
 			end
 		end
 	end
