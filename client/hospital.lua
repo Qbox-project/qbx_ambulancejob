@@ -80,11 +80,8 @@ RegisterNetEvent('qbx-ambulancejob:client:onPlayerRespawn', function(hospitalNam
 end)
 
 ---Notifies doctors, and puts player in a hospital bed.
-local function checkIn(hospitalName)
-    if DoctorCount >= Config.MinimalDoctors then
-        TriggerServerEvent("hospital:server:SendDoctorAlert")
-        return
-    end
+    local canCheckIn = lib.callback.await('qbx-ambulancejob:server:onCheckIn')
+    if not canCheckIn then return end
 
     exports.scully_emotemenu:playEmoteByCommand('notepad')
     if lib.progressCircle({

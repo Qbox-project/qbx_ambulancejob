@@ -8,7 +8,6 @@ HealAnim = "cpr_pumpchest"
 EmsNotified = false
 CanLeaveBed = true
 OnPainKillers = false
-DoctorCount = 0
 PlayerData = {
     job = nil
 }
@@ -112,11 +111,3 @@ function GetClosestPlayer()
     local coords = GetEntityCoords(cache.ped)
     return QBCore.Functions.GetClosestPlayer(coords)
 end
-
----fetch and cache DoctorCount every minute from server.
-CreateThread(function()
-    while true do
-        DoctorCount = lib.callback.await('hospital:GetDoctors', false)
-        Wait(60000)
-    end
-end)

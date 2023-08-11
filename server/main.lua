@@ -140,25 +140,19 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	TriggerClientEvent('hospital:client:Revive', patient.PlayerData.source)
 end)
 
-RegisterNetEvent('hospital:server:SendDoctorAlert', function()
-	if GetInvokingResource() then return end
-	local src = source
-	if doctorCalled then
-		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('info.dr_needed'), type = 'inform' })
-		return
+local function sendDoctorAlert()
+	if doctorCalled then return end
+	doctorCalled = true
+	local _, doctors = QBCore.Functions.GetDutyCountJob('ambulance')
+	for i = 1, #doctors do
+		local doctor = doctors[i]
+		TriggerClientEvent('ox_lib:notify', doctor.PlayerData.source, { description = Lang:t('info.dr_needed'), type = 'inform' })
 	end
 
-	doctorCalled = true
-	local players = QBCore.Functions.GetQBPlayers()
-	for _, v in pairs(players) do
-		if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-			TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('info.dr_needed'), type = 'inform' })
-		end
-	end
 	SetTimeout(Config.DocCooldown * 60000, function()
 		doctorCalled = false
 	end)
-end)
+end
 
 ---@param targetId number
 RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
@@ -179,14 +173,18 @@ end)
 -- Callbacks
 
 lib.callback.register('hospital:GetDoctors', function()
-	local amount = 0
-	local players = QBCore.Functions.GetQBPlayers()
-	for _, v in pairs(players) do
-		if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-			amount += 1
-		end
+	local count = QBCore.Functions.GetDutyCountJob('ambulance')
+	return count
+end)
+
+lib.callback.register('qbx-ambulancejob:server:onCheckIn', function(source)
+	local numDoctors = QBCore.Functions.GetDutyCountJob('ambulance')
+	if numDoctors < Config.MinimalDoctors then
+		return true
 	end
-	return amount
+	TriggerClientEvent('ox_lib:notify', source, { description = Lang:t('info.dr_needed'), type = 'inform' })
+	sendDoctorAlert()
+	return false
 end)
 
 -- Commands
