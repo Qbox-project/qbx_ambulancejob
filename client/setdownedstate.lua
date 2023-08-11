@@ -1,6 +1,12 @@
+local function getDoctorCount()
+    return cache('doctorCount', function()
+        lib.callback.await('hospital:GetDoctors')
+    end, 60000)
+end
+
 local function displayRespawnText()
     local deathTime = exports['qbx-medical']:getDeathTime()
-    if deathTime > 0 and DoctorCount > 0 then
+    if deathTime > 0 and getDoctorCount() > 0 then
         DrawText2D(Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), vec2(0.93, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
         DrawText2D(Lang:t('info.respawn_revive', { holdtime = exports['qbx-medical']:getRespawnHoldTimeDeprecated(), cost = Config.BillCost }), vec2(0.865, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
@@ -31,7 +37,7 @@ end
 
 ---Player is able to send a notification to EMS there are any on duty
 local function handleRequestingEms()
-    if DoctorCount == 0 then return end
+    if getDoctorCount() == 0 then return end
     if not EmsNotified then
         DrawText2D(Lang:t('info.request_help'), vec2(0.91, 1.40), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
         if IsControlJustPressed(0, 47) then
