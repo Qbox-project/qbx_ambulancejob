@@ -139,10 +139,18 @@ if Config.UseTarget then
                         }
                     }
                 })
-            end
-        end
 
-        for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+                lib.zones.box({
+                    coords = hospital.checkIn,
+                    size = vec3(2, 1, 2),
+                    rotation = 18,
+                    debug = false,
+                    onEnter = enterCheckInZone,
+                    onExit = outCheckInZone,
+                    inside = insideZone,
+                })
+            end
+
             for i = 1, #hospital.beds do
                 local bed = hospital.beds[i]
                 exports.ox_target:addBoxZone({
@@ -182,11 +190,8 @@ else
                     lib.hideTextUI()
                 end
 
-                local function insideZone()
-                    if IsControlJustPressed(0, 38) and DoctorCount >= Config.MinimalDoctors then
-                        exports['qbx-core']:KeyPressed(38)
-                        checkIn(hospitalName)
-                    end
+                local function insideCheckInZone()
+                    OnKeyPress(checkIn(hospitalName))
                 end
 
                 lib.zones.box({
@@ -196,11 +201,10 @@ else
                     debug = false,
                     onEnter = enterCheckInZone,
                     onExit = outCheckInZone,
-                    inside = insideZone,
+                    inside = insideCheckInZone,
                 })
             end
-        end
-        for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+            
             for i = 1, #hospital.beds do
                 local bed = hospital.beds[i]
                 local function enterBedZone()
@@ -211,11 +215,8 @@ else
                     lib.hideTextUI()
                 end
 
-                local function insideZone()
-                    if IsControlJustPressed(0, 38) then
-                        exports['qbx-core']:KeyPressed(38)
-                        putPlayerInBed(hospitalName, i, false)
-                    end
+                local function insideBedZone()
+                    OnKeyPress(putPlayerInBed(hospitalName, i, false))
                 end
 
                 lib.zones.box({
@@ -225,7 +226,7 @@ else
                     debug = false,
                     onEnter = enterBedZone,
                     onExit = outBedZone,
-                    inside = insideZone,
+                    inside = insideBedZone,
                 })
             end
         end
@@ -260,22 +261,16 @@ local function leaveBed()
     TriggerEvent("prison:client:Enter", PlayerData.metadata.injail)
 end
 
----Shows leave bed text if the player can leave the bed, triggers leaving the bed if the right key is pressed.
-local function givePlayerOptionToLeaveBed()
-    lib.showTextUI(Lang:t('text.bed_out'))
-    if not IsControlJustReleased(0, 38) then return end
-
-    exports['qbx-core']:KeyPressed(38)
-    leaveBed()
-    lib.hideTextUI()
-end
-
 ---shows player option to press key to leave bed when available.
 CreateThread(function()
     while true do
         if IsInHospitalBed and CanLeaveBed then
-            givePlayerOptionToLeaveBed()
-            Wait(0)
+            lib.showTextUI(Lang:t('text.bed_out'))
+            while IsInHospitalBed and CanLeaveBed do
+                OnKeyPress(leaveBed)
+                Wait(0)
+            end
+            lib.hideTextUI()
         else
             Wait(1000)
         end
