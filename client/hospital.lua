@@ -139,16 +139,6 @@ if Config.UseTarget then
                         }
                     }
                 })
-
-                lib.zones.box({
-                    coords = hospital.checkIn,
-                    size = vec3(2, 1, 2),
-                    rotation = 18,
-                    debug = false,
-                    onEnter = enterCheckInZone,
-                    onExit = outCheckInZone,
-                    inside = insideZone,
-                })
             end
 
             for i = 1, #hospital.beds do
