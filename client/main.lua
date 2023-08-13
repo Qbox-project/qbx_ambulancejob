@@ -111,3 +111,10 @@ function GetClosestPlayer()
     local coords = GetEntityCoords(cache.ped)
     return QBCore.Functions.GetClosestPlayer(coords)
 end
+
+function OnKeyPress(cb)
+    if IsControlJustPressed(0, 38) then
+        exports['qbx-core']:KeyPressed(38)
+        cb()
+    end
+end

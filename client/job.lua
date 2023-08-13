@@ -187,21 +187,6 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
     end
 end)
 
----calls a function when the player presses a key
----@param cb function to call when key is pressed
-local function emsControls(cb)
-    CreateThread(function()
-        check = true
-        while check do
-            if IsControlJustPressed(0, 38) then
-                exports['qbx-core']:KeyPressed(38)
-                cb()
-            end
-            Wait(0)
-        end
-    end)
-end
-
 ---Opens the hospital stash.
 local function openStash()
     if not PlayerData.job.onduty then return end
@@ -293,7 +278,7 @@ local function createGarage(vehicles, vehiclePlatePrefix, coords)
     end
 
     lib.zones.box({
-        coords = vec3(coords.x, coords.y, coords.z),
+        coords = coords.xyz,
         size = vec3(5, 5, 2),
         rotation = coords.w,
         debug = false,
@@ -316,10 +301,10 @@ end)
 ---Sets up duty toggle, stash, armory, and elevator interactions using either target or zones.
 if Config.UseTarget then
     CreateThread(function()
-        for k, v in pairs(Config.Locations.duty) do
+        for i = 1, #Config.Locations.duty do
             exports.ox_target:addBoxZone({
-                name = "duty" .. k,
-                coords = vec3(v.x, v.y, v.z),
+                name = "duty" .. i,
+                coords = Config.Locations.duty[i],
                 size = vec3(1.5, 1, 2),
                 rotation = 71,
                 debug = false,
@@ -335,10 +320,10 @@ if Config.UseTarget then
                 }
             })
         end
-        for k, v in pairs(Config.Locations.stash) do
+        for i = 1, #Config.Locations.stash do
             exports.ox_target:addBoxZone({
-                name = "stash" .. k,
-                coords = vec3(v.x, v.y, v.z),
+                name = "stash" .. i,
+                coords = Config.Locations.stash[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = false,
@@ -354,10 +339,10 @@ if Config.UseTarget then
                 }
             })
         end
-        for k, v in pairs(Config.Locations.armory) do
+        for i = 1, #Config.Locations.armory do
             exports.ox_target:addBoxZone({
-                name = "armory" .. k,
-                coords = vec3(v.x, v.y, v.z),
+                name = "armory" .. i,
+                coords = Config.Locations.armory[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = false,
@@ -410,90 +395,100 @@ if Config.UseTarget then
     end)
 else
     CreateThread(function()
-        for _, v in pairs(Config.Locations.duty) do
-            local function EnteredSignInZone()
+        for i = 1, #Config.Locations.duty do
+            local function enteredSignInZone()
                 if not PlayerData.job.onduty then
                     lib.showTextUI(Lang:t('text.onduty_button'))
-                    emsControls(toggleDuty)
                 else
                     lib.showTextUI(Lang:t('text.offduty_button'))
-                    emsControls(toggleDuty)
                 end
             end
 
             local function outSignInZone()
-                check = false
                 lib.hideTextUI()
             end
 
+            local function insideDutyZone()
+                OnKeyPress(toggleDuty)
+            end
+
             lib.zones.box({
-                coords = vec3(v.x, v.y, v.z),
+                coords = Config.Locations.duty[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = false,
-                onEnter = EnteredSignInZone,
-                onExit = outSignInZone
+                onEnter = enteredSignInZone,
+                onExit = outSignInZone,
+                inside = insideDutyZone,
             })
         end
 
-        for _, v in pairs(Config.Locations.stash) do
-            local function EnteredStashZone()
+        for i = 1, #Config.Locations.stash do
+            local function enteredStashZone()
                 if PlayerData.job.onduty then
                     lib.showTextUI(Lang:t('text.pstash_button'))
-                    emsControls(openStash)
                 end
             end
 
             local function outStashZone()
-                check = false
                 lib.hideTextUI()
+            end
+            
+            local function insideStashZone()
+                OnKeyPress(openStash)
             end
 
             lib.zones.box({
-                coords = vec3(v.x, v.y, v.z),
+                coords = Config.Locations.stash[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = false,
-                onEnter = EnteredStashZone,
-                onExit = outStashZone
+                onEnter = enteredStashZone,
+                onExit = outStashZone,
+                inside = insideStashZone,
             })
         end
 
-        for _, v in pairs(Config.Locations.armory) do
-            local function EnteredArmoryZone()
+        for i = 1, #Config.Locations.armory do
+            local function enteredArmoryZone()
                 if PlayerData.job.onduty then
                     lib.showTextUI(Lang:t('text.armory_button'))
-                    emsControls(openArmory)
                 end
             end
 
             local function outArmoryZone()
-                check = false
                 lib.hideTextUI()
             end
 
+            local function insideArmoryZone()
+                OnKeyPress(openArmory)
+            end
+
             lib.zones.box({
-                coords = vec3(v.x, v.y, v.z),
+                coords = Config.Locations.armory[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = false,
-                onEnter = EnteredArmoryZone,
-                onExit = outArmoryZone
+                onEnter = enteredArmoryZone,
+                onExit = outArmoryZone,
+                inside = insideArmoryZone,
             })
         end
 
-        local function EnteredRoofZone()
+        local function enteredRoofZone()
             if PlayerData.job.onduty then
                 lib.showTextUI(Lang:t('text.elevator_main'))
-                emsControls(teleportToMainElevator)
             else
                 lib.showTextUI(Lang:t('error.not_ems'))
             end
         end
 
         local function outRoofZone()
-            check = false
             lib.hideTextUI()
+        end
+
+        local function insideRoofZone()
+            OnKeyPress(teleportToMainElevator)
         end
 
         lib.zones.box({
@@ -501,22 +496,25 @@ else
             size = vec3(1, 1, 2),
             rotation = -20,
             debug = false,
-            onEnter = EnteredRoofZone,
-            onExit = outRoofZone
+            onEnter = enteredRoofZone,
+            onExit = outRoofZone,
+            inside = insideRoofZone,
         })
 
-        local function EnteredMainZone()
+        local function enteredMainZone()
             if PlayerData.job.onduty then
                 lib.showTextUI(Lang:t('text.elevator_roof'))
-                emsControls(teleportToRoofElevator)
             else
                 lib.showTextUI(Lang:t('error.not_ems'))
             end
         end
 
         local function outMainZone()
-            check = false
             lib.hideTextUI()
+        end
+
+        local function insideMainZone()
+            OnKeyPress(teleportToRoofElevator)
         end
 
         lib.zones.box({
@@ -524,8 +522,9 @@ else
             size = vec3(1, 1, 2),
             rotation = -20,
             debug = false,
-            onEnter = EnteredMainZone,
-            onExit = outMainZone
+            onEnter = enteredMainZone,
+            onExit = outMainZone,
+            inside = insideMainZone,
         })
     end)
 end
