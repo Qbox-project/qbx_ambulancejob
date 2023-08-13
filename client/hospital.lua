@@ -80,6 +80,7 @@ RegisterNetEvent('qbx-ambulancejob:client:onPlayerRespawn', function(hospitalNam
 end)
 
 ---Notifies doctors, and puts player in a hospital bed.
+local function checkIn(hospitalName)
     local canCheckIn = lib.callback.await('qbx-ambulancejob:server:onCheckIn')
     if not canCheckIn then return end
 
