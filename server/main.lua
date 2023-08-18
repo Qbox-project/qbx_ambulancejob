@@ -36,7 +36,7 @@ local function getOpenBed(hospitalName)
 	end
 end
 
-lib.callback.register('qbx-ambulancejob:server:getOpenBed', function(source, hospitalName)
+lib.callback.register('qbx-ambulancejob:server:getOpenBed', function(_, hospitalName)
 	return getOpenBed(hospitalName)
 end)
 
