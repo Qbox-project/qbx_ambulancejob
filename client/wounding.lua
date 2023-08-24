@@ -36,7 +36,7 @@ lib.callback.register('hospital:client:UseIfaks', function()
         return true
     else
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
         return false
     end
 end)
@@ -73,7 +73,7 @@ lib.callback.register('hospital:client:UseBandage', function()
         return true
     else
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
         return false
     end
 end)
@@ -107,7 +107,7 @@ lib.callback.register('hospital:client:UsePainkillers', function()
         return true
     else
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
         return false
     end
 end)

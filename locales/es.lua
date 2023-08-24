@@ -89,12 +89,14 @@ local Translations = {
         heli_button = '[E] - Sacar / guardar helicoptero',
         elevator_roof = '[E] - Tomar el elevador al último piso',
         elevator_main = '[E] - Tomar el elevador hacía abajo',
+        el_roof = 'Tomar el elevador al último piso',
         bed_out = '[E] - Para salir de la cama..',
         call_doc = '[E] - Llamar doctor',
         call = 'Llamar',
         check_in = '[E] Hacer check-in',
         check = 'Check-in',
-        lie_bed = '[E] - Para acostarse en la cama'
+        lie_bed = '[E] - Para acostarse en la cama',
+        bed = 'Acostarse en la cama',
     },
     body = {
         head = 'cabeza',

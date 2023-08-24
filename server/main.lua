@@ -36,7 +36,7 @@ local function getOpenBed(hospitalName)
 	end
 end
 
-lib.callback.register('qbx-ambulancejob:server:getOpenBed', function(hospitalName)
+lib.callback.register('qbx-ambulancejob:server:getOpenBed', function(_, hospitalName)
 	return getOpenBed(hospitalName)
 end)
 
@@ -51,7 +51,8 @@ local function respawn(src)
 
 		for hospitalName, hospital in pairs(Config.Locations.hospitals) do
 			if hospitalName ~= 'jail' then
-				if not closest or #(coords - hospital.coords) < closest then
+				local distance = #(coords - hospital.coords)
+				if not closest or distance < #(coords - closest) then
 					closest = hospital.coords
 					closestHospital = hospitalName
 				end

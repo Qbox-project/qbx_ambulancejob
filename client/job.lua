@@ -73,7 +73,7 @@ end
 RegisterNetEvent('hospital:client:CheckStatus', function()
     local player, distance = GetClosestPlayer()
     if player == -1 or distance > 5.0 then
-        lib.notify({ description = Lang:t('error.no_player'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.no_player'), 'error')
         return
     end
     local playerId = GetPlayerServerId(player)
@@ -81,7 +81,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
     ---@param damage PlayerDamage
     local damage = lib.callback.await('hospital:GetPlayerStatus', false, playerId)
     if not damage or (damage.bleedLevel == 0 and #damage.damagedBodyParts == 0 and #damage.weaponWounds == 0) then
-        lib.notify({ description = Lang:t('success.healthy_player'), type = 'success' })
+        QBCore.Functions.Notify(Lang:t('success.healthy_player'), 'success')
         return
     end
 
@@ -109,13 +109,13 @@ end)
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:RevivePlayer', function()
     if not QBCore.Functions.HasItem('firstaid') then
-        lib.notify({ description = Lang:t('error.no_firstaid'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.no_firstaid'), 'error')
         return
     end
 
     local player, distance = GetClosestPlayer()
     if player == -1 or distance >= 5.0 then
-        lib.notify({ description = Lang:t('error.no_player'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.no_player'), 'error')
         return
     end
 
@@ -138,11 +138,11 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
     })
     then
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        lib.notify({ description = Lang:t('success.revived'), type = 'success' })
+        QBCore.Functions.Notify(Lang:t('success.revived'), 'success')
         TriggerServerEvent("hospital:server:RevivePlayer", GetPlayerServerId(player))
     else
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
     end
 end)
 
@@ -150,13 +150,13 @@ end)
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:TreatWounds', function()
     if not QBCore.Functions.HasItem('bandage') then
-        lib.notify({ description = Lang:t('error.no_bandage'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.no_bandage'), 'error')
         return
     end
 
     local player, distance = GetClosestPlayer()
     if player == -1 or distance >= 5.0 then
-        lib.notify({ description = Lang:t('error.no_player'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.no_player'), 'error')
         return
     end
 
@@ -179,11 +179,11 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
     })
     then
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        lib.notify({ description = Lang:t('success.helped_player'), type = 'success' })
+        QBCore.Functions.Notify(Lang:t('success.helped_player'), 'success')
         TriggerServerEvent("hospital:server:TreatWounds", GetPlayerServerId(player))
     else
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
     end
 end)
 
