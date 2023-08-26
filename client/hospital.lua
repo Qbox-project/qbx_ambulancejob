@@ -166,7 +166,8 @@ else
 
             if hospital.checkIn then
                 local function enterCheckInZone()
-                    if DoctorCount >= Config.MinimalDoctors then
+                    local numDoctors = lib.callback.await('hospital:GetDoctors')
+                    if numDoctors >= Config.MinimalDoctors then
                         lib.showTextUI(Lang:t('text.call_doc'))
                     else
                         lib.showTextUI(Lang:t('text.check_in'))
