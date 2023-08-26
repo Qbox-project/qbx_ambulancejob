@@ -178,7 +178,10 @@ else
                 end
 
                 local function insideCheckInZone()
-                    OnKeyPress(checkIn(hospitalName))
+                    if IsControlJustPressed(0, 38) then
+                        exports['qbx-core']:KeyPressed(38)
+                        checkIn(hospitalName)
+                    end
                 end
 
                 lib.zones.box({
@@ -195,7 +198,9 @@ else
             for i = 1, #hospital.beds do
                 local bed = hospital.beds[i]
                 local function enterBedZone()
-                    lib.showTextUI(Lang:t('text.lie_bed'))
+                    if not IsInHospitalBed then
+                        lib.showTextUI(Lang:t('text.lie_bed'))
+                    end
                 end
 
                 local function outBedZone()
@@ -203,7 +208,10 @@ else
                 end
 
                 local function insideBedZone()
-                    OnKeyPress(putPlayerInBed(hospitalName, i, false))
+                    if IsControlJustPressed(0, 38) then
+                        exports['qbx-core']:KeyPressed(38)
+                        putPlayerInBed(hospitalName, i, false)
+                    end
                 end
 
                 lib.zones.box({
