@@ -54,7 +54,7 @@ local function handleLastStand()
     if laststandTime > Config.LaststandMinimumRevive then
         DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(0.94, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
-        DrawText2D(Lang:t('info.bleed_out_help', { time = math.ceil(laststandTime) }), vec2(0.845, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.bleed_out_help', { time = math.ceil(laststandTime) }), vec2(0.94, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
         handleRequestingEms()
     end
 

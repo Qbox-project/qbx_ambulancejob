@@ -50,7 +50,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     if IsInHospitalBed then return end
     if not skipOpenCheck then
         if lib.callback.await('qbx-ambulancejob:server:isBedTaken', false, hospitalName, bedIndex) then
-            lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
+            QBCore.Functions.Notify(Lang:t('error.beds_taken'), 'error')
             return
         end
     end
@@ -65,7 +65,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     CreateThread(function()
         Wait(5)
         if isRevive then
-            lib.notify({ description = Lang:t('success.being_helped'), type = 'success' })
+            QBCore.Functions.Notify(Lang:t('success.being_helped'), 'success')
             Wait(Config.AIHealTimer * 1000)
             TriggerEvent("hospital:client:Revive")
         else
@@ -92,14 +92,10 @@ local function checkIn(hospitalName)
         useWhileDead = false,
         canCancel = true,
         disable = {
-            move = false,
-            car = false,
+            move = true,
+            car = true,
             combat = true,
             mouse = false,
-        },
-        anim = {
-            dict = HealAnimDict,
-            clip = HealAnim,
         },
     })
     then
@@ -107,14 +103,14 @@ local function checkIn(hospitalName)
         --- ask server for first non taken bed
         local bedIndex = lib.callback.await('qbx-ambulancejob:server:getOpenBed', false, hospitalName)
         if not bedIndex then
-            lib.notify({ description = Lang:t('error.beds_taken'), type = 'error' })
+            QBCore.Functions.Notify(Lang:t('error.beds_taken'), 'error')
             return
         end
 
         putPlayerInBed(hospitalName, bedIndex, true, true)
     else
         exports.scully_emotemenu:cancelEmote()
-        lib.notify({ description = Lang:t('error.canceled'), type = 'error' })
+        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
     end
 end
 

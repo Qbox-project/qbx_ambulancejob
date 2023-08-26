@@ -21,9 +21,8 @@ Config.Locations = { -- Edit the various interaction points for players or creat
         vec4(351.58, -587.45, 74.16, 160.5),
         vec4(-475.43, 5988.353, 31.716, 31.34),
     },
-    armory = {
-        vec3(309.93, -602.94, 43.29),
-        vec3(-245.13, 6315.71, 32.82),
+    armory = { -- Currently not in use, use ox_inventory/data/shops.lua instead
+        --vec3(0.0, 0.0, 0.0),
     },
     roof = {
         vec3(338.54, -583.88, 74.17),
@@ -31,8 +30,8 @@ Config.Locations = { -- Edit the various interaction points for players or creat
     main = {
         vec3(298.62, -599.66, 43.29),
     },
-    stash = {
-        vec3(309.78, -596.6, 43.29),
+    stash = { -- Currently not in use, use ox_inventory/data/stashes.lua instead
+        --vec3(0.0, 0.0, 0.0),
     },
 
     ---@class Bed
@@ -94,7 +93,6 @@ Config.AuthorizedVehicles = { -- Vehicles players can use based on their ambulan
     -- Grade 1
     [1] = {
         ["ambulance"] = "Ambulance",
-
     },
     -- Grade 2
     [2] = {
@@ -119,7 +117,6 @@ Config.AuthorizedHelicopters = {
     -- Grade 1
     [1] = {
         ["polmav"] = "Helicopter",
-
     },
     -- Grade 2
     [2] = {
@@ -267,7 +264,7 @@ Config.BoneIndexes = { -- Correspond bone labels to their hash number
 }
 
 Config.VehicleSettings = { -- Enable or disable vehicle extras when pulling them from the ambulance job vehicle spawner
-    ["car1"] = { -- Model name
+    ["ambulance"] = { -- Model name
         extras = {
             ["1"] = false, -- on/off
             ["2"] = true,
