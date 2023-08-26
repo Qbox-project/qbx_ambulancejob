@@ -143,10 +143,11 @@ end)
 local function sendDoctorAlert()
 	if doctorCalled then return end
 	doctorCalled = true
-	local _, doctors = QBCore.Functions.GetDutyCountJob('ambulance')
-	for i = 1, #doctors do
-		local doctor = doctors[i]
-		TriggerClientEvent('ox_lib:notify', doctor.PlayerData.source, { description = Lang:t('info.dr_needed'), type = 'inform' })
+	local players = QBCore.Functions.GetQBPlayers()
+	for _, doctor in pairs(players) do
+		if doctor.PlayerData.job.name == 'ambulance' and doctor.PlayerData.job.onduty then
+			TriggerClientEvent('QBCore:Notify', doctor.PlayerData.source, Lang:t('info.dr_needed'), 'ambulance')
+		end
 	end
 
 	SetTimeout(Config.DocCooldown * 60000, function()
@@ -182,7 +183,7 @@ lib.callback.register('qbx-ambulancejob:server:onCheckIn', function(source)
 	if numDoctors < Config.MinimalDoctors then
 		return true
 	end
-	TriggerClientEvent('ox_lib:notify', source, { description = Lang:t('info.dr_needed'), type = 'inform' })
+	TriggerClientEvent('ox_lib:notify', source, { description = Lang:t('info.dr_alert'), type = 'inform' })
 	sendDoctorAlert()
 	return false
 end)
