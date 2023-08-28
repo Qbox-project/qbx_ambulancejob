@@ -148,7 +148,7 @@ local function sendDoctorAlert()
 		local doctor = doctors[i]
 		TriggerClientEvent('ox_lib:notify', doctor, { description = Lang:t('info.dr_needed'), type = 'inform' })
 	end
-	
+
 	SetTimeout(Config.DocCooldown * 60000, function()
 		doctorCalled = false
 	end)
