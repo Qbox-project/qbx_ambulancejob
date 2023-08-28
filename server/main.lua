@@ -143,7 +143,7 @@ end)
 local function sendDoctorAlert()
 	if doctorCalled then return end
 	doctorCalled = true
-	local _, doctors = QBCore.Functions.GetDutyCountJob('ambulance')
+	local _, doctors = QBCore.Functions.GetDutyCountType('ems')
 	for i = 1, #doctors do
 		local doctor = doctors[i]
 		TriggerClientEvent('ox_lib:notify', doctor, { description = Lang:t('info.dr_needed'), type = 'inform' })
@@ -173,12 +173,12 @@ end)
 -- Callbacks
 
 lib.callback.register('hospital:GetDoctors', function()
-	local count = QBCore.Functions.GetDutyCountJob('ambulance')
+	local count = QBCore.Functions.GetDutyCountType('ems')
 	return count
 end)
 
 lib.callback.register('qbx-ambulancejob:server:onCheckIn', function(source)
-	local numDoctors = QBCore.Functions.GetDutyCountJob('ambulance')
+	local numDoctors = QBCore.Functions.GetDutyCountType('ems')
 	if numDoctors < Config.MinimalDoctors then
 		return true
 	end
