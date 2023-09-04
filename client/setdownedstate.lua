@@ -9,8 +9,6 @@ local function displayRespawnText()
     local deathTime = exports['qbx-medical']:getDeathTime()
     if deathTime > 0 and getDoctorCount() > 0 then
         DrawText2D(Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
-    elseif doctorCount == 0 then
-        DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
         DrawText2D(Lang:t('info.respawn_revive', { holdtime = exports['qbx-medical']:getRespawnHoldTimeDeprecated(), cost = Config.BillCost }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     end
@@ -38,7 +36,7 @@ local function handleDead(ped)
     SetCurrentPedWeapon(ped, `WEAPON_UNARMED`, true)
 end
 
----Player is able to send a notification to EMS there are any on duty
+---Player is able to send a notification to EMS there are any on dutyeeeeeeeeee
 local function handleRequestingEms()
     if not EmsNotified then
         DrawText2D(Lang:t('info.request_help'), vec2(1.0, 1.40), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
@@ -54,6 +52,8 @@ end
 local function handleLastStand()
     local laststandTime = exports['qbx-medical']:getLaststandTime()
     if laststandTime > Config.LaststandMinimumRevive or doctorCount == 0 then
+        DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+    elseif doctorCount == 0 then
         DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
         DrawText2D(Lang:t('info.bleed_out_help', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
