@@ -38,7 +38,6 @@ end
 
 ---Player is able to send a notification to EMS there are any on duty
 local function handleRequestingEms()
-    --if getDoctorCount() == 0 then return end
     if not EmsNotified then
         DrawText2D(Lang:t('info.request_help'), vec2(1.0, 1.40), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
         if IsControlJustPressed(0, 47) then
