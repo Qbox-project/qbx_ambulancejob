@@ -36,7 +36,7 @@ local function handleDead(ped)
     SetCurrentPedWeapon(ped, `WEAPON_UNARMED`, true)
 end
 
----Player is able to send a notification to EMS there are any on dutyeeeeeeeeee
+---Player is able to send a notification to EMS there are any on duty
 local function handleRequestingEms()
     if not EmsNotified then
         DrawText2D(Lang:t('info.request_help'), vec2(1.0, 1.40), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
