@@ -1,8 +1,7 @@
 local doctorCount = 0
 
 local function getDoctorCount()
-    doctorCount = lib.callback.await('hospital:GetDoctors')
-    return doctorCount
+    return lib.callback.await('hospital:GetDoctors')
 end
 
 local function displayRespawnText()
