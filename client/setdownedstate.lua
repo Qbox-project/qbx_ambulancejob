@@ -6,7 +6,7 @@ end
 
 local function displayRespawnText()
     local deathTime = exports['qbx-medical']:getDeathTime()
-    if deathTime > 0 and getDoctorCount() > 0 then
+    if deathTime > 0 and doctorCount > 0 then
         DrawText2D(Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
         DrawText2D(Lang:t('info.respawn_revive', { holdtime = exports['qbx-medical']:getRespawnHoldTimeDeprecated(), cost = Config.BillCost }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
