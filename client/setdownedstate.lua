@@ -1,15 +1,15 @@
+local doctorCount = 0
+
 local function getDoctorCount()
-    return cache('doctorCount', function()
-        lib.callback.await('hospital:GetDoctors')
-    end, 60000)
+    return lib.callback.await('hospital:GetDoctors')
 end
 
 local function displayRespawnText()
     local deathTime = exports['qbx-medical']:getDeathTime()
-    if deathTime > 0 and getDoctorCount() > 0 then
-        DrawText2D(Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), vec2(0.93, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+    if deathTime > 0 and doctorCount > 0 then
+        DrawText2D(Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
-        DrawText2D(Lang:t('info.respawn_revive', { holdtime = exports['qbx-medical']:getRespawnHoldTimeDeprecated(), cost = Config.BillCost }), vec2(0.865, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.respawn_revive', { holdtime = exports['qbx-medical']:getRespawnHoldTimeDeprecated(), cost = Config.BillCost }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     end
 end
 
@@ -37,24 +37,25 @@ end
 
 ---Player is able to send a notification to EMS there are any on duty
 local function handleRequestingEms()
-    if getDoctorCount() == 0 then return end
     if not EmsNotified then
-        DrawText2D(Lang:t('info.request_help'), vec2(0.91, 1.40), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.request_help'), vec2(1.0, 1.40), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
         if IsControlJustPressed(0, 47) then
             TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
             EmsNotified = true
         end
     else
-        DrawText2D(Lang:t('info.help_requested'), vec2(0.90, 1.40), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.help_requested'), vec2(1.0, 1.40), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     end
 end
 
 local function handleLastStand()
     local laststandTime = exports['qbx-medical']:getLaststandTime()
     if laststandTime > Config.LaststandMinimumRevive then
-        DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(0.94, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+    elseif doctorCount == 0 then
+        DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
-        DrawText2D(Lang:t('info.bleed_out_help', { time = math.ceil(laststandTime) }), vec2(0.94, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.bleed_out_help', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
         handleRequestingEms()
     end
 
@@ -92,5 +93,12 @@ CreateThread(function()
         else
             Wait(1000)
         end
+    end
+end)
+
+CreateThread(function()
+    while true do
+        doctorCount = getDoctorCount()
+        Wait(60000)
     end
 end)
