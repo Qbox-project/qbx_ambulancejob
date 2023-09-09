@@ -369,7 +369,7 @@ if Config.UseTarget then
                     type = "client",
                     onSelect = teleportToMainElevator,
                     icon = "fas fa-hand-point-up",
-                    label = Lang:t('text.el_roof'),
+                    label = Lang:t('text.el_main'),
                     distance = 1.5,
                     groups = "ambulance",
                 }
