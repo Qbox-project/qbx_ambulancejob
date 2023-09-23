@@ -1,5 +1,4 @@
 local checkVehicle = false
-local check = false
 
 ---Configures and spawns a vehicle and teleports player to the driver seat.
 ---@param data { vehicleName: string, vehiclePlatePrefix: string, coords: vector4}
