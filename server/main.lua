@@ -40,7 +40,7 @@ lib.callback.register('qbx-ambulancejob:server:getOpenBed', function(_, hospital
 	return getOpenBed(hospitalName)
 end)
 
-lib.callback.register('qbx-ambulancejob:server:spawnVehicle', function(_, vehicleName, vehicleCoords)
+lib.callback.register('qbx-ambulancejob:server:spawnVehicle', function(source, vehicleName, vehicleCoords)
 	local netId = SpawnVehicle(source, vehicleName, vehicleCoords, true)
 	return netId
 end)
