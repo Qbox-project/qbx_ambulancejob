@@ -4,22 +4,27 @@ local check = false
 ---Configures and spawns a vehicle and teleports player to the driver seat.
 ---@param data { vehicleName: string, vehiclePlatePrefix: string, coords: vector4}
 local function takeOutVehicle(data)
-    QBCore.Functions.SpawnVehicle(data.vehicleName, function(veh)
-        SetVehicleNumberPlateText(veh, data.vehiclePlatePrefix .. tostring(math.random(1000, 9999)))
-        TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-        SetVehicleEngineOn(veh, true, true, true)
+    local netId = lib.callback.await('qbx-ambulancejob:server:spawnVehicle', false, data.vehicleName, data.coords)
+    local timeout = 100
+    while not NetworkDoesEntityExistWithNetworkId(netId) and timeout > 0 do
+        Wait(10)
+        timeout -= 1
+    end
+    local veh = NetworkGetEntityFromNetworkId(netId)
+    SetVehicleNumberPlateText(veh, data.vehiclePlatePrefix .. tostring(math.random(1000, 9999)))
+    TriggerEvent("vehiclekeys:client:SetOwner", GetPlate(veh))
+    SetVehicleEngineOn(veh, true, true, true)
 
-        local settings = Config.VehicleSettings[data.vehicleName]
-        if not settings then return end
+    local settings = Config.VehicleSettings[data.vehicleName]
+    if not settings then return end
 
-        if settings.extra then
-            QBCore.Shared.SetDefaultVehicleExtras(veh, settings.extras)
-        end
+    if settings.extra then
+        SetVehicleExtras(veh, settings.extras)
+    end
 
-        if settings.livery then
-            SetVehicleLivery(veh, settings.livery)
-        end
-    end, data.coords, true, true)
+    if settings.livery then
+        SetVehicleLivery(veh, settings.livery)
+    end
 end
 
 ---show the garage spawn menu
