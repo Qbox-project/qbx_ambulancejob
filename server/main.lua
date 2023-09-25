@@ -40,6 +40,11 @@ lib.callback.register('qbx-ambulancejob:server:getOpenBed', function(_, hospital
 	return getOpenBed(hospitalName)
 end)
 
+lib.callback.register('qbx-ambulancejob:server:spawnVehicle', function(source, vehicleName, vehicleCoords)
+	local netId = SpawnVehicle(source, vehicleName, vehicleCoords, true)
+	return netId
+end)
+
 local function respawn(src)
 	local player = QBCore.Functions.GetPlayer(src)
 	local closestHospital = nil
