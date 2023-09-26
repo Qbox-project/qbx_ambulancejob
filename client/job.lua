@@ -31,7 +31,7 @@ end
 ---@param vehiclePlatePrefix string
 ---@param coords vector4
 local function showGarageMenu(vehicles, vehiclePlatePrefix, coords)
-    local authorizedVehicles = vehicles[PlayerData.job.grade.level]
+    local authorizedVehicles = vehicles[QBX.PlayerData.job.grade.level]
     local optionsMenu = {}
     for veh, label in pairs(authorizedVehicles) do
         optionsMenu[#optionsMenu + 1] = {
@@ -77,7 +77,7 @@ end
 RegisterNetEvent('hospital:client:CheckStatus', function()
     local player, distance = GetClosestPlayer()
     if player == -1 or distance > 5.0 then
-        QBCore.Functions.Notify(Lang:t('error.no_player'), 'error')
+        QBX.Functions.Notify(Lang:t('error.no_player'), 'error')
         return
     end
     local playerId = GetPlayerServerId(player)
@@ -85,7 +85,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
     ---@param damage PlayerDamage
     local damage = lib.callback.await('hospital:GetPlayerStatus', false, playerId)
     if not damage or (damage.bleedLevel == 0 and #damage.damagedBodyParts == 0 and #damage.weaponWounds == 0) then
-        QBCore.Functions.Notify(Lang:t('success.healthy_player'), 'success')
+        QBX.Functions.Notify(Lang:t('success.healthy_player'), 'success')
         return
     end
 
@@ -93,7 +93,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { Lang:t('info.status'), QBCore.Shared.Weapons[hash].damagereason }
+            args = { Lang:t('info.status'), QBX.Shared.Weapons[hash].damagereason }
         })
     end
 
@@ -112,14 +112,14 @@ end)
 ---Use first aid on nearest player to revive them.
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:RevivePlayer', function()
-    if not QBCore.Functions.HasItem('firstaid') then
-        QBCore.Functions.Notify(Lang:t('error.no_firstaid'), 'error')
+    if not QBX.Functions.HasItem('firstaid') then
+        QBX.Functions.Notify(Lang:t('error.no_firstaid'), 'error')
         return
     end
 
     local player, distance = GetClosestPlayer()
     if player == -1 or distance >= 5.0 then
-        QBCore.Functions.Notify(Lang:t('error.no_player'), 'error')
+        QBX.Functions.Notify(Lang:t('error.no_player'), 'error')
         return
     end
 
@@ -142,25 +142,25 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
     })
     then
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        QBCore.Functions.Notify(Lang:t('success.revived'), 'success')
+        QBX.Functions.Notify(Lang:t('success.revived'), 'success')
         TriggerServerEvent("hospital:server:RevivePlayer", GetPlayerServerId(player))
     else
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
+        QBX.Functions.Notify(Lang:t('error.canceled'), 'error')
     end
 end)
 
 ---Use bandage on nearest player to treat their wounds.
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:TreatWounds', function()
-    if not QBCore.Functions.HasItem('bandage') then
-        QBCore.Functions.Notify(Lang:t('error.no_bandage'), 'error')
+    if not QBX.Functions.HasItem('bandage') then
+        QBX.Functions.Notify(Lang:t('error.no_bandage'), 'error')
         return
     end
 
     local player, distance = GetClosestPlayer()
     if player == -1 or distance >= 5.0 then
-        QBCore.Functions.Notify(Lang:t('error.no_player'), 'error')
+        QBX.Functions.Notify(Lang:t('error.no_player'), 'error')
         return
     end
 
@@ -183,24 +183,24 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
     })
     then
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        QBCore.Functions.Notify(Lang:t('success.helped_player'), 'success')
+        QBX.Functions.Notify(Lang:t('success.helped_player'), 'success')
         TriggerServerEvent("hospital:server:TreatWounds", GetPlayerServerId(player))
     else
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
+        QBX.Functions.Notify(Lang:t('error.canceled'), 'error')
     end
 end)
 
 ---Opens the hospital stash.
 local function openStash()
-    if not PlayerData.job.onduty then return end
-    TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
-    TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
+    if not QBX.PlayerData.job.onduty then return end
+    TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBX.PlayerData.citizenid)
+    TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBX.PlayerData.citizenid)
 end
 
 ---Opens the hospital armory.
 local function openArmory()
-    if PlayerData.job.onduty then
+    if QBX.PlayerData.job.onduty then
         TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
     end
 end
@@ -217,7 +217,7 @@ local function checkGarageAction(vehicles, vehiclePlatePrefix, coords)
                 exports['qbx-core']:KeyPressed(38)
                 checkVehicle = false
                 if cache.vehicle then
-                    QBCore.Functions.DeleteVehicle(cache.vehicle)
+                    QBX.Functions.DeleteVehicle(cache.vehicle)
                 else
                     showGarageMenu(vehicles, vehiclePlatePrefix, coords)
                 end
@@ -267,7 +267,7 @@ end
 local function createGarage(vehicles, vehiclePlatePrefix, coords)
 
     local function inVehicleZone()
-        if PlayerData.job.name == "ambulance" and PlayerData.job.onduty then
+        if QBX.PlayerData.job.name == "ambulance" and QBX.PlayerData.job.onduty then
             lib.showTextUI(Lang:t('text.veh_button'))
             checkGarageAction(vehicles, vehiclePlatePrefix, coords)
         else
@@ -401,7 +401,7 @@ else
     CreateThread(function()
         for i = 1, #Config.Locations.duty do
             local function enteredSignInZone()
-                if not PlayerData.job.onduty then
+                if not QBX.PlayerData.job.onduty then
                     lib.showTextUI(Lang:t('text.onduty_button'))
                 else
                     lib.showTextUI(Lang:t('text.offduty_button'))
@@ -429,7 +429,7 @@ else
 
         for i = 1, #Config.Locations.stash do
             local function enteredStashZone()
-                if PlayerData.job.onduty then
+                if QBX.PlayerData.job.onduty then
                     lib.showTextUI(Lang:t('text.pstash_button'))
                 end
             end
@@ -455,7 +455,7 @@ else
 
         for i = 1, #Config.Locations.armory do
             local function enteredArmoryZone()
-                if PlayerData.job.onduty then
+                if QBX.PlayerData.job.onduty then
                     lib.showTextUI(Lang:t('text.armory_button'))
                 end
             end
@@ -480,7 +480,7 @@ else
         end
 
         local function enteredRoofZone()
-            if PlayerData.job.onduty then
+            if QBX.PlayerData.job.onduty then
                 lib.showTextUI(Lang:t('text.elevator_main'))
             else
                 lib.showTextUI(Lang:t('error.not_ems'))
@@ -506,7 +506,7 @@ else
         })
 
         local function enteredMainZone()
-            if PlayerData.job.onduty then
+            if QBX.PlayerData.job.onduty then
                 lib.showTextUI(Lang:t('text.elevator_roof'))
             else
                 lib.showTextUI(Lang:t('error.not_ems'))

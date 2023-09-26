@@ -50,7 +50,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     if IsInHospitalBed then return end
     if not skipOpenCheck then
         if lib.callback.await('qbx-ambulancejob:server:isBedTaken', false, hospitalName, bedIndex) then
-            QBCore.Functions.Notify(Lang:t('error.beds_taken'), 'error')
+            QBX.Functions.Notify(Lang:t('error.beds_taken'), 'error')
             return
         end
     end
@@ -65,7 +65,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     CreateThread(function()
         Wait(5)
         if isRevive then
-            QBCore.Functions.Notify(Lang:t('success.being_helped'), 'success')
+            QBX.Functions.Notify(Lang:t('success.being_helped'), 'success')
             Wait(Config.AIHealTimer * 1000)
             TriggerEvent("hospital:client:Revive")
         else
@@ -103,14 +103,14 @@ local function checkIn(hospitalName)
         --- ask server for first non taken bed
         local bedIndex = lib.callback.await('qbx-ambulancejob:server:getOpenBed', false, hospitalName)
         if not bedIndex then
-            QBCore.Functions.Notify(Lang:t('error.beds_taken'), 'error')
+            QBX.Functions.Notify(Lang:t('error.beds_taken'), 'error')
             return
         end
 
         putPlayerInBed(hospitalName, bedIndex, true, true)
     else
         exports.scully_emotemenu:cancelEmote()
-        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
+        QBX.Functions.Notify(Lang:t('error.canceled'), 'error')
     end
 end
 
@@ -253,8 +253,8 @@ local function leaveBed()
     bedOccupyingData = nil
     IsInHospitalBed = false
 
-    if PlayerData.metadata.injail <= 0 then return end
-    TriggerEvent("prison:client:Enter", PlayerData.metadata.injail)
+    if QBX.PlayerData.metadata.injail <= 0 then return end
+    TriggerEvent("prison:client:Enter", QBX.PlayerData.metadata.injail)
 end
 
 ---shows player option to press key to leave bed when available.

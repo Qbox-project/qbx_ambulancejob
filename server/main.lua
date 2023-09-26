@@ -1,5 +1,3 @@
-local QBCore = exports['qbx-core']:GetCoreObject()
-
 ---@class Player object from core
 
 ---@alias source number
@@ -46,7 +44,7 @@ lib.callback.register('qbx-ambulancejob:server:spawnVehicle', function(source, v
 end)
 
 local function respawn(src)
-	local player = QBCore.Functions.GetPlayer(src)
+	local player = QBX.Functions.GetPlayer(src)
 	local closestHospital = nil
 	if player.PlayerData.metadata.injail > 0 then
 		closestHospital = "jail"
@@ -87,7 +85,7 @@ end)
 local function alertAmbulance(src, text)
 	local ped = GetPlayerPed(src)
 	local coords = GetEntityCoords(ped)
-	local players = QBCore.Functions.GetQBPlayers()
+	local players = QBX.Functions.GetQBPlayers()
 	for _, v in pairs(players) do
 		if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
 			TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
@@ -110,7 +108,7 @@ end)
 RegisterNetEvent('qbx-ambulancejob:server:playerEnteredBed', function(hospitalName, bedIndex)
 	if GetInvokingResource() then return end
 	local src = source
-	local player = QBCore.Functions.GetPlayer(src)
+	local player = QBX.Functions.GetPlayer(src)
 	billPlayer(player)
 	hospitalBedsTaken[hospitalName][bedIndex] = true
 end)
@@ -124,31 +122,31 @@ end)
 RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	if GetInvokingResource() then return end
 	local src = source
-	local player = QBCore.Functions.GetPlayer(src)
-	local patient = QBCore.Functions.GetPlayer(playerId)
+	local player = QBX.Functions.GetPlayer(src)
+	local patient = QBX.Functions.GetPlayer(playerId)
 	if player.PlayerData.job.name ~= "ambulance" or not patient then return end
 
 	player.Functions.RemoveItem('bandage', 1)
-	TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['bandage'], "remove")
+	TriggerClientEvent('inventory:client:ItemBox', src, QBX.Shared.Items['bandage'], "remove")
 	TriggerClientEvent("hospital:client:HealInjuries", patient.PlayerData.source, "full")
 end)
 
 ---@param playerId number
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	if GetInvokingResource() then return end
-	local player = QBCore.Functions.GetPlayer(source)
-	local patient = QBCore.Functions.GetPlayer(playerId)
+	local player = QBX.Functions.GetPlayer(source)
+	local patient = QBX.Functions.GetPlayer(playerId)
 
 	if not patient then return end
 	player.Functions.RemoveItem('firstaid', 1)
-	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, QBCore.Shared.Items['firstaid'], "remove")
+	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, QBX.Shared.Items['firstaid'], "remove")
 	TriggerClientEvent('hospital:client:Revive', patient.PlayerData.source)
 end)
 
 local function sendDoctorAlert()
 	if doctorCalled then return end
 	doctorCalled = true
-	local _, doctors = QBCore.Functions.GetDutyCountType('ems')
+	local _, doctors = QBX.Functions.GetDutyCountType('ems')
 	for i = 1, #doctors do
 		local doctor = doctors[i]
 		TriggerClientEvent('ox_lib:notify', doctor, { description = Lang:t('info.dr_needed'), type = 'inform' })
@@ -163,7 +161,7 @@ end
 RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 	if GetInvokingResource() then return end
 	local src = source
-	local target = QBCore.Functions.GetPlayer(targetId)
+	local target = QBX.Functions.GetPlayer(targetId)
 	if not target then return end
 
 	local canHelp = lib.callback.await('hospital:client:canHelp', targetId)
@@ -178,12 +176,12 @@ end)
 -- Callbacks
 
 lib.callback.register('hospital:GetDoctors', function()
-	local count = QBCore.Functions.GetDutyCountType('ems')
+	local count = QBX.Functions.GetDutyCountType('ems')
 	return count
 end)
 
 lib.callback.register('qbx-ambulancejob:server:onCheckIn', function(source)
-	local numDoctors = QBCore.Functions.GetDutyCountType('ems')
+	local numDoctors = QBX.Functions.GetDutyCountType('ems')
 	if numDoctors < Config.MinimalDoctors then
 		return true
 	end
@@ -203,7 +201,7 @@ lib.addCommand('911e', {
 	local message = args.message or Lang:t('info.civ_call')
 	local ped = GetPlayerPed(source)
 	local coords = GetEntityCoords(ped)
-	local players = QBCore.Functions.GetQBPlayers()
+	local players = QBX.Functions.GetQBPlayers()
 	for _, v in pairs(players) do
 		if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
 			TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message)
@@ -214,7 +212,7 @@ end)
 ---@param src number
 ---@param event string
 local function triggerEventOnEmsPlayer(src, event)
-	local player = QBCore.Functions.GetPlayer(src)
+	local player = QBX.Functions.GetPlayer(src)
 	if player.PlayerData.job.name ~= "ambulance" then
 		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_ems'), type = 'error' })
 		return
@@ -246,26 +244,26 @@ end)
 ---@param item table
 ---@param event string
 local function triggerItemEventOnPlayer(src, item, event)
-	local player = QBCore.Functions.GetPlayer(src)
+	local player = QBX.Functions.GetPlayer(src)
 	if player.Functions.GetItemByName(item.name) == nil then return end
 	local removeItem = lib.callback.await(event, src)
 	if not removeItem then return end
 	player.Functions.RemoveItem(item.name, 1)
 end
 
-QBCore.Functions.CreateUseableItem("ifaks", function(source, item)
+QBX.Functions.CreateUseableItem("ifaks", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseIfaks')
 end)
 
-QBCore.Functions.CreateUseableItem("bandage", function(source, item)
+QBX.Functions.CreateUseableItem("bandage", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseBandage')
 end)
 
-QBCore.Functions.CreateUseableItem("painkillers", function(source, item)
+QBX.Functions.CreateUseableItem("painkillers", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UsePainkillers')
 end)
 
-QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
+QBX.Functions.CreateUseableItem("firstaid", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseFirstAid')
 end)
 

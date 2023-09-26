@@ -9,7 +9,7 @@ end)
 ---use first aid pack on nearest player.
 lib.callback.register('hospital:client:UseFirstAid', function()
     if isEscorting then
-        QBCore.Functions.Notify(Lang:t('error.impossible'), 'error')
+        QBX.Functions.Notify(Lang:t('error.impossible'), 'error')
         return
     end
         
@@ -47,10 +47,10 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     })
     then
         ClearPedTasks(ped)
-        QBCore.Functions.Notify(Lang:t('success.revived'), 'success')
+        QBX.Functions.Notify(Lang:t('success.revived'), 'success')
         TriggerServerEvent("hospital:server:RevivePlayer", targetId)
     else
         ClearPedTasks(ped)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
+        QBX.Functions.Notify(Lang:t('error.canceled'), 'error')
     end
 end)
