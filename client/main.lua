@@ -1,5 +1,3 @@
-QBCore = exports['qbx-core']:GetCoreObject()
-
 InBedDict = "anim@gangops@morgue@table@"
 InBedAnim = "body_search"
 IsInHospitalBed = false
@@ -12,7 +10,7 @@ PlayerData = {
     job = nil
 }
 
-RegisterNetEvent('QBCore:Player:SetPlayerData', function(data)
+RegisterNetEvent('QBX:Player:SetPlayerData', function(data)
     if GetInvokingResource() then return end
     PlayerData = data
 end)
@@ -109,7 +107,7 @@ end)
 
 function GetClosestPlayer()
     local coords = GetEntityCoords(cache.ped)
-    return QBCore.Functions.GetClosestPlayer(coords)
+    return QBX.Functions.GetClosestPlayer(coords)
 end
 
 function OnKeyPress(cb)
