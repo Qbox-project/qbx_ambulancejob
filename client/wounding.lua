@@ -23,7 +23,7 @@ lib.callback.register('hospital:client:UseIfaks', function()
     })
     then
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["ifaks"], "remove")
+        TriggerEvent("inventory:client:ItemBox", QBX.Shared.Items["ifaks"], "remove")
         TriggerServerEvent('hud:server:RelieveStress', math.random(12, 24))
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
         OnPainKillers = true
@@ -62,7 +62,7 @@ lib.callback.register('hospital:client:UseBandage', function()
     })
     then
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["bandage"], "remove")
+        TriggerEvent("inventory:client:ItemBox", QBX.Shared.Items["bandage"], "remove")
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
         if math.random(1, 100) < 50 then
             exports['qbx-medical']:removeBleed(1)
@@ -99,7 +99,7 @@ lib.callback.register('hospital:client:UsePainkillers', function()
     })
     then
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["painkillers"], "remove")
+        TriggerEvent("inventory:client:ItemBox", QBX.Shared.Items["painkillers"], "remove")
         OnPainKillers = true
         if painkillerAmount < 3 then
             painkillerAmount += 1
