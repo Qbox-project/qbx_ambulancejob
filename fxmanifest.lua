@@ -5,16 +5,16 @@ description 'https://github.com/QBCore-Remastered'
 version '1.0.0'
 
 modules {
-    'qbx-core:utils'
+    'qbx_core:utils'
 }
 
 shared_scripts {
-	'@qbx-core/shared/locale.lua',
+	'@qbx_core/shared/locale.lua',
 	'locales/en.lua',
 	'locales/*.lua',
 	'config.lua',
 	'@ox_lib/init.lua',
-	'@qbx-core/import.lua',
+	'@qbx_core/import.lua',
 }
 
 client_scripts {
@@ -35,7 +35,7 @@ dependencies {
 	'ox_lib',
 	'ox_target',
 	'ox_inventory',
-	'qbx-core',
+	'qbx_core',
 	'qbx-policejob',
 	'qbx-management',
 	'qbx-medical',
