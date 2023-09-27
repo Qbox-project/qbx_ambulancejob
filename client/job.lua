@@ -93,7 +93,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { Lang:t('info.status'), QBCore.Shared.Weapons[hash].damagereason }
+            args = { Lang:t('info.status'), QBX.Shared.Weapons[hash].damagereason }
         })
     end
 
@@ -112,7 +112,7 @@ end)
 ---Use first aid on nearest player to revive them.
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:RevivePlayer', function()
-    if not QBCore.Functions.HasItem('firstaid') then
+    if not QBX.Functions.HasItem('firstaid') then
         QBCore.Functions.Notify(Lang:t('error.no_firstaid'), 'error')
         return
     end
@@ -153,7 +153,7 @@ end)
 ---Use bandage on nearest player to treat their wounds.
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:TreatWounds', function()
-    if not QBCore.Functions.HasItem('bandage') then
+    if not QBX.Functions.HasItem('bandage') then
         QBCore.Functions.Notify(Lang:t('error.no_bandage'), 'error')
         return
     end
@@ -194,8 +194,8 @@ end)
 ---Opens the hospital stash.
 local function openStash()
     if not PlayerData.job.onduty then return end
-    TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
-    TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
+    TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBX.Functions.GetPlayerData().citizenid)
+    TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBX.Functions.GetPlayerData().citizenid)
 end
 
 ---Opens the hospital armory.
@@ -217,7 +217,7 @@ local function checkGarageAction(vehicles, vehiclePlatePrefix, coords)
                 exports['qbx-core']:KeyPressed(38)
                 checkVehicle = false
                 if cache.vehicle then
-                    QBCore.Functions.DeleteVehicle(cache.vehicle)
+                    QBX.Functions.DeleteVehicle(cache.vehicle)
                 else
                     showGarageMenu(vehicles, vehiclePlatePrefix, coords)
                 end
@@ -256,7 +256,7 @@ end
 
 ---Toggles the on duty status of the player.
 local function toggleDuty()
-    TriggerServerEvent("QBCore:ToggleDuty")
+    TriggerServerEvent("QBX:ToggleDuty")
     TriggerServerEvent("police:server:UpdateBlips")
 end
 
