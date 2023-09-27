@@ -1,5 +1,3 @@
-QBCore = exports['qbx-core']:GetCoreObject()
-
 InBedDict = "anim@gangops@morgue@table@"
 InBedAnim = "body_search"
 IsInHospitalBed = false
@@ -8,14 +6,6 @@ HealAnim = "cpr_pumpchest"
 EmsNotified = false
 CanLeaveBed = true
 OnPainKillers = false
-PlayerData = {
-    job = nil
-}
-
-RegisterNetEvent('QBCore:Player:SetPlayerData', function(data)
-    if GetInvokingResource() then return end
-    PlayerData = data
-end)
 
 -- Events
 
@@ -27,7 +17,7 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
-    QBCore.Functions.Notify({ title = Lang:t('text.alert'), description = text .. ' | ' .. street1name .. ' ' .. street2name, type = 'inform' })
+    QBX.Functions.Notify({ title = Lang:t('text.alert'), description = text .. ' | ' .. street1name .. ' ' .. street2name, type = 'inform' })
     PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
     local transG = 250
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
@@ -80,7 +70,7 @@ end)
 RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
     if GetInvokingResource() then return end
     SetTimeout(math.random(2500, 4000), function()
-        local charInfo = PlayerData.charinfo
+        local charInfo = QBX.PlayerData.charinfo
         local gender = charInfo.gender == 1 and Lang:t('info.mrs') or Lang:t('info.mr')
         TriggerServerEvent('qb-phone:server:sendNewMail', {
             sender = Lang:t('mail.sender'),
@@ -109,7 +99,7 @@ end)
 
 function GetClosestPlayer()
     local coords = GetEntityCoords(cache.ped)
-    return QBCore.Functions.GetClosestPlayer(coords)
+    return QBX.Functions.GetClosestPlayer(coords)
 end
 
 function OnKeyPress(cb)
