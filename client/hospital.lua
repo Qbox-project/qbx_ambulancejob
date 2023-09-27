@@ -65,7 +65,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     CreateThread(function()
         Wait(5)
         if isRevive then
-            QBCore.Functions.Notify(Lang:t('success.being_helped'), 'success')
+            QBX.Functions.Notify(Lang:t('success.being_helped'), 'success')
             Wait(Config.AIHealTimer * 1000)
             TriggerEvent("hospital:client:Revive")
         else
@@ -280,7 +280,7 @@ local function onPlayerUnloaded()
     end
 end
 
-RegisterNetEvent('QBCore:Client:OnPlayerUnload', onPlayerUnloaded)
+RegisterNetEvent('QBX:Client:OnPlayerUnload', onPlayerUnloaded)
 
 AddEventHandler('onResourceStop', function(resourceName)
     if GetCurrentResourceName() ~= resourceName then return end
