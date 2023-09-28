@@ -16,7 +16,7 @@ end
 ---@param player Player
 local function billPlayer(player)
 	player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-	exports['qbx-management']:AddMoney("ambulance", Config.BillCost)
+	exports.qbx_management:AddMoney("ambulance", Config.BillCost)
 	TriggerClientEvent('hospital:client:SendBillEmail', player.PlayerData.source, Config.BillCost)
 end
 
@@ -34,17 +34,17 @@ local function getOpenBed(hospitalName)
 	end
 end
 
-lib.callback.register('qbx-ambulancejob:server:getOpenBed', function(_, hospitalName)
+lib.callback.register('qbx_ambulancejob:server:getOpenBed', function(_, hospitalName)
 	return getOpenBed(hospitalName)
 end)
 
-lib.callback.register('qbx-ambulancejob:server:spawnVehicle', function(source, vehicleName, vehicleCoords)
+lib.callback.register('qbx_ambulancejob:server:spawnVehicle', function(source, vehicleName, vehicleCoords)
 	local netId = SpawnVehicle(source, vehicleName, vehicleCoords, true)
 	return netId
 end)
 
 local function respawn(src)
-	local player = QBX.Functions.GetPlayer(src)
+	local player = exports.qbx_core:GetPlayer(src)
 	local closestHospital = nil
 	if player.PlayerData.metadata.injail > 0 then
 		closestHospital = "jail"
@@ -71,21 +71,21 @@ local function respawn(src)
 	if Config.WipeInventoryOnRespawn then
 		wipeInventory(player)
 	end
-	TriggerClientEvent('qbx-ambulancejob:client:onPlayerRespawn', src, closestHospital, bedIndex)
+	TriggerClientEvent('qbx_ambulancejob:client:onPlayerRespawn', src, closestHospital, bedIndex)
 end
 
-AddEventHandler('qbx-medical:server:playerRespawned', function(source)
+AddEventHandler('qbx_medical:server:playerRespawned', function(source)
 	respawn(source)
 end)
 
-lib.callback.register('qbx-ambulancejob:server:isBedTaken', function(hospitalName, bedIndex)
+lib.callback.register('qbx_ambulancejob:server:isBedTaken', function(hospitalName, bedIndex)
 	return hospitalBedsTaken[hospitalName][bedIndex]
 end)
 
 local function alertAmbulance(src, text)
 	local ped = GetPlayerPed(src)
 	local coords = GetEntityCoords(ped)
-	local players = QBX.Functions.GetQBPlayers()
+	local players = exports.qbx_core:GetQBPlayers()
 	for _, v in pairs(players) do
 		if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
 			TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
@@ -99,21 +99,21 @@ RegisterNetEvent('hospital:server:ambulanceAlert', function()
 	alertAmbulance(src, Lang:t('info.civ_down'))
 end)
 
-RegisterNetEvent('qbx-medical:server:onPlayerLaststand', function(text)
+RegisterNetEvent('qbx_medical:server:onPlayerLaststand', function(text)
 	if GetInvokingResource() then return end
 	local src = source
 	alertAmbulance(src, text)
 end)
 
-RegisterNetEvent('qbx-ambulancejob:server:playerEnteredBed', function(hospitalName, bedIndex)
+RegisterNetEvent('qbx_ambulancejob:server:playerEnteredBed', function(hospitalName, bedIndex)
 	if GetInvokingResource() then return end
 	local src = source
-	local player = QBX.Functions.GetPlayer(src)
+	local player = exports.qbx_core:GetPlayer(src)
 	billPlayer(player)
 	hospitalBedsTaken[hospitalName][bedIndex] = true
 end)
 
-RegisterNetEvent('qbx-ambulancejob:server:playerLeftBed', function(hospitalName, bedIndex)
+RegisterNetEvent('qbx_ambulancejob:server:playerLeftBed', function(hospitalName, bedIndex)
 	if GetInvokingResource() then return end
 	hospitalBedsTaken[hospitalName][bedIndex] = false
 end)
@@ -122,31 +122,31 @@ end)
 RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	if GetInvokingResource() then return end
 	local src = source
-	local player = QBX.Functions.GetPlayer(src)
-	local patient = QBX.Functions.GetPlayer(playerId)
+	local player = exports.qbx_core:GetPlayer(src)
+	local patient = exports.qbx_core:GetPlayer(playerId)
 	if player.PlayerData.job.name ~= "ambulance" or not patient then return end
 
 	player.Functions.RemoveItem('bandage', 1)
-	TriggerClientEvent('inventory:client:ItemBox', src, QBX.Shared.Items['bandage'], "remove")
+	TriggerClientEvent('inventory:client:ItemBox', src, exports.ox_inventory:Items()['bandage'], "remove")
 	TriggerClientEvent("hospital:client:HealInjuries", patient.PlayerData.source, "full")
 end)
 
 ---@param playerId number
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	if GetInvokingResource() then return end
-	local player = QBX.Functions.GetPlayer(source)
-	local patient = QBX.Functions.GetPlayer(playerId)
+	local player = exports.qbx_core:GetPlayer(source)
+	local patient = exports.qbx_core:GetPlayer(playerId)
 
 	if not patient then return end
 	player.Functions.RemoveItem('firstaid', 1)
-	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, QBX.Shared.Items['firstaid'], "remove")
+	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, exports.ox_inventory:Items()['firstaid'], "remove")
 	TriggerClientEvent('hospital:client:Revive', patient.PlayerData.source)
 end)
 
 local function sendDoctorAlert()
 	if doctorCalled then return end
 	doctorCalled = true
-	local _, doctors = QBX.Functions.GetDutyCountType('ems')
+	local _, doctors = exports.qbx_core:GetDutyCountType('ems')
 	for i = 1, #doctors do
 		local doctor = doctors[i]
 		TriggerClientEvent('ox_lib:notify', doctor, { description = Lang:t('info.dr_needed'), type = 'inform' })
@@ -161,7 +161,7 @@ end
 RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 	if GetInvokingResource() then return end
 	local src = source
-	local target = QBX.Functions.GetPlayer(targetId)
+	local target = exports.qbx_core:GetPlayer(targetId)
 	if not target then return end
 
 	local canHelp = lib.callback.await('hospital:client:canHelp', targetId)
@@ -176,12 +176,12 @@ end)
 -- Callbacks
 
 lib.callback.register('hospital:GetDoctors', function()
-	local count = QBX.Functions.GetDutyCountType('ems')
+	local count = exports.qbx_core:GetDutyCountType('ems')
 	return count
 end)
 
-lib.callback.register('qbx-ambulancejob:server:onCheckIn', function(source)
-	local numDoctors = QBX.Functions.GetDutyCountType('ems')
+lib.callback.register('qbx_ambulancejob:server:onCheckIn', function(source)
+	local numDoctors = exports.qbx_core:GetDutyCountType('ems')
 	if numDoctors < Config.MinimalDoctors then
 		return true
 	end
@@ -201,7 +201,7 @@ lib.addCommand('911e', {
 	local message = args.message or Lang:t('info.civ_call')
 	local ped = GetPlayerPed(source)
 	local coords = GetEntityCoords(ped)
-	local players = QBX.Functions.GetQBPlayers()
+	local players = exports.qbx_core:GetQBPlayers()
 	for _, v in pairs(players) do
 		if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
 			TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message)
@@ -212,7 +212,7 @@ end)
 ---@param src number
 ---@param event string
 local function triggerEventOnEmsPlayer(src, event)
-	local player = QBX.Functions.GetPlayer(src)
+	local player = exports.qbx_core:GetPlayer(src)
 	if player.PlayerData.job.name ~= "ambulance" then
 		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_ems'), type = 'error' })
 		return
@@ -244,30 +244,30 @@ end)
 ---@param item table
 ---@param event string
 local function triggerItemEventOnPlayer(src, item, event)
-	local player = QBX.Functions.GetPlayer(src)
+	local player = exports.qbx_core:GetPlayer(src)
 	if player.Functions.GetItemByName(item.name) == nil then return end
 	local removeItem = lib.callback.await(event, src)
 	if not removeItem then return end
 	player.Functions.RemoveItem(item.name, 1)
 end
 
-QBX.Functions.CreateUseableItem("ifaks", function(source, item)
+exports.qbx_core:CreateUseableItem("ifaks", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseIfaks')
 end)
 
-QBX.Functions.CreateUseableItem("bandage", function(source, item)
+exports.qbx_core:CreateUseableItem("bandage", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseBandage')
 end)
 
-QBX.Functions.CreateUseableItem("painkillers", function(source, item)
+exports.qbx_core:CreateUseableItem("painkillers", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UsePainkillers')
 end)
 
-QBX.Functions.CreateUseableItem("firstaid", function(source, item)
+exports.qbx_core:CreateUseableItem("firstaid", function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseFirstAid')
 end)
 
-RegisterNetEvent('qbx-medical:server:playerDied', function()
+RegisterNetEvent('qbx_medical:server:playerDied', function()
 	if GetInvokingResource() then return end
 	local src = source
 	alertAmbulance(src, Lang:t('info.civ_died'))

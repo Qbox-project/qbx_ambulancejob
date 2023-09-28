@@ -5,7 +5,6 @@ description 'https://github.com/QBCore-Remastered'
 version '1.0.0'
 
 modules {
-	'qbx_core:core',
 	'qbx_core:playerdata',
     'qbx_core:utils'
 }
@@ -38,9 +37,9 @@ dependencies {
 	'ox_target',
 	'ox_inventory',
 	'qbx_core',
-	'qbx-policejob',
-	'qbx-management',
-	'qbx-medical',
+	'qbx_policejob',
+	'qbx_management',
+	'qbx_medical',
 }
 
 lua54 'yes'

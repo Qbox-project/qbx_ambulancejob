@@ -3,7 +3,7 @@ local checkVehicle = false
 ---Configures and spawns a vehicle and teleports player to the driver seat.
 ---@param data { vehicleName: string, vehiclePlatePrefix: string, coords: vector4}
 local function takeOutVehicle(data)
-    local netId = lib.callback.await('qbx-ambulancejob:server:spawnVehicle', false, data.vehicleName, data.coords)
+    local netId = lib.callback.await('qbx_ambulancejob:server:spawnVehicle', false, data.vehicleName, data.coords)
     local timeout = 100
     while not NetworkDoesEntityExistWithNetworkId(netId) and timeout > 0 do
         Wait(10)
@@ -77,7 +77,7 @@ end
 RegisterNetEvent('hospital:client:CheckStatus', function()
     local player, distance = GetClosestPlayer()
     if player == -1 or distance > 5.0 then
-        QBX.Functions.Notify(Lang:t('error.no_player'), 'error')
+        exports.qbx_core:Notify(Lang:t('error.no_player'), 'error')
         return
     end
     local playerId = GetPlayerServerId(player)
@@ -85,7 +85,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
     ---@param damage PlayerDamage
     local damage = lib.callback.await('hospital:GetPlayerStatus', false, playerId)
     if not damage or (damage.bleedLevel == 0 and #damage.damagedBodyParts == 0 and #damage.weaponWounds == 0) then
-        QBX.Functions.Notify(Lang:t('success.healthy_player'), 'success')
+        exports.qbx_core:Notify(Lang:t('success.healthy_player'), 'success')
         return
     end
 
@@ -93,7 +93,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { Lang:t('info.status'), QBX.Shared.Weapons[hash].damagereason }
+            args = { Lang:t('info.status'), exports.qbx_core:GetWeapons()[hash].damagereason }
         })
     end
 
@@ -101,25 +101,25 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { Lang:t('info.status'), Lang:t('info.is_status', { status = exports['qbx-medical']:getBleedStateLabelDeprecated(damage.bleedLevel)}) }
+            args = { Lang:t('info.status'), Lang:t('info.is_status', { status = exports.qbx_medical:getBleedStateLabelDeprecated(damage.bleedLevel)}) }
         })
     end
 
-    local status = exports['qbx-medical']:getPatientStatus(damage.damagedBodyParts)
+    local status = exports.qbx_medical:getPatientStatus(damage.damagedBodyParts)
     showTreatmentMenu(status)
 end)
 
 ---Use first aid on nearest player to revive them.
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:RevivePlayer', function()
-    if not QBX.Functions.HasItem('firstaid') then
-        QBX.Functions.Notify(Lang:t('error.no_firstaid'), 'error')
+    if not exports.qbx_core:HasItem('firstaid') then
+        exports.qbx_core:Notify(Lang:t('error.no_firstaid'), 'error')
         return
     end
 
     local player, distance = GetClosestPlayer()
     if player == -1 or distance >= 5.0 then
-        QBX.Functions.Notify(Lang:t('error.no_player'), 'error')
+        exports.qbx_core:Notify(Lang:t('error.no_player'), 'error')
         return
     end
 
@@ -142,25 +142,25 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
     })
     then
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        QBX.Functions.Notify(Lang:t('success.revived'), 'success')
+        exports.qbx_core:Notify(Lang:t('success.revived'), 'success')
         TriggerServerEvent("hospital:server:RevivePlayer", GetPlayerServerId(player))
     else
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        QBX.Functions.Notify(Lang:t('error.canceled'), 'error')
+        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
     end
 end)
 
 ---Use bandage on nearest player to treat their wounds.
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:TreatWounds', function()
-    if not QBX.Functions.HasItem('bandage') then
-        QBX.Functions.Notify(Lang:t('error.no_bandage'), 'error')
+    if not exports.qbx_core:HasItem('bandage') then
+        exports.qbx_core:Notify(Lang:t('error.no_bandage'), 'error')
         return
     end
 
     local player, distance = GetClosestPlayer()
     if player == -1 or distance >= 5.0 then
-        QBX.Functions.Notify(Lang:t('error.no_player'), 'error')
+        exports.qbx_core:Notify(Lang:t('error.no_player'), 'error')
         return
     end
 
@@ -183,11 +183,11 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
     })
     then
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        QBX.Functions.Notify(Lang:t('success.helped_player'), 'success')
+        exports.qbx_core:Notify(Lang:t('success.helped_player'), 'success')
         TriggerServerEvent("hospital:server:TreatWounds", GetPlayerServerId(player))
     else
         StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
-        QBX.Functions.Notify(Lang:t('error.canceled'), 'error')
+        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
     end
 end)
 
@@ -214,10 +214,10 @@ local function checkGarageAction(vehicles, vehiclePlatePrefix, coords)
     CreateThread(function()
         while checkVehicle do
             if IsControlJustPressed(0, 38) then
-                exports['qbx-core']:KeyPressed(38)
+                lib.hideTextUI()
                 checkVehicle = false
                 if cache.vehicle then
-                    QBX.Functions.DeleteVehicle(cache.vehicle)
+                    exports.qbx_core:DeleteVehicle(cache.vehicle)
                 else
                     showGarageMenu(vehicles, vehiclePlatePrefix, coords)
                 end

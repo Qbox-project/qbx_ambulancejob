@@ -9,7 +9,7 @@ end)
 ---use first aid pack on nearest player.
 lib.callback.register('hospital:client:UseFirstAid', function()
     if isEscorting then
-        QBX.Functions.Notify(Lang:t('error.impossible'), 'error')
+        exports.qbx_core:Notify(Lang:t('error.impossible'), 'error')
         return
     end
         
@@ -21,7 +21,7 @@ lib.callback.register('hospital:client:UseFirstAid', function()
 end)
 
 lib.callback.register('hospital:client:canHelp', function()
-    return exports['qbx-medical']:getLaststand() and exports['qbx-medical']:getLaststandTime() <= 300
+    return exports.qbx_medical:getLaststand() and exports.qbx_medical:getLaststandTime() <= 300
 end)
 
 ---@param targetId number playerId
@@ -47,10 +47,10 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     })
     then
         ClearPedTasks(ped)
-        QBX.Functions.Notify(Lang:t('success.revived'), 'success')
+        exports.qbx_core:Notify(Lang:t('success.revived'), 'success')
         TriggerServerEvent("hospital:server:RevivePlayer", targetId)
     else
         ClearPedTasks(ped)
-        QBX.Functions.Notify(Lang:t('error.canceled'), 'error')
+        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
     end
 end)
