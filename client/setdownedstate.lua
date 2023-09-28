@@ -5,11 +5,11 @@ local function getDoctorCount()
 end
 
 local function displayRespawnText()
-    local deathTime = exports['qbx-medical']:getDeathTime()
+    local deathTime = exports.qbx_medical:getDeathTime()
     if deathTime > 0 and doctorCount > 0 then
         DrawText2D(Lang:t('info.respawn_txt', { deathtime = math.ceil(deathTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
-        DrawText2D(Lang:t('info.respawn_revive', { holdtime = exports['qbx-medical']:getRespawnHoldTimeDeprecated(), cost = Config.BillCost }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
+        DrawText2D(Lang:t('info.respawn_revive', { holdtime = exports.qbx_medical:getRespawnHoldTimeDeprecated(), cost = Config.BillCost }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     end
 end
 
@@ -21,7 +21,7 @@ local function playDeadAnimation(ped)
             TaskPlayAnim(ped, InBedDict, InBedAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
         end
     else
-        exports['qbx-medical']:playDeadAnimation()
+        exports.qbx_medical:playDeadAnimation()
     end
 end
 
@@ -49,7 +49,7 @@ local function handleRequestingEms()
 end
 
 local function handleLastStand()
-    local laststandTime = exports['qbx-medical']:getLaststandTime()
+    local laststandTime = exports.qbx_medical:getLaststandTime()
     if laststandTime > Config.LaststandMinimumRevive then
         DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     elseif doctorCount == 0 then
@@ -59,7 +59,7 @@ local function handleLastStand()
         handleRequestingEms()
     end
 
-    exports['qbx-medical']:playLastStandAnimationDeprecated()
+    exports.qbx_medical:playLastStandAnimationDeprecated()
 end
 
 local function disableControls()
@@ -80,8 +80,8 @@ end
 ---Set dead and last stand states.
 CreateThread(function()
     while true do
-        local isDead = exports['qbx-medical']:isDead()
-        local inLaststand = exports['qbx-medical']:getLaststand()
+        local isDead = exports.qbx_medical:isDead()
+        local inLaststand = exports.qbx_medical:getLaststand()
         if isDead or inLaststand then
             disableControls()
             if isDead then

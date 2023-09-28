@@ -49,8 +49,8 @@ end
 local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     if IsInHospitalBed then return end
     if not skipOpenCheck then
-        if lib.callback.await('qbx-ambulancejob:server:isBedTaken', false, hospitalName, bedIndex) then
-            QBX.Functions.Notify(Lang:t('error.beds_taken'), 'error')
+        if lib.callback.await('qbx_ambulancejob:server:isBedTaken', false, hospitalName, bedIndex) then
+            exports.qbx_core:Notify(Lang:t('error.beds_taken'), 'error')
             return
         end
     end
@@ -59,29 +59,29 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     bedIndexOccupying = bedIndex
     bedOccupyingData = Config.Locations.hospitals[hospitalName].beds[bedIndex]
     IsInHospitalBed = true
-    exports['qbx-medical']:disableRespawn()
+    exports.qbx_medical:disableRespawn()
     CanLeaveBed = false
     setBedCam()
     CreateThread(function()
         Wait(5)
         if isRevive then
-            QBX.Functions.Notify(Lang:t('success.being_helped'), 'success')
+            exports.qbx_core:Notify(Lang:t('success.being_helped'), 'success')
             Wait(Config.AIHealTimer * 1000)
             TriggerEvent("hospital:client:Revive")
         else
             CanLeaveBed = true
         end
     end)
-    TriggerServerEvent('qbx-ambulancejob:server:playerEnteredBed', hospitalName, bedIndex)
+    TriggerServerEvent('qbx_ambulancejob:server:playerEnteredBed', hospitalName, bedIndex)
 end
 
-RegisterNetEvent('qbx-ambulancejob:client:onPlayerRespawn', function(hospitalName, bedIndex)
+RegisterNetEvent('qbx_ambulancejob:client:onPlayerRespawn', function(hospitalName, bedIndex)
     putPlayerInBed(hospitalName, bedIndex, true, true)
 end)
 
 ---Notifies doctors, and puts player in a hospital bed.
 local function checkIn(hospitalName)
-    local canCheckIn = lib.callback.await('qbx-ambulancejob:server:onCheckIn')
+    local canCheckIn = lib.callback.await('qbx_ambulancejob:server:onCheckIn')
     if not canCheckIn then return end
 
     exports.scully_emotemenu:playEmoteByCommand('notepad')
@@ -101,16 +101,16 @@ local function checkIn(hospitalName)
     then
         exports.scully_emotemenu:cancelEmote()
         --- ask server for first non taken bed
-        local bedIndex = lib.callback.await('qbx-ambulancejob:server:getOpenBed', false, hospitalName)
+        local bedIndex = lib.callback.await('qbx_ambulancejob:server:getOpenBed', false, hospitalName)
         if not bedIndex then
-            QBX.Functions.Notify(Lang:t('error.beds_taken'), 'error')
+            exports.qbx_core:Notify(Lang:t('error.beds_taken'), 'error')
             return
         end
 
         putPlayerInBed(hospitalName, bedIndex, true, true)
     else
         exports.scully_emotemenu:cancelEmote()
-        QBX.Functions.Notify(Lang:t('error.canceled'), 'error')
+        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
     end
 end
 
@@ -180,7 +180,7 @@ else
 
                 local function insideCheckInZone()
                     if IsControlJustPressed(0, 38) then
-                        exports['qbx-core']:KeyPressed(38)
+                        lib.hideTextUI()
                         checkIn(hospitalName)
                     end
                 end
@@ -210,7 +210,7 @@ else
 
                 local function insideBedZone()
                     if IsControlJustPressed(0, 38) then
-                        exports['qbx-core']:KeyPressed(38)
+                        lib.hideTextUI()
                         putPlayerInBed(hospitalName, i, false)
                     end
                 end
@@ -242,7 +242,7 @@ local function leaveBed()
     TaskPlayAnim(ped, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, false, false, false)
     Wait(4000)
     ClearPedTasks(ped)
-    TriggerServerEvent('qbx-ambulancejob:server:playerLeftBed', hospitalOccupying, bedIndexOccupying)
+    TriggerServerEvent('qbx_ambulancejob:server:playerLeftBed', hospitalOccupying, bedIndexOccupying)
     FreezeEntityPosition(bedObject, true)
     RenderScriptCams(false, true, 200, true, true)
     DestroyCam(cam, false)
@@ -276,7 +276,7 @@ end)
 ---reset player settings that the server is storing
 local function onPlayerUnloaded()
     if bedIndexOccupying then
-        TriggerServerEvent('qbx-ambulancejob:server:playerLeftBed', hospitalOccupying, bedIndexOccupying)
+        TriggerServerEvent('qbx_ambulancejob:server:playerLeftBed', hospitalOccupying, bedIndexOccupying)
     end
 end
 

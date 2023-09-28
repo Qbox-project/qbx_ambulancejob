@@ -17,7 +17,7 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
-    QBX.Functions.Notify({ title = Lang:t('text.alert'), description = text .. ' | ' .. street1name .. ' ' .. street2name, type = 'inform' })
+    exports.qbx_core:Notify({ title = Lang:t('text.alert'), description = text .. ' | ' .. street1name .. ' ' .. street2name, type = 'inform' })
     PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
     local transG = 250
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
@@ -99,12 +99,12 @@ end)
 
 function GetClosestPlayer()
     local coords = GetEntityCoords(cache.ped)
-    return QBX.Functions.GetClosestPlayer(coords)
+    return exports.qbx_core:GetClosestPlayer(coords)
 end
 
 function OnKeyPress(cb)
     if IsControlJustPressed(0, 38) then
-        exports['qbx-core']:KeyPressed(38)
+        lib.hideTextUI()
         cb()
     end
 end
