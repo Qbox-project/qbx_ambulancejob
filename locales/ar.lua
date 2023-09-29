@@ -65,14 +65,13 @@ local Translations = {
         elevator_main = '[E] - ﻞﻔﺳﻷ ﺪﻌﺼﻤﻟﺍ ﺬﺧ',
         el_roof = 'Take the elevator to the roof',
         el_main = 'Take the elevator to the main floor',
-        bed_out = '[E] - ﺮﻳﺮﺴﻟﺍ ﻦﻣ ﺽﻮﻬﻨﻟﺍ',
         call_doc = '[E] - ﺭﻮﺘﻛﺪﻟﺎﺑ ﻞﺼﺗﺍ',
         call = 'ﻞﺼﺗﺍ',
         check_in = '[E] - ﻖﻘﺤﺗ',
         check = 'ﻖﻘﺤﺗ',
         lie_bed = '[E] - ﺮﻳﺮﺴﻟﺍ ﻰﻠﻋ ﺀﺎﻘﻠﺘﺳﺍ',
         bed = 'Lay in bed',
-        bed_out = 'Get out of bed',
+        bed_out = '[E] - ﺮﻳﺮﺴﻟﺍ ﻦﻣ ﺽﻮﻬﻨﻟﺍ',
         alert = 'Alert!'
     },
     progress = {

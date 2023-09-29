@@ -66,14 +66,13 @@ local Translations = {
         elevator_main = '[E] - Taktu lyftuna niður',
         el_roof = 'Take the elevator to the roof',
         el_main = 'Take the elevator to the main floor',
-        bed_out = '[E] - Til að fara fram úr rúminu..',
         call_doc = '[E] - Hringdu í lækni',
         call = 'Hringdu',
         check_in = '[E] Innritun',
         check = 'Innritun',
         lie_bed = '[E] - Að liggja í rúminu',
         bed = 'Lay in bed',
-        bed_out = 'Get out of bed',
+        bed_out = '[E] - Til að fara fram úr rúminu..',
         alert = 'Alert!'
     },
     progress = {

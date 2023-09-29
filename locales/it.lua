@@ -65,14 +65,13 @@ local Translations = {
         elevator_main = '[E] - Prendi l\'ascensore fino al piano',
         el_roof = 'Take the elevator to the roof',
         el_main = 'Take the elevator to the main floor',
-        bed_out = '[E] - Per alzarti dal letto..',
         call_doc = '[E] - Chiama un dottore',
         call = 'Chiama',
         check_in = '[E] Check in',
         check = 'Check In',
         lie_bed = '[E] - Sdraiarsi sul letto',
         bed = 'Lay in bed',
-        bed_out = 'Get out of bed',
+        bed_out = '[E] - Per alzarti dal letto..',
         alert = 'Alert!'
     },
     progress = {

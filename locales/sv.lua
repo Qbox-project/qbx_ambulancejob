@@ -66,13 +66,13 @@ local Translations = {
         elevator_main = '~INPUT_CONTEXT~ - Ta hissen ner till lobbyn',
         el_roof = 'Ta hissen till taket',
         el_main = 'Ta hissen till bottenvåningen',
-        bed_out = '~INPUT_CONTEXT~ - Gå ur sängen..',
         call_doc = '~INPUT_CONTEXT~ - Kalla på läkare',
         call = 'Kalla på läkare',
         check_in = '~INPUT_CONTEXT~ - Checka in',
         check = 'Checka In',
         lie_bed = '~INPUT_CONTEXT~ - Ligg på sängen',
         bed = 'Ligg på sängen',
+        bed_out = '~INPUT_CONTEXT~ - Gå ur sängen..',
         alert = 'LARM!'
     },
     progress = {

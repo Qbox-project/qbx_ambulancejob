@@ -65,14 +65,13 @@ local Translations = {
         elevator_main = '[E] - Đi xuống',
         el_roof = 'Take the elevator to the roof',
         el_main = 'Take the elevator to the main floor',
-        bed_out = '[E] - Rời khỏi giường..',
         call_doc = '[E] -Gọi Bác sĩ',
         call = 'Gọi',
         check_in = '[E] - Nhập viện',
         check = 'Nhập viện',
         lie_bed = '[E] - Nằm xuống giường',
         bed = 'Lay in bed',
-        bed_out = 'Get out of bed',
+        bed_out = '[E] - Rời khỏi giường..',
         alert = 'Alert!'
     },
     progress = {
