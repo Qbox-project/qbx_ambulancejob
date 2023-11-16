@@ -1,17 +1,13 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'https://github.com/QBCore-Remastered'
+description 'QBX_AmbulanceJob'
+repository 'https://github.com/Qbox-project/qbx_ambulancejob'
 version '1.0.0'
-
-modules {
-	'qbx_core:playerdata',
-    'qbx_core:utils'
-}
 
 shared_scripts {
 	'@ox_lib/init.lua',
-	'@qbx_core/import.lua',
+	'@qbx_core/modules/utils.lua',
 	'@qbx_core/shared/locale.lua',
 	'locales/en.lua',
 	'locales/*.lua',
@@ -19,17 +15,12 @@ shared_scripts {
 }
 
 client_scripts {
-	'client/damage/damage.lua',
-	'client/hospital.lua',
-	'client/main.lua',
-	'client/wounding.lua',
-	'client/laststand.lua',
-	'client/job.lua',
-	'client/setdownedstate.lua',
+	'@qbx_core/modules/playerdata.lua',
+	'client/*.lua',
 }
 
 server_scripts {
-	'server/main.lua',
+	'server/*.lua',
 }
 
 dependencies {
@@ -43,3 +34,4 @@ dependencies {
 }
 
 lua54 'yes'
+use_experimental_fxv2_oal 'yes'
