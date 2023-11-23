@@ -75,7 +75,7 @@ Config.Locations = { -- Edit the various interaction points for players or creat
     },
 
     stations = {
-        [1] = { label = Lang:t('info.pb_hospital'), coords = vec4(304.27, -600.33, 43.28, 272.249) }
+        { label = Lang:t('info.pb_hospital'), coords = vec4(304.27, -600.33, 43.28, 272.249) }
     }
 }
 
@@ -136,7 +136,7 @@ Config.Items = { -- Items found in the ambulance shop for players with the ambul
     label = Lang:t('info.safe'),
     slots = 30,
     items = {
-        [1] = {
+        {
             name = "radio",
             price = 0,
             amount = 50,
@@ -144,7 +144,7 @@ Config.Items = { -- Items found in the ambulance shop for players with the ambul
             type = "item",
             slot = 1,
         },
-        [2] = {
+        {
             name = "bandage",
             price = 0,
             amount = 50,
@@ -152,7 +152,7 @@ Config.Items = { -- Items found in the ambulance shop for players with the ambul
             type = "item",
             slot = 2,
         },
-        [3] = {
+        {
             name = "painkillers",
             price = 0,
             amount = 50,
@@ -160,7 +160,7 @@ Config.Items = { -- Items found in the ambulance shop for players with the ambul
             type = "item",
             slot = 3,
         },
-        [4] = {
+        {
             name = "firstaid",
             price = 0,
             amount = 50,
@@ -168,7 +168,7 @@ Config.Items = { -- Items found in the ambulance shop for players with the ambul
             type = "item",
             slot = 4,
         },
-        [5] = {
+        {
             name = "weapon_flashlight",
             price = 0,
             amount = 50,
@@ -176,7 +176,7 @@ Config.Items = { -- Items found in the ambulance shop for players with the ambul
             type = "item",
             slot = 5,
         },
-        [6] = {
+        {
             name = "weapon_fireextinguisher",
             price = 0,
             amount = 50,
@@ -185,82 +185,6 @@ Config.Items = { -- Items found in the ambulance shop for players with the ambul
             slot = 6,
         },
     }
-}
-
-Config.WeaponClasses = { -- Define gta weapon classe numbers
-    ['SMALL_CALIBER'] = 1,
-    ['MEDIUM_CALIBER'] = 2,
-    ['HIGH_CALIBER'] = 3,
-    ['SHOTGUN'] = 4,
-    ['CUTTING'] = 5,
-    ['LIGHT_IMPACT'] = 6,
-    ['HEAVY_IMPACT'] = 7,
-    ['EXPLOSIVE'] = 8,
-    ['FIRE'] = 9,
-    ['SUFFOCATING'] = 10,
-    ['OTHER'] = 11,
-    ['WILDLIFE'] = 12,
-    ['NOTHING'] = 13
-}
-
----@alias Bone 'NONE'|'HEAD'|'NECK'|'SPINE'|'UPPER_BODY'|'LOWER_BODY'|'LARM'|'LHAND'|'LFINGER'|'LLEG'|'LFOOT'|'RARM'|'RHAND'|'RFINGER'|'RLEG'|'RFOOT'
-Config.BoneIndexes = { -- Correspond bone labels to their hash number
-    ['NONE'] = 0,
-    -- ['HEAD'] = 31085,
-    ['HEAD'] = 31086,
-    ['NECK'] = 39317,
-    -- ['SPINE'] = 57597,
-    -- ['SPINE'] = 23553,
-    -- ['SPINE'] = 24816,
-    -- ['SPINE'] = 24817,
-    ['SPINE'] = 24818,
-    -- ['UPPER_BODY'] = 10706,
-    ['UPPER_BODY'] = 64729,
-    ['LOWER_BODY'] = 11816,
-    -- ['LARM'] = 45509,
-    ['LARM'] = 61163,
-    ['LHAND'] = 18905,
-    -- ['LFINGER'] = 4089,
-    -- ['LFINGER'] = 4090,
-    -- ['LFINGER'] = 4137,
-    -- ['LFINGER'] = 4138,
-    -- ['LFINGER'] = 4153,
-    -- ['LFINGER'] = 4154,
-    -- ['LFINGER'] = 4169,
-    -- ['LFINGER'] = 4170,
-    -- ['LFINGER'] = 4185,
-    -- ['LFINGER'] = 4186,
-    -- ['LFINGER'] = 26610,
-    -- ['LFINGER'] = 26611,
-    -- ['LFINGER'] = 26612,
-    -- ['LFINGER'] = 26613,
-    ['LFINGER'] = 26614,
-    -- ['LLEG'] = 58271,
-    ['LLEG'] = 63931,
-    -- ['LFOOT'] = 2108,
-    ['LFOOT'] = 14201,
-    -- ['RARM'] = 40269,
-    ['RARM'] = 28252,
-    ['RHAND'] = 57005,
-    -- ['RFINGER'] = 58866,
-    -- ['RFINGER'] = 58867,
-    -- ['RFINGER'] = 58868,
-    -- ['RFINGER'] = 58869,
-    -- ['RFINGER'] = 58870,
-    -- ['RFINGER'] = 64016,
-    -- ['RFINGER'] = 64017,
-    -- ['RFINGER'] = 64064,
-    -- ['RFINGER'] = 64065,
-    -- ['RFINGER'] = 64080,
-    -- ['RFINGER'] = 64081,
-    -- ['RFINGER'] = 64096,
-    -- ['RFINGER'] = 64097,
-    -- ['RFINGER'] = 64112,
-    ['RFINGER'] = 64113,
-    -- ['RLEG'] = 36864,
-    ['RLEG'] = 51826,
-    -- ['RFOOT'] = 20781,
-    ['RFOOT'] = 52301,
 }
 
 Config.VehicleSettings = { -- Enable or disable vehicle extras when pulling them from the ambulance job vehicle spawner
