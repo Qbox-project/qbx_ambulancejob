@@ -1,4 +1,5 @@
 local checkVehicle = false
+local WEAPONS = exports.qbx_core:GetWeapons()
 
 ---Configures and spawns a vehicle and teleports player to the driver seat.
 ---@param data { vehicleName: string, vehiclePlatePrefix: string, coords: vector4}
@@ -82,31 +83,30 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
     end
     local playerId = GetPlayerServerId(player)
 
-    ---@param damage PlayerDamage
-    local damage = lib.callback.await('hospital:GetPlayerStatus', false, playerId)
-    if not damage or (damage.bleedLevel == 0 and #damage.damagedBodyParts == 0 and #damage.weaponWounds == 0) then
+
+    local status = lib.callback.await('qbx_ambulancejob:server:getPlayerStatus', false, playerId)
+    if #status.injuries == 0 then
         exports.qbx_core:Notify(Lang:t('success.healthy_player'), 'success')
         return
     end
 
-    for _, hash in pairs(damage.weaponWounds) do
+    for hash in pairs(status.damageCauses) do
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { Lang:t('info.status'), exports.qbx_core:GetWeapons()[hash].damagereason }
+            args = { Lang:t('info.status'), WEAPONS[hash].damagereason }
         })
     end
 
-    if damage.bleedLevel > 0 then
+    if status.bleedLevel > 0 then
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { Lang:t('info.status'), Lang:t('info.is_status', { status = exports.qbx_medical:getBleedStateLabelDeprecated(damage.bleedLevel)}) }
+            args = { Lang:t('info.status'), Lang:t('info.is_status', { status = status.bleedState }) }
         })
     end
 
-    local status = exports.qbx_medical:getPatientStatus(damage.damagedBodyParts)
-    showTreatmentMenu(status)
+    showTreatmentMenu(status.injuries)
 end)
 
 ---Use first aid on nearest player to revive them.
