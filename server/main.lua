@@ -78,8 +78,12 @@ AddEventHandler('qbx_medical:server:playerRespawned', function(source)
 	respawn(source)
 end)
 
-lib.callback.register('qbx_ambulancejob:server:isBedTaken', function(hospitalName, bedIndex)
+lib.callback.register('qbx_ambulancejob:server:isBedTaken', function(_, hospitalName, bedIndex)
 	return hospitalBedsTaken[hospitalName][bedIndex]
+end)
+
+lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc),
+	return exports.qbx_medical:getPlayerStatus(targetSrc)
 end)
 
 local function alertAmbulance(src, text)
