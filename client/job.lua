@@ -1,3 +1,5 @@
+local config = require 'config.client'
+local sharedConfig = require 'config.shared'
 local checkVehicle = false
 local WEAPONS = exports.qbx_core:GetWeapons()
 
@@ -15,7 +17,7 @@ local function takeOutVehicle(data)
     TriggerEvent("vehiclekeys:client:SetOwner", GetPlate(veh))
     SetVehicleEngineOn(veh, true, true, true)
 
-    local settings = Config.VehicleSettings[data.vehicleName]
+    local settings = config.vehicleSettings[data.vehicleName]
     if not settings then return end
 
     if settings.extra then
@@ -201,7 +203,7 @@ end
 ---Opens the hospital armory.
 local function openArmory()
     if QBX.PlayerData.job.onduty then
-        TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
+        TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", config.items)
     end
 end
 
@@ -246,12 +248,12 @@ end
 
 ---Teleports the player to main elevator
 local function teleportToMainElevator()
-    teleportPlayerWithFade(Config.Locations.main[1])
+    teleportPlayerWithFade(sharedConfig.locations.main[1])
 end
 
 ---Teleports the player to roof elevator
 local function teleportToRoofElevator()
-    teleportPlayerWithFade(Config.Locations.roof[1])
+    teleportPlayerWithFade(sharedConfig.locations.roof[1])
 end
 
 ---Toggles the on duty status of the player.
@@ -293,22 +295,22 @@ end
 
 ---Creates air and land garages to spawn vehicles at for EMS personnel
 CreateThread(function()
-    for _, coords in pairs(Config.Locations.vehicle) do
-        createGarage(Config.AuthorizedVehicles, Lang:t('info.amb_plate'), coords)
+    for _, coords in pairs(sharedConfig.locations.vehicle) do
+        createGarage(config.authorizedVehicles, Lang:t('info.amb_plate'), coords)
     end
 
-    for _, coords in pairs(Config.Locations.helicopter) do
-        createGarage(Config.AuthorizedHelicopters, Lang:t('info.heli_plate'), coords)
+    for _, coords in pairs(sharedConfig.locations.helicopter) do
+        createGarage(config.authorizedHelicopters, Lang:t('info.heli_plate'), coords)
     end
 end)
 
 ---Sets up duty toggle, stash, armory, and elevator interactions using either target or zones.
-if Config.UseTarget then
+if config.useTarget then
     CreateThread(function()
-        for i = 1, #Config.Locations.duty do
+        for i = 1, #sharedConfig.locations.duty do
             exports.ox_target:addBoxZone({
                 name = "duty" .. i,
-                coords = Config.Locations.duty[i],
+                coords = sharedConfig.locations.duty[i],
                 size = vec3(1.5, 1, 2),
                 rotation = 71,
                 debug = false,
@@ -324,10 +326,10 @@ if Config.UseTarget then
                 }
             })
         end
-        for i = 1, #Config.Locations.stash do
+        for i = 1, #sharedConfig.locations.stash do
             exports.ox_target:addBoxZone({
                 name = "stash" .. i,
-                coords = Config.Locations.stash[i],
+                coords = sharedConfig.locations.stash[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = false,
@@ -343,10 +345,10 @@ if Config.UseTarget then
                 }
             })
         end
-        for i = 1, #Config.Locations.armory do
+        for i = 1, #sharedConfig.locations.armory do
             exports.ox_target:addBoxZone({
                 name = "armory" .. i,
-                coords = Config.Locations.armory[i],
+                coords = sharedConfig.locations.armory[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = false,
@@ -364,7 +366,7 @@ if Config.UseTarget then
         end
         exports.ox_target:addBoxZone({
             name = "roof1",
-            coords = Config.Locations.roof[1],
+            coords = sharedConfig.locations.roof[1],
             size = vec3(1, 2, 2),
             rotation = -20,
             debug = false,
@@ -381,7 +383,7 @@ if Config.UseTarget then
         })
         exports.ox_target:addBoxZone({
             name = "main1",
-            coords = Config.Locations.main[1],
+            coords = sharedConfig.locations.main[1],
             size = vec3(2, 1, 2),
             rotation = -20,
             debug = false,
@@ -399,7 +401,7 @@ if Config.UseTarget then
     end)
 else
     CreateThread(function()
-        for i = 1, #Config.Locations.duty do
+        for i = 1, #sharedConfig.locations.duty do
             local function enteredSignInZone()
                 if not QBX.PlayerData.job.onduty then
                     lib.showTextUI(Lang:t('text.onduty_button'))
@@ -417,7 +419,7 @@ else
             end
 
             lib.zones.box({
-                coords = Config.Locations.duty[i],
+                coords = sharedConfig.locations.duty[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = false,
@@ -427,7 +429,7 @@ else
             })
         end
 
-        for i = 1, #Config.Locations.stash do
+        for i = 1, #sharedConfig.locations.stash do
             local function enteredStashZone()
                 if QBX.PlayerData.job.onduty then
                     lib.showTextUI(Lang:t('text.pstash_button'))
@@ -443,7 +445,7 @@ else
             end
 
             lib.zones.box({
-                coords = Config.Locations.stash[i],
+                coords = sharedConfig.locations.stash[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = false,
@@ -453,7 +455,7 @@ else
             })
         end
 
-        for i = 1, #Config.Locations.armory do
+        for i = 1, #sharedConfig.locations.armory do
             local function enteredArmoryZone()
                 if QBX.PlayerData.job.onduty then
                     lib.showTextUI(Lang:t('text.armory_button'))
@@ -469,7 +471,7 @@ else
             end
 
             lib.zones.box({
-                coords = Config.Locations.armory[i],
+                coords = sharedConfig.locations.armory[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = false,
@@ -496,7 +498,7 @@ else
         end
 
         lib.zones.box({
-            coords = Config.Locations.roof[1],
+            coords = sharedConfig.locations.roof[1],
             size = vec3(1, 1, 2),
             rotation = -20,
             debug = false,
@@ -522,7 +524,7 @@ else
         end
 
         lib.zones.box({
-            coords = Config.Locations.main[1],
+            coords = sharedConfig.locations.main[1],
             size = vec3(1, 1, 2),
             rotation = -20,
             debug = false,

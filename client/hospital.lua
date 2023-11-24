@@ -1,3 +1,5 @@
+local config = require 'config.client'
+local sharedConfig = require 'config.shared'
 local bedObject = nil
 local bedOccupyingData = nil
 local cam = nil
@@ -57,7 +59,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
 
     hospitalOccupying = hospitalName
     bedIndexOccupying = bedIndex
-    bedOccupyingData = Config.Locations.hospitals[hospitalName].beds[bedIndex]
+    bedOccupyingData = sharedConfig.locations.hospitals[hospitalName].beds[bedIndex]
     IsInHospitalBed = true
     exports.qbx_medical:DisableDamageEffects()
     exports.qbx_medical:disableRespawn()
@@ -67,7 +69,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
         Wait(5)
         if isRevive then
             exports.qbx_core:Notify(Lang:t('success.being_helped'), 'success')
-            Wait(Config.AIHealTimer * 1000)
+            Wait(config.aiHealTime * 1000)
             TriggerEvent("hospital:client:Revive")
         else
             CanLeaveBed = true
@@ -116,9 +118,9 @@ local function checkIn(hospitalName)
 end
 
 ---Set up check-in and getting into beds using either target or zones
-if Config.UseTarget then
+if config.useTarget then
     CreateThread(function()
-        for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+        for hospitalName, hospital in pairs(sharedConfig.locations.hospitals) do
             if hospital.checkIn then
                 exports.ox_target:addBoxZone({
                     name = hospitalName.."_checkin",
@@ -163,12 +165,12 @@ if Config.UseTarget then
     end)
 else
     CreateThread(function()
-        for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+        for hospitalName, hospital in pairs(sharedConfig.locations.hospitals) do
 
             if hospital.checkIn then
                 local function enterCheckInZone()
                     local numDoctors = lib.callback.await('qbx_ambulancejob:server:getNumDoctors')
-                    if numDoctors >= Config.MinimalDoctors then
+                    if numDoctors >= config.minForCheckIn then
                         lib.showTextUI(Lang:t('text.call_doc'))
                     else
                         lib.showTextUI(Lang:t('text.check_in'))
