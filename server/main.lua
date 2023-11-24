@@ -82,7 +82,7 @@ lib.callback.register('qbx_ambulancejob:server:isBedTaken', function(_, hospital
 	return hospitalBedsTaken[hospitalName][bedIndex]
 end)
 
-lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc),
+lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
 	return exports.qbx_medical:getPlayerStatus(targetSrc)
 end)
 
