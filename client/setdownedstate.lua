@@ -1,7 +1,7 @@
 local doctorCount = 0
 
 local function getDoctorCount()
-    return lib.callback.await('hospital:GetDoctors')
+    return lib.callback.await('qbx_ambulancejob:server:getNumDoctors')
 end
 
 local function displayRespawnText()

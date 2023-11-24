@@ -59,6 +59,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     bedIndexOccupying = bedIndex
     bedOccupyingData = Config.Locations.hospitals[hospitalName].beds[bedIndex]
     IsInHospitalBed = true
+    exports.qbx_medical:DisableDamageEffects()
     exports.qbx_medical:disableRespawn()
     CanLeaveBed = false
     setBedCam()
@@ -81,7 +82,7 @@ end)
 
 ---Notifies doctors, and puts player in a hospital bed.
 local function checkIn(hospitalName)
-    local canCheckIn = lib.callback.await('qbx_ambulancejob:server:onCheckIn')
+    local canCheckIn = lib.callback.await('qbx_ambulancejob:server:canCheckIn')
     if not canCheckIn then return end
 
     exports.scully_emotemenu:playEmoteByCommand('notepad')
@@ -166,7 +167,7 @@ else
 
             if hospital.checkIn then
                 local function enterCheckInZone()
-                    local numDoctors = lib.callback.await('hospital:GetDoctors')
+                    local numDoctors = lib.callback.await('qbx_ambulancejob:server:getNumDoctors')
                     if numDoctors >= Config.MinimalDoctors then
                         lib.showTextUI(Lang:t('text.call_doc'))
                     else
@@ -252,6 +253,7 @@ local function leaveBed()
     bedObject = nil
     bedOccupyingData = nil
     IsInHospitalBed = false
+    exports.qbx_medical:EnableDamageEffects()
 
     if QBX.PlayerData.metadata.injail <= 0 then return end
     TriggerEvent("prison:client:Enter", QBX.PlayerData.metadata.injail)

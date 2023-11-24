@@ -27,6 +27,7 @@ lib.callback.register('hospital:client:UseIfaks', function()
         TriggerServerEvent('hud:server:RelieveStress', math.random(12, 24))
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
         OnPainKillers = true
+        exports.qbx_medical:DisableDamageEffects()
         if painkillerAmount < 3 then
             painkillerAmount += 1
         end
@@ -101,6 +102,7 @@ lib.callback.register('hospital:client:UsePainkillers', function()
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         TriggerEvent("inventory:client:ItemBox", exports.ox_inventory:Items()["painkillers"], "remove")
         OnPainKillers = true
+        exports.qbx_medical:DisableDamageEffects()
         if painkillerAmount < 3 then
             painkillerAmount += 1
         end
@@ -118,6 +120,7 @@ local function consumePainKiller()
     if painkillerAmount > 0 then return end
     painkillerAmount = 0
     OnPainKillers = false
+    exports.qbx_medical:EnableDamageEffects()
 end
 
 CreateThread(function()

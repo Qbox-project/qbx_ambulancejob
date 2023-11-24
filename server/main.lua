@@ -179,12 +179,12 @@ end)
 
 -- Callbacks
 
-lib.callback.register('hospital:GetDoctors', function()
+lib.callback.register('qbx_ambulancejob:server:getNumDoctors', function()
 	local count = exports.qbx_core:GetDutyCountType('ems')
 	return count
 end)
 
-lib.callback.register('qbx_ambulancejob:server:onCheckIn', function(source)
+lib.callback.register('qbx_ambulancejob:server:canCheckIn', function(source)
 	local numDoctors = exports.qbx_core:GetDutyCountType('ems')
 	if numDoctors < Config.MinimalDoctors then
 		return true
