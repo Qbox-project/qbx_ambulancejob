@@ -1,3 +1,4 @@
+local sharedConfig = require 'config.shared'
 InBedDict = "anim@gangops@morgue@table@"
 InBedAnim = "body_search"
 IsInHospitalBed = false
@@ -85,7 +86,7 @@ end)
 
 ---sets blips for stations on map
 CreateThread(function()
-    for _, station in pairs(Config.Locations.stations) do
+    for _, station in pairs(sharedConfig.locations.stations) do
         local blip = AddBlipForCoord(station.coords.x, station.coords.y, station.coords.z)
         SetBlipSprite(blip, 61)
         SetBlipAsShortRange(blip, true)

@@ -1,3 +1,4 @@
+local config = require 'config.client'
 local painkillerAmount = 0
 
 -- Events
@@ -116,7 +117,7 @@ end)
 
 local function consumePainKiller()
     painkillerAmount -= 1
-    Wait(Config.PainkillerInterval * 1000)
+    Wait(config.painkillerInterval * 1000)
     if painkillerAmount > 0 then return end
     painkillerAmount = 0
     OnPainKillers = false

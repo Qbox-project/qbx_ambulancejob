@@ -2,11 +2,13 @@
 
 ---@alias source number
 
+local config = require 'config.server'
+local sharedConfig = require 'config.shared'
 local doctorCalled = false
 
 ---@type table<string, table<number, boolean>>
 local hospitalBedsTaken = {}
-for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+for hospitalName, hospital in pairs(sharedConfig.locations.hospitals) do
 	hospitalBedsTaken[hospitalName] = {}
 	for i = 1, #hospital.beds do
 		hospitalBedsTaken[hospitalName][i] = false
@@ -15,9 +17,9 @@ end
 
 ---@param player Player
 local function billPlayer(player)
-	player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-	exports.qbx_management:AddMoney("ambulance", Config.BillCost)
-	TriggerClientEvent('hospital:client:SendBillEmail', player.PlayerData.source, Config.BillCost)
+	player.Functions.RemoveMoney("bank", sharedConfig.checkInCost, "respawned-at-hospital")
+	exports.qbx_management:AddMoney("ambulance", sharedConfig.checkInCost)
+	TriggerClientEvent('hospital:client:SendBillEmail', player.PlayerData.source, sharedConfig.checkInCost)
 end
 
 ---@param player Player
@@ -52,7 +54,7 @@ local function respawn(src)
 		local coords = GetEntityCoords(GetPlayerPed(src))
 		local closest = nil
 
-		for hospitalName, hospital in pairs(Config.Locations.hospitals) do
+		for hospitalName, hospital in pairs(sharedConfig.locations.hospitals) do
 			if hospitalName ~= 'jail' then
 				if not closest or #(coords - hospital.coords) < #(coords - closest) then
 					closest = hospital.coords
@@ -68,7 +70,7 @@ local function respawn(src)
 		return
 	end
 
-	if Config.WipeInventoryOnRespawn then
+	if config.wipeInvOnRespawn then
 		wipeInventory(player)
 	end
 	TriggerClientEvent('qbx_ambulancejob:client:onPlayerRespawn', src, closestHospital, bedIndex)
@@ -156,7 +158,7 @@ local function sendDoctorAlert()
 		TriggerClientEvent('ox_lib:notify', doctor, { description = Lang:t('info.dr_needed'), type = 'inform' })
 	end
 
-	SetTimeout(Config.DocCooldown * 60000, function()
+	SetTimeout(config.doctorCallCooldown * 60000, function()
 		doctorCalled = false
 	end)
 end
@@ -186,7 +188,7 @@ end)
 
 lib.callback.register('qbx_ambulancejob:server:canCheckIn', function(source)
 	local numDoctors = exports.qbx_core:GetDutyCountType('ems')
-	if numDoctors < Config.MinimalDoctors then
+	if numDoctors < config.minForCheckIn then
 		return true
 	end
 	TriggerClientEvent('ox_lib:notify', source, { description = Lang:t('info.dr_alert'), type = 'inform' })
