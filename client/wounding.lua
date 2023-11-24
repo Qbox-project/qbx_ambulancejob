@@ -133,13 +133,3 @@ CreateThread(function()
         end
     end
 end)
-
-CreateThread(function()
-    Wait(2500)
-    while true do
-        Wait(1000)
-        if not OnPainKillers then
-            exports.qbx_medical:checkBleedingDeprecated()
-        end
-    end
-end)
