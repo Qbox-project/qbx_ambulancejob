@@ -32,7 +32,6 @@ local function handleDead(ped)
     end
 
     playDeadAnimation(ped)
-    SetCurrentPedWeapon(ped, `WEAPON_UNARMED`, true)
 end
 
 ---Player is able to send a notification to EMS there are any on duty
@@ -50,9 +49,7 @@ end
 
 local function handleLastStand()
     local laststandTime = exports.qbx_medical:getLaststandTime()
-    if laststandTime > Config.LaststandMinimumRevive then
-        DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
-    elseif doctorCount == 0 then
+    if laststandTime > Config.LaststandMinimumRevive or doctorCount == 0 then
         DrawText2D(Lang:t('info.bleed_out', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
     else
         DrawText2D(Lang:t('info.bleed_out_help', { time = math.ceil(laststandTime) }), vec2(1.0, 1.44), 1.0, 1.0, 0.6, 4, 255, 255, 255, 255)
@@ -62,28 +59,12 @@ local function handleLastStand()
     exports.qbx_medical:playLastStandAnimationDeprecated()
 end
 
-local function disableControls()
-    DisableAllControlActions(0)
-    EnableControlAction(0, 1, true)
-    EnableControlAction(0, 2, true)
-    EnableControlAction(0, 245, true)
-    EnableControlAction(0, 38, true)
-    EnableControlAction(0, 0, true)
-    EnableControlAction(0, 322, true)
-    EnableControlAction(0, 288, true)
-    EnableControlAction(0, 213, true)
-    EnableControlAction(0, 249, true)
-    EnableControlAction(0, 46, true)
-    EnableControlAction(0, 47, true)
-end
-
 ---Set dead and last stand states.
 CreateThread(function()
     while true do
         local isDead = exports.qbx_medical:isDead()
         local inLaststand = exports.qbx_medical:getLaststand()
         if isDead or inLaststand then
-            disableControls()
             if isDead then
                 handleDead(cache.ped)
             elseif inLaststand then
