@@ -69,7 +69,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
         Wait(5)
         if isRevive then
             exports.qbx_core:Notify(Lang:t('success.being_helped'), 'success')
-            Wait(config.aiHealTime * 1000)
+            Wait(config.aiHealTimer * 1000)
             TriggerEvent("hospital:client:Revive")
         else
             CanLeaveBed = true
