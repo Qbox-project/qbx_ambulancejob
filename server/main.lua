@@ -4,6 +4,7 @@
 
 local config = require 'config.server'
 local sharedConfig = require 'config.shared'
+local triggerEventHooks = require '@qbx_core.modules.hooks'
 local doctorCalled = false
 
 ---@type table<string, table<number, boolean>>
@@ -186,14 +187,20 @@ lib.callback.register('qbx_ambulancejob:server:getNumDoctors', function()
 	return count
 end)
 
-lib.callback.register('qbx_ambulancejob:server:canCheckIn', function(source)
+lib.callback.register('qbx_ambulancejob:server:canCheckIn', function(source, hospitalName)
 	local numDoctors = exports.qbx_core:GetDutyCountType('ems')
 	if numDoctors < config.minForCheckIn then
-		return true
+		TriggerClientEvent('ox_lib:notify', source, { description = Lang:t('info.dr_alert'), type = 'inform' })
+		sendDoctorAlert()
+		return false
 	end
-	TriggerClientEvent('ox_lib:notify', source, { description = Lang:t('info.dr_alert'), type = 'inform' })
-	sendDoctorAlert()
-	return false
+
+	if not triggerEventHooks('checkIn', {
+		source = source,
+		hospitalName = hospitalName,
+	}) then return false end
+
+	return true
 end)
 
 -- Commands

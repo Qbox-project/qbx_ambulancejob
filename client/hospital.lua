@@ -84,7 +84,7 @@ end)
 
 ---Notifies doctors, and puts player in a hospital bed.
 local function checkIn(hospitalName)
-    local canCheckIn = lib.callback.await('qbx_ambulancejob:server:canCheckIn')
+    local canCheckIn = lib.callback.await('qbx_ambulancejob:server:canCheckIn', false, hospitalName)
     if not canCheckIn then return end
 
     exports.scully_emotemenu:playEmoteByCommand('notepad')
