@@ -19,7 +19,7 @@ end
 ---@param player Player
 local function billPlayer(player)
 	player.Functions.RemoveMoney("bank", sharedConfig.checkInCost, "respawned-at-hospital")
-	exports.qbx_management:AddMoney("ambulance", sharedConfig.checkInCost)
+	exports['Renewed-Banking']:addAccountMoney("ambulance", sharedConfig.checkInCost)
 	TriggerClientEvent('hospital:client:SendBillEmail', player.PlayerData.source, sharedConfig.checkInCost)
 end
 
@@ -86,7 +86,7 @@ lib.callback.register('qbx_ambulancejob:server:isBedTaken', function(_, hospital
 end)
 
 lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
-	return exports.qbx_medical:getPlayerStatus(targetSrc)
+	return exports.qbx_medical:GetPlayerStatus(targetSrc)
 end)
 
 local function alertAmbulance(src, text)
