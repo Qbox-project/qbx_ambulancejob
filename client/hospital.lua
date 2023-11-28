@@ -64,14 +64,15 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     exports.qbx_medical:DisableDamageEffects()
     exports.qbx_medical:disableRespawn()
     CanLeaveBed = false
+    local numDoctors = lib.callback.await('qbx_ambulancejob:server:getNumDoctors')
     setBedCam()
     CreateThread(function()
         Wait(5)
         if isRevive then
             exports.qbx_core:Notify(Lang:t('success.being_helped'), 'success')
             Wait(config.aiHealTimer * 1000)
-            TriggerEvent("hospital:client:Revive")
-        else
+            TriggerEvent("qbx_medical:client:playerRevived")
+        elseif numDoctors == 0 then
             CanLeaveBed = true
         end
     end)
@@ -273,6 +274,10 @@ CreateThread(function()
             lib.hideTextUI()
         else
             Wait(1000)
+            local numDoctors = lib.callback.await('qbx_ambulancejob:server:getNumDoctors')
+            if numDoctors == 0 or (not exports.qbx_medical:isDead() and not exports.qbx_medical:getLaststand()) then
+                CanLeaveBed = true
+            end
         end
     end
 end)

@@ -131,23 +131,19 @@ RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	local src = source
 	local player = exports.qbx_core:GetPlayer(src)
 	local patient = exports.qbx_core:GetPlayer(playerId)
-	if player.PlayerData.job.name ~= "ambulance" or not patient then return end
+	if player.PlayerData.job.name ~= "ambulance" or not patient or not exports.ox_inventory:RemoveItem(src, 'bandage', 1) then return end
 
-	player.Functions.RemoveItem('bandage', 1)
-	TriggerClientEvent('inventory:client:ItemBox', src, exports.ox_inventory:Items()['bandage'], "remove")
-	TriggerClientEvent("hospital:client:HealInjuries", patient.PlayerData.source, "full")
+	lib.callback("qbx_medical:client:heal", patient.PlayerData.source, false, "full")
 end)
 
 ---@param playerId number
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	if GetInvokingResource() then return end
-	local player = exports.qbx_core:GetPlayer(source)
-	local patient = exports.qbx_core:GetPlayer(playerId)
+	local src = source
+	local player = exports.qbx_core:GetPlayer(playerId)
 
-	if not patient then return end
-	player.Functions.RemoveItem('firstaid', 1)
-	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, exports.ox_inventory:Items()['firstaid'], "remove")
-	TriggerClientEvent('hospital:client:Revive', patient.PlayerData.source)
+	if not player or not exports.ox_inventory:RemoveItem(src, 'firstaid', 1) then return end
+	TriggerClientEvent('qbx_medical:client:playerRevived', player.PlayerData.source)
 end)
 
 local function sendDoctorAlert()
@@ -169,7 +165,7 @@ RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 	if GetInvokingResource() then return end
 	local src = source
 	local target = exports.qbx_core:GetPlayer(targetId)
-	if not target then return end
+	if not target or not exports.ox_inventory:RemoveItem(src, 'firstaid', 1) then return end
 
 	local canHelp = lib.callback.await('hospital:client:canHelp', targetId)
 	if not canHelp then
