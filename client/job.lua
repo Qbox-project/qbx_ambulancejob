@@ -313,7 +313,7 @@ if config.useTarget then
                 coords = sharedConfig.locations.duty[i],
                 size = vec3(1.5, 1, 2),
                 rotation = 71,
-                debug = false,
+                debug = config.debugPoly,
                 options = {
                     {
                         type = "client",
@@ -332,7 +332,7 @@ if config.useTarget then
                 coords = sharedConfig.locations.stash[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
-                debug = false,
+                debug = config.debugPoly,
                 options = {
                     {
                         type = "client",
@@ -351,7 +351,7 @@ if config.useTarget then
                 coords = sharedConfig.locations.armory[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
-                debug = false,
+                debug = config.debugPoly,
                 options = {
                     {
                         type = "client",
@@ -369,12 +369,12 @@ if config.useTarget then
             coords = sharedConfig.locations.roof[1],
             size = vec3(1, 2, 2),
             rotation = -20,
-            debug = false,
+            debug = config.debugPoly,
             options = {
                 {
                     type = "client",
                     onSelect = teleportToMainElevator,
-                    icon = "fas fa-hand-point-up",
+                    icon = "fas fa-hand-point-down",
                     label = Lang:t('text.el_main'),
                     distance = 1.5,
                     groups = "ambulance",
@@ -386,7 +386,7 @@ if config.useTarget then
             coords = sharedConfig.locations.main[1],
             size = vec3(2, 1, 2),
             rotation = -20,
-            debug = false,
+            debug = config.debugPoly,
             options = {
                 {
                     type = "client",
@@ -422,7 +422,7 @@ else
                 coords = sharedConfig.locations.duty[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
-                debug = false,
+                debug = config.debugPoly,
                 onEnter = enteredSignInZone,
                 onExit = outSignInZone,
                 inside = insideDutyZone,
@@ -448,7 +448,7 @@ else
                 coords = sharedConfig.locations.stash[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
-                debug = false,
+                debug = config.debugPoly,
                 onEnter = enteredStashZone,
                 onExit = outStashZone,
                 inside = insideStashZone,
@@ -474,7 +474,7 @@ else
                 coords = sharedConfig.locations.armory[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
-                debug = false,
+                debug = config.debugPoly,
                 onEnter = enteredArmoryZone,
                 onExit = outArmoryZone,
                 inside = insideArmoryZone,
@@ -501,7 +501,7 @@ else
             coords = sharedConfig.locations.roof[1],
             size = vec3(1, 1, 2),
             rotation = -20,
-            debug = false,
+            debug = config.debugPoly,
             onEnter = enteredRoofZone,
             onExit = outRoofZone,
             inside = insideRoofZone,
@@ -527,7 +527,7 @@ else
             coords = sharedConfig.locations.main[1],
             size = vec3(1, 1, 2),
             rotation = -20,
-            debug = false,
+            debug = config.debugPoly,
             onEnter = enteredMainZone,
             onExit = outMainZone,
             inside = insideMainZone,
