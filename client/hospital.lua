@@ -127,7 +127,7 @@ if config.useTarget then
                     coords = hospital.checkIn,
                     size = vec3(2, 1, 2),
                     rotation = 18,
-                    debug = false,
+                    debug = config.debugPoly,
                     options = {
                         {
                             onSelect = function()
@@ -148,7 +148,7 @@ if config.useTarget then
                     coords = bed.coords.xyz,
                     size = vec3(1.7, 1.9, 2),
                     rotation = bed.coords.w,
-                    debug = false,
+                    debug = config.debugPoly,
                     options = {
                         {
                             onSelect = function()
@@ -192,7 +192,7 @@ else
                     coords = hospital.checkIn,
                     size = vec3(2, 1, 2),
                     rotation = 18,
-                    debug = false,
+                    debug = config.debugPoly,
                     onEnter = enterCheckInZone,
                     onExit = outCheckInZone,
                     inside = insideCheckInZone,
@@ -222,7 +222,7 @@ else
                     coords = bed.coords.xyz,
                     size = vec3(1.9, 2.1, 2),
                     rotation = bed.coords.w,
-                    debug = false,
+                    debug = config.debugPoly,
                     onEnter = enterBedZone,
                     onExit = outBedZone,
                     inside = insideBedZone,
