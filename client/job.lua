@@ -287,7 +287,7 @@ local function createGarage(vehicles, vehiclePlatePrefix, coords)
         coords = coords.xyz,
         size = vec3(5, 5, 2),
         rotation = coords.w,
-        debug = false,
+        debug = config.debugPoly,
         inside = inVehicleZone,
         onExit = outVehicleZone
     })
