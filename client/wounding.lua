@@ -24,9 +24,8 @@ lib.callback.register('hospital:client:UseIfaks', function()
     })
     then
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerEvent("inventory:client:ItemBox", exports.ox_inventory:Items()["ifaks"], "remove")
         TriggerServerEvent('hud:server:RelieveStress', math.random(12, 24))
-        SetEntityHealth(ped, GetEntityHealth(ped) + 10)
+        SetEntityHealth(ped, GetEntityHealth(ped) + 50)
         OnPainKillers = true
         exports.qbx_medical:DisableDamageEffects()
         if painkillerAmount < 3 then
@@ -64,8 +63,7 @@ lib.callback.register('hospital:client:UseBandage', function()
     })
     then
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        TriggerEvent("inventory:client:ItemBox", exports.ox_inventory:Items()["bandage"], "remove")
-        SetEntityHealth(ped, GetEntityHealth(ped) + 10)
+        SetEntityHealth(ped, GetEntityHealth(ped) + 25)
         if math.random(1, 100) < 50 then
             exports.qbx_medical:removeBleed(1)
         end
@@ -101,7 +99,6 @@ lib.callback.register('hospital:client:UsePainkillers', function()
     })
     then
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerEvent("inventory:client:ItemBox", exports.ox_inventory:Items()["painkillers"], "remove")
         OnPainKillers = true
         exports.qbx_medical:DisableDamageEffects()
         if painkillerAmount < 3 then
