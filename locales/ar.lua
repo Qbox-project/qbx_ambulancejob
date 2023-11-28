@@ -71,6 +71,7 @@ local Translations = {
         check = 'ﻖﻘﺤﺗ',
         lie_bed = '[E] - ﺮﻳﺮﺴﻟﺍ ﻰﻠﻋ ﺀﺎﻘﻠﺘﺳﺍ',
         bed = 'Lay in bed',
+        put_bed = 'Place citizen in bed',
         bed_out = '[E] - ﺮﻳﺮﺴﻟﺍ ﻦﻣ ﺽﻮﻬﻨﻟﺍ',
         alert = 'Alert!'
     },

@@ -109,6 +109,9 @@ end)
 RegisterNetEvent('qbx_medical:server:onPlayerLaststand', function(text)
 	if GetInvokingResource() then return end
 	local src = source
+    local player = exports.qbx_core:GetPlayer(src)
+	player.Functions.SetJobDuty(false)
+    TriggerClientEvent('QBCore:Client:SetDuty', src, player.PlayerData.job.onduty)
 	alertAmbulance(src, text)
 end)
 
@@ -148,6 +151,15 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	player.Functions.RemoveItem('firstaid', 1)
 	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, exports.ox_inventory:Items()['firstaid'], "remove")
 	TriggerClientEvent('hospital:client:Revive', patient.PlayerData.source)
+end)
+
+---@param playerId number
+RegisterNetEvent('hospital:server:putPlayerInBed', function(playerId, hospitalName, bedIndex)
+	if GetInvokingResource() then return end
+	local patient = exports.qbx_core:GetPlayer(playerId)
+
+	if not patient then return end
+	TriggerClientEvent('qbx_ambulancejob:client:putPlayerInBed', patient.PlayerData.source, hospitalName, bedIndex)
 end)
 
 local function sendDoctorAlert()
