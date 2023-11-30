@@ -19,7 +19,7 @@ end
 ---@param player Player
 local function billPlayer(player)
 	player.Functions.RemoveMoney("bank", sharedConfig.checkInCost, "respawned-at-hospital")
-	exports['Renewed-Banking']:addAccountMoney("ambulance", sharedConfig.checkInCost)
+	config.depositSociety("ambulance", sharedConfig.checkInCost)
 	TriggerClientEvent('hospital:client:SendBillEmail', player.PlayerData.source, sharedConfig.checkInCost)
 end
 
