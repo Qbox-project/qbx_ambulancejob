@@ -109,9 +109,6 @@ end)
 RegisterNetEvent('qbx_medical:server:onPlayerLaststand', function(text)
 	if GetInvokingResource() then return end
 	local src = source
-    local player = exports.qbx_core:GetPlayer(src)
-	player.Functions.SetJobDuty(false)
-    TriggerClientEvent('QBCore:Client:SetDuty', src, player.PlayerData.job.onduty)
 	alertAmbulance(src, text)
 end)
 
