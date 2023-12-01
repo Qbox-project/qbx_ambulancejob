@@ -99,8 +99,7 @@ CreateThread(function()
 end)
 
 function GetClosestPlayer()
-    local coords = GetEntityCoords(cache.ped)
-    return exports.qbx_core:GetClosestPlayer(coords)
+    return lib.getClosestPlayer(GetEntityCoords(cache.ped), 5.0, false)
 end
 
 function OnKeyPress(cb)
