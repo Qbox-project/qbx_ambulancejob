@@ -164,10 +164,7 @@ if config.useTarget then
                         },
                         {
                             canInteract = function()
-                                if QBX.PlayerData.job.name == 'ambulance' then
-                                    return true
-                                end
-                                return false
+                                return QBX.PlayerData.job.name == 'ambulance'
                             end,
                             onSelect = function()
                                 local player = GetClosestPlayer()
