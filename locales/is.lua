@@ -72,6 +72,7 @@ local Translations = {
         check = 'Innritun',
         lie_bed = '[E] - Að liggja í rúminu',
         bed = 'Lay in bed',
+        put_bed = 'Place citizen in bed',
         bed_out = '[E] - Til að fara fram úr rúminu..',
         alert = 'Alert!'
     },

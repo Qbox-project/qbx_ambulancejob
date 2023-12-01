@@ -1,7 +1,7 @@
 ---@alias source number
 
 lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
-	return exports.qbx_medical:getPlayerStatus(targetSrc)
+	return exports.qbx_medical:GetPlayerStatus(targetSrc)
 end)
 
 local function alertAmbulance(src, text)

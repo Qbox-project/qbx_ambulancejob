@@ -72,6 +72,7 @@ local Translations = {
         check = 'Hoito',
         lie_bed = '[E] - Makaa sängyssä',
         bed = 'Lay in bed',
+        put_bed = 'Aseta kansalainen sänkyyn',
         bed_out = '[E] - Nouse ylös sängystä..',
         alert = 'Alert!'
     },

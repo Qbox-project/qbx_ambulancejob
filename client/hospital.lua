@@ -78,6 +78,10 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     TriggerServerEvent('qbx_ambulancejob:server:playerEnteredBed', hospitalName, bedIndex)
 end
 
+RegisterNetEvent('qbx_ambulancejob:client:putPlayerInBed', function(hospitalName, bedIndex)
+    putPlayerInBed(hospitalName, bedIndex, false, true)
+end)
+
 ---Notifies doctors, and puts player in a hospital bed.
 local function checkIn(hospitalName)
     local canCheckIn = lib.callback.await('qbx_ambulancejob:server:canCheckIn', false, hospitalName)
@@ -149,6 +153,21 @@ if config.useTarget then
                             end,
                             icon = "fas fa-clipboard",
                             label = Lang:t('text.bed'),
+                            distance = 1.5,
+                        },
+                        {
+                            canInteract = function()
+                                return QBX.PlayerData.job.name == 'ambulance'
+                            end,
+                            onSelect = function()
+                                local player = GetClosestPlayer()
+                                if player then
+                                    local playerId = GetPlayerServerId(player)
+                                    TriggerServerEvent('hospital:server:putPlayerInBed', playerId, hospitalName, i)
+                                end
+                            end,
+                            icon = "fas fa-clipboard",
+                            label = Lang:t('text.put_bed'),
                             distance = 1.5,
                         }
                     }
