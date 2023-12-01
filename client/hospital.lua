@@ -78,10 +78,6 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     TriggerServerEvent('qbx_ambulancejob:server:playerEnteredBed', hospitalName, bedIndex)
 end
 
-RegisterNetEvent('qbx_ambulancejob:client:onPlayerRespawn', function(hospitalName, bedIndex)
-    putPlayerInBed(hospitalName, bedIndex, true, true)
-end)
-
 ---Notifies doctors, and puts player in a hospital bed.
 local function checkIn(hospitalName)
     local canCheckIn = lib.callback.await('qbx_ambulancejob:server:canCheckIn', false, hospitalName)
@@ -103,19 +99,16 @@ local function checkIn(hospitalName)
     })
     then
         exports.scully_emotemenu:cancelEmote()
-        --- ask server for first non taken bed
-        local bedIndex = lib.callback.await('qbx_ambulancejob:server:getOpenBed', false, hospitalName)
-        if not bedIndex then
-            exports.qbx_core:Notify(Lang:t('error.beds_taken'), 'error')
-            return
-        end
-
-        putPlayerInBed(hospitalName, bedIndex, true, true)
+        lib.callback('qbx_ambulancejob:server:checkIn', false, nil, cache.serverId, hospitalName)
     else
         exports.scully_emotemenu:cancelEmote()
         exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
     end
 end
+
+RegisterNetEvent('qbx_ambulancejob:client:checkedIn', function(hospitalName, bedIndex)
+    putPlayerInBed(hospitalName, bedIndex, true, true)
+end)
 
 ---Set up check-in and getting into beds using either target or zones
 if config.useTarget then
