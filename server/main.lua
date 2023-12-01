@@ -153,10 +153,7 @@ end)
 ---@param playerId number
 RegisterNetEvent('hospital:server:putPlayerInBed', function(playerId, hospitalName, bedIndex)
 	if GetInvokingResource() then return end
-	local patient = exports.qbx_core:GetPlayer(playerId)
-
-	if not patient then return end
-	TriggerClientEvent('qbx_ambulancejob:client:putPlayerInBed', patient.PlayerData.source, hospitalName, bedIndex)
+	TriggerClientEvent('qbx_ambulancejob:client:putPlayerInBed', playerId, hospitalName, bedIndex)
 end)
 
 local function sendDoctorAlert()
