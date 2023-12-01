@@ -142,10 +142,12 @@ local function respawn(src)
 		end
 	end
 
-	if not checkIn(src, src, closestHospital) then
-		lib.print.error(src, 'unable to check-in at hospital. Likely due to no available beds.')
+	local bedIndex = getOpenBed(closestHospital)
+	if not bedIndex then
+		exports.qbx_core:Notify(src, Lang:t('error.beds_taken'), 'error')
 		return
 	end
+	TriggerClientEvent('qbx_ambulancejob:client:checkedIn', src, closestHospital, bedIndex)
 
 	if config.wipeInvOnRespawn then
 		wipeInventory(player)
