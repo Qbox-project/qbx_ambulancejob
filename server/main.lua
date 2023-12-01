@@ -150,6 +150,12 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	TriggerClientEvent('hospital:client:Revive', patient.PlayerData.source)
 end)
 
+---@param playerId number
+RegisterNetEvent('hospital:server:putPlayerInBed', function(playerId, hospitalName, bedIndex)
+	if GetInvokingResource() then return end
+	TriggerClientEvent('qbx_ambulancejob:client:putPlayerInBed', playerId, hospitalName, bedIndex)
+end)
+
 local function sendDoctorAlert()
 	if doctorCalled then return end
 	doctorCalled = true
