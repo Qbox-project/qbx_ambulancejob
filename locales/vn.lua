@@ -71,6 +71,7 @@ local Translations = {
         check = 'Nhập viện',
         lie_bed = '[E] - Nằm xuống giường',
         bed = 'Lay in bed',
+        put_bed = 'Đặt công dân lên giường',
         bed_out = '[E] - Rời khỏi giường..',
         alert = 'Alert!'
     },

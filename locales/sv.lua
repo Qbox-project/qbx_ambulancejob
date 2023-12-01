@@ -72,6 +72,7 @@ local Translations = {
         check = 'Checka In',
         lie_bed = '~INPUT_CONTEXT~ - Ligg på sängen',
         bed = 'Ligg på sängen',
+        put_bed = 'Placera medborgaren i sängen',
         bed_out = '~INPUT_CONTEXT~ - Gå ur sängen..',
         alert = 'LARM!'
     },

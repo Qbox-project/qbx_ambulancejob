@@ -78,8 +78,8 @@ end
 ---Check status of nearest player and show treatment menu.
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:CheckStatus', function()
-    local player, distance = GetClosestPlayer()
-    if player == -1 or distance > 5.0 then
+    local player = GetClosestPlayer()
+    if not player then
         exports.qbx_core:Notify(Lang:t('error.no_player'), 'error')
         return
     end
@@ -119,8 +119,8 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
         return
     end
 
-    local player, distance = GetClosestPlayer()
-    if player == -1 or distance >= 5.0 then
+    local player = GetClosestPlayer()
+    if not player then
         exports.qbx_core:Notify(Lang:t('error.no_player'), 'error')
         return
     end
@@ -160,8 +160,8 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
         return
     end
 
-    local player, distance = GetClosestPlayer()
-    if player == -1 or distance >= 5.0 then
+    local player = GetClosestPlayer()
+    if not player then
         exports.qbx_core:Notify(Lang:t('error.no_player'), 'error')
         return
     end
@@ -219,7 +219,7 @@ local function checkGarageAction(vehicles, vehiclePlatePrefix, coords)
                 lib.hideTextUI()
                 checkVehicle = false
                 if cache.vehicle then
-                    exports.qbx_core:DeleteVehicle(cache.vehicle)
+                    DeleteEntity(cache.vehicle)
                 else
                     showGarageMenu(vehicles, vehiclePlatePrefix, coords)
                 end

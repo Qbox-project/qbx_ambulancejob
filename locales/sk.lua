@@ -71,6 +71,7 @@ local Translations = {
         check = 'Prihlásiť sa',
         lie_bed = '[E] - Ľahnutie na postel',
         bed = 'Lay in bed',
+        put_bed = 'Umiestnite občana do postele',
         bed_out = '[E] - Vstatie z postele..',
         alert = 'Alert!'
     },

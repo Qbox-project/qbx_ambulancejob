@@ -13,8 +13,8 @@ lib.callback.register('hospital:client:UseFirstAid', function()
         return
     end
         
-    local player, distance = GetClosestPlayer()
-    if player ~= -1 and distance < 1.5 then
+    local player = GetClosestPlayer()
+    if player then
         local playerId = GetPlayerServerId(player)
         TriggerServerEvent('hospital:server:UseFirstAid', playerId)
     end
