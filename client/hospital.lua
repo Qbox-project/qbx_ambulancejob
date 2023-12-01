@@ -82,6 +82,10 @@ RegisterNetEvent('qbx_ambulancejob:client:onPlayerRespawn', function(hospitalNam
     putPlayerInBed(hospitalName, bedIndex, true, true)
 end)
 
+RegisterNetEvent('qbx_ambulancejob:client:putPlayerInBed', function(hospitalName, bedIndex)
+    putPlayerInBed(hospitalName, bedIndex, false, true)
+end)
+
 ---Notifies doctors, and puts player in a hospital bed.
 local function checkIn(hospitalName)
     local canCheckIn = lib.callback.await('qbx_ambulancejob:server:canCheckIn', false, hospitalName)
@@ -127,7 +131,7 @@ if config.useTarget then
                     coords = hospital.checkIn,
                     size = vec3(2, 1, 2),
                     rotation = 18,
-                    debug = false,
+                    debug = config.debugPoly,
                     options = {
                         {
                             onSelect = function()
@@ -148,7 +152,7 @@ if config.useTarget then
                     coords = bed.coords.xyz,
                     size = vec3(1.7, 1.9, 2),
                     rotation = bed.coords.w,
-                    debug = false,
+                    debug = config.debugPoly,
                     options = {
                         {
                             onSelect = function()
@@ -156,6 +160,21 @@ if config.useTarget then
                             end,
                             icon = "fas fa-clipboard",
                             label = Lang:t('text.bed'),
+                            distance = 1.5,
+                        },
+                        {
+                            canInteract = function()
+                                return QBX.PlayerData.job.name == 'ambulance'
+                            end,
+                            onSelect = function()
+                                local player = GetClosestPlayer()
+                                if player then
+                                    local playerId = GetPlayerServerId(player)
+                                    TriggerServerEvent('hospital:server:putPlayerInBed', playerId, hospitalName, i)
+                                end
+                            end,
+                            icon = "fas fa-clipboard",
+                            label = Lang:t('text.put_bed'),
                             distance = 1.5,
                         }
                     }
@@ -192,7 +211,7 @@ else
                     coords = hospital.checkIn,
                     size = vec3(2, 1, 2),
                     rotation = 18,
-                    debug = false,
+                    debug = config.debugPoly,
                     onEnter = enterCheckInZone,
                     onExit = outCheckInZone,
                     inside = insideCheckInZone,
@@ -222,7 +241,7 @@ else
                     coords = bed.coords.xyz,
                     size = vec3(1.9, 2.1, 2),
                     rotation = bed.coords.w,
-                    debug = false,
+                    debug = config.debugPoly,
                     onEnter = enterBedZone,
                     onExit = outBedZone,
                     inside = insideBedZone,

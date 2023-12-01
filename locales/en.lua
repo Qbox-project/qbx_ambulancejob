@@ -72,6 +72,7 @@ local Translations = {
         check = 'Check In',
         lie_bed = '[E] - To lay in bed',
         bed = 'Lay in bed',
+        put_bed = 'Place citizen in bed',
         bed_out = '[E] - To get out of bed..',
         alert = 'Alert!'
     },

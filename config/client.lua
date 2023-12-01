@@ -1,5 +1,6 @@
 return {
     useTarget = false,
+    debugPoly = false,
     minForCheckIn = 2, -- Minimum number of people with the ambulance job to prevent the check-in system from being used
     painkillerInterval = 60, -- Time in minutes that painkillers last for
     checkInHealTime = 20, -- Time in seconds that it takes to be healed from the check-in system
