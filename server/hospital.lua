@@ -49,6 +49,12 @@ RegisterNetEvent('qbx_ambulancejob:server:playerLeftBed', function(hospitalName,
 	hospitalBedsTaken[hospitalName][bedIndex] = false
 end)
 
+---@param playerId number
+RegisterNetEvent('hospital:server:putPlayerInBed', function(playerId, hospitalName, bedIndex)
+	if GetInvokingResource() then return end
+	TriggerClientEvent('qbx_ambulancejob:client:putPlayerInBed', playerId, hospitalName, bedIndex)
+end)
+
 lib.callback.register('qbx_ambulancejob:server:isBedTaken', function(_, hospitalName, bedIndex)
 	return hospitalBedsTaken[hospitalName][bedIndex]
 end)
@@ -64,9 +70,62 @@ lib.callback.register('qbx_ambulancejob:server:spawnVehicle', function(source, v
 	return netId
 end)
 
+local function sendDoctorAlert()
+	if doctorCalled then return end
+	doctorCalled = true
+	local _, doctors = exports.qbx_core:GetDutyCountType('ems')
+	for i = 1, #doctors do
+		local doctor = doctors[i]
+		TriggerClientEvent('ox_lib:notify', doctor, { description = Lang:t('info.dr_needed'), type = 'inform' })
+	end
+
+	SetTimeout(config.doctorCallCooldown * 60000, function()
+		doctorCalled = false
+	end)
+end
+
+local function canCheckIn(source, hospitalName)
+	local numDoctors = exports.qbx_core:GetDutyCountType('ems')
+	if numDoctors >= config.minForCheckIn then
+		TriggerClientEvent('ox_lib:notify', source, { description = Lang:t('info.dr_alert'), type = 'inform' })
+		sendDoctorAlert()
+		return false
+	end
+
+	if not triggerEventHooks('checkIn', {
+		source = source,
+		hospitalName = hospitalName,
+	}) then return false end
+
+	return true
+end
+
+lib.callback.register('qbx_ambulancejob:server:canCheckIn', canCheckIn)
+
+---Sends the patient to an open bed within the hospital
+---@param src number the player doing the checking in
+---@param patientSrc number the player being checked in
+---@param hospitalName string name of the hospital matching the config where player should be placed
+local function checkIn(src, patientSrc, hospitalName)
+	if not canCheckIn(patientSrc, hospitalName) then return false end
+
+	local bedIndex = getOpenBed(hospitalName)
+	if not bedIndex then
+		exports.qbx_core:Notify(src, Lang:t('error.beds_taken'), 'error')
+		return false
+	end
+
+	TriggerClientEvent('qbx_ambulancejob:client:checkedIn', patientSrc, hospitalName, bedIndex)
+	return true
+end
+
+lib.callback.register('qbx_ambulancejob:server:checkIn', checkIn)
+
+exports('CheckIn', checkIn)
+
 local function respawn(src)
 	local player = exports.qbx_core:GetPlayer(src)
-	local closestHospital = nil
+	local closestHospital
 	if player.PlayerData.metadata.injail > 0 then
 		closestHospital = "jail"
 	else
@@ -85,53 +144,14 @@ local function respawn(src)
 
 	local bedIndex = getOpenBed(closestHospital)
 	if not bedIndex then
-		---TODO: handle hospital being out of beds. Could send them to backup hospital or notify to wait.
+		exports.qbx_core:Notify(src, Lang:t('error.beds_taken'), 'error')
 		return
 	end
+	TriggerClientEvent('qbx_ambulancejob:client:checkedIn', src, closestHospital, bedIndex)
 
 	if config.wipeInvOnRespawn then
 		wipeInventory(player)
 	end
-	TriggerClientEvent('qbx_ambulancejob:client:onPlayerRespawn', src, closestHospital, bedIndex)
 end
 
-AddEventHandler('qbx_medical:server:playerRespawned', function(source)
-	respawn(source)
-end)
-
-
-local function sendDoctorAlert()
-	if doctorCalled then return end
-	doctorCalled = true
-	local _, doctors = exports.qbx_core:GetDutyCountType('ems')
-	for i = 1, #doctors do
-		local doctor = doctors[i]
-		TriggerClientEvent('ox_lib:notify', doctor, { description = Lang:t('info.dr_needed'), type = 'inform' })
-	end
-
-	SetTimeout(config.doctorCallCooldown * 60000, function()
-		doctorCalled = false
-	end)
-end
-
-lib.callback.register('qbx_ambulancejob:server:canCheckIn', function(source, hospitalName)
-	local numDoctors = exports.qbx_core:GetDutyCountType('ems')
-	if numDoctors >= config.minForCheckIn then
-		TriggerClientEvent('ox_lib:notify', source, { description = Lang:t('info.dr_alert'), type = 'inform' })
-		sendDoctorAlert()
-		return false
-	end
-
-	if not triggerEventHooks('checkIn', {
-		source = source,
-		hospitalName = hospitalName,
-	}) then return false end
-
-	return true
-end)
-
----@param playerId number
-RegisterNetEvent('hospital:server:putPlayerInBed', function(playerId, hospitalName, bedIndex)
-	if GetInvokingResource() then return end
-	TriggerClientEvent('qbx_ambulancejob:client:putPlayerInBed', playerId, hospitalName, bedIndex)
-end)
+AddEventHandler('qbx_medical:server:playerRespawned', respawn)
