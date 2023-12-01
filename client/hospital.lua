@@ -182,7 +182,7 @@ else
             if hospital.checkIn then
                 local function enterCheckInZone()
                     local numDoctors = lib.callback.await('qbx_ambulancejob:server:getNumDoctors')
-                    if numDoctors >= config.minForCheckIn then
+                    if numDoctors >= sharedConfig.minForCheckIn then
                         lib.showTextUI(Lang:t('text.call_doc'))
                     else
                         lib.showTextUI(Lang:t('text.check_in'))
