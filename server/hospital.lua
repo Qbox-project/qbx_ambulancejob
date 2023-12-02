@@ -86,7 +86,7 @@ end
 
 local function canCheckIn(source, hospitalName)
 	local numDoctors = exports.qbx_core:GetDutyCountType('ems')
-	if numDoctors >= config.minForCheckIn then
+	if numDoctors >= sharedConfig.minForCheckIn then
 		TriggerClientEvent('ox_lib:notify', source, { description = Lang:t('info.dr_alert'), type = 'inform' })
 		sendDoctorAlert()
 		return false

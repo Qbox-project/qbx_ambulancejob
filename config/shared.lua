@@ -1,5 +1,6 @@
 return {
     checkInCost = 2000, -- Price for using the hospital check-in system
+    minForCheckIn = 2, -- Minimum number of people with the ambulance job to prevent the check-in system from being used
 
     locations = { -- Various interaction points
         duty = {
