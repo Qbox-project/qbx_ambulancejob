@@ -20,7 +20,7 @@ local function takeOutVehicle(data)
     local settings = config.vehicleSettings[data.vehicleName]
     if not settings then return end
 
-    if settings.extra then
+    if settings.extras then
         SetVehicleExtras(veh, settings.extras)
     end
 
