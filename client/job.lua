@@ -114,7 +114,7 @@ end)
 ---Use first aid on nearest player to revive them.
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:RevivePlayer', function()
-    if not exports.qbx_core:HasItem('firstaid') then
+    if not HasItem('firstaid') then
         exports.qbx_core:Notify(Lang:t('error.no_firstaid'), 'error')
         return
     end
@@ -155,7 +155,7 @@ end)
 ---Use bandage on nearest player to treat their wounds.
 ---Intended to be invoked by client or server.
 RegisterNetEvent('hospital:client:TreatWounds', function()
-    if not exports.qbx_core:HasItem('bandage') then
+    if not HasItem('bandage') then
         exports.qbx_core:Notify(Lang:t('error.no_bandage'), 'error')
         return
     end
@@ -300,7 +300,7 @@ CreateThread(function()
     end
 
     for _, coords in pairs(sharedConfig.locations.helicopter) do
-        createGarage(config.authorizedHelicopters, Lang:t('info.heli_plate'), coords)
+        createGarage(config.authorizedHelicopter, Lang:t('info.heli_plate'), coords)
     end
 end)
 
