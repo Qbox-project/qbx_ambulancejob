@@ -49,7 +49,7 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	if not patient then return end
 	player.Functions.RemoveItem('firstaid', 1)
 	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, exports.ox_inventory:Items()['firstaid'], "remove")
-	TriggerClientEvent('hospital:client:Revive', patient.PlayerData.source)
+	TriggerClientEvent('qbx_medical:client:playerRevived', patient.PlayerData.source)
 end)
 
 ---@param targetId number
