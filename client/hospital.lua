@@ -8,44 +8,42 @@ local bedIndexOccupying = nil
 
 ---Teleports the player to lie down in bed and sets the player's camera.
 local function setBedCam()
-    local player = cache.ped
-
     DoScreenFadeOut(1000)
 
     while not IsScreenFadedOut() do
         Wait(100)
     end
 
-    if IsPedDeadOrDying(player) then
-        local pos = GetEntityCoords(player, true)
-        NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(player), true, false)
+    if IsPedDeadOrDying(cache.ped) then
+        local pos = GetEntityCoords(cache.ped, true)
+        NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(cache.ped), true, false)
     end
 
     bedObject = GetClosestObjectOfType(bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z, 1.0, bedOccupyingData.model, false, false, false)
     FreezeEntityPosition(bedObject, true)
 
-    SetEntityCoords(player, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02)
+    SetEntityCoords(cache.ped, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02)
     Wait(500)
-    FreezeEntityPosition(player, true)
+    FreezeEntityPosition(cache.ped, true)
 
     lib.requestAnimDict(InBedDict)
 
-    TaskPlayAnim(player, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
-    SetEntityHeading(player, bedOccupyingData.coords.w)
+    TaskPlayAnim(cache.ped, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
+    SetEntityHeading(cache.ped, bedOccupyingData.coords.w)
 
-    cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
+    cam = CreateCam('DEFAULT_SCRIPTED_CAMERA', true)
     SetCamActive(cam, true)
     RenderScriptCams(true, false, 1, true, true)
-    AttachCamToPedBone(cam, player, 31085, 0, 1.0, 1.0, true)
+    AttachCamToPedBone(cam, cache.ped, 31085, 0, 1.0, 1.0, true)
     SetCamFov(cam, 90.0)
-    local heading = GetEntityHeading(player)
+    local heading = GetEntityHeading(cache.ped)
     heading = (heading > 180) and heading - 180 or heading + 180
     SetCamRot(cam, -45.0, 0.0, heading, 2)
 
     DoScreenFadeIn(1000)
 
     Wait(1000)
-    FreezeEntityPosition(player, true)
+    FreezeEntityPosition(cache.ped, true)
 end
 
 local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
@@ -70,7 +68,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
         if isRevive then
             exports.qbx_core:Notify(Lang:t('success.being_helped'), 'success')
             Wait(config.aiHealTimer * 1000)
-            TriggerEvent("hospital:client:Revive")
+            TriggerEvent('hospital:client:Revive')
         else
             CanLeaveBed = true
         end
@@ -120,7 +118,7 @@ if config.useTarget then
         for hospitalName, hospital in pairs(sharedConfig.locations.hospitals) do
             if hospital.checkIn then
                 exports.ox_target:addBoxZone({
-                    name = hospitalName.."_checkin",
+                    name = hospitalName..'_checkin',
                     coords = hospital.checkIn,
                     size = vec3(2, 1, 2),
                     rotation = 18,
@@ -130,7 +128,7 @@ if config.useTarget then
                             onSelect = function()
                                 checkIn(hospitalName)
                             end,
-                            icon = "fas fa-clipboard",
+                            icon = 'fas fa-clipboard',
                             label = Lang:t('text.check'),
                             distance = 1.5,
                         }
@@ -141,7 +139,7 @@ if config.useTarget then
             for i = 1, #hospital.beds do
                 local bed = hospital.beds[i]
                 exports.ox_target:addBoxZone({
-                    name = hospitalName.."_bed_"..i,
+                    name = hospitalName..'_bed_'..i,
                     coords = bed.coords.xyz,
                     size = vec3(1.7, 1.9, 2),
                     rotation = bed.coords.w,
@@ -151,7 +149,7 @@ if config.useTarget then
                             onSelect = function()
                                 putPlayerInBed(hospitalName, i, false)
                             end,
-                            icon = "fas fa-clipboard",
+                            icon = 'fas fa-clipboard',
                             label = Lang:t('text.bed'),
                             distance = 1.5,
                         },
@@ -166,7 +164,7 @@ if config.useTarget then
                                     TriggerServerEvent('hospital:server:putPlayerInBed', playerId, hospitalName, i)
                                 end
                             end,
-                            icon = "fas fa-clipboard",
+                            icon = 'fas fa-clipboard',
                             label = Lang:t('text.put_bed'),
                             distance = 1.5,
                         }
@@ -210,7 +208,7 @@ else
                     inside = insideCheckInZone,
                 })
             end
-            
+
             for i = 1, #hospital.beds do
                 local bed = hospital.beds[i]
                 local function enterBedZone()
@@ -244,19 +242,15 @@ else
     end)
 end
 
----plays animation to get out of bed and resets variables
+---Plays animation to get out of bed and resets variables
 local function leaveBed()
-    local ped = cache.ped
-    local getOutDict = 'switch@franklin@bed'
-    local getOutAnim = 'sleep_getup_rubeyes'
-
-    lib.requestAnimDict(getOutDict)
-    FreezeEntityPosition(ped, false)
-    SetEntityInvincible(ped, false)
-    SetEntityHeading(ped, bedOccupyingData.coords.w + 90)
-    TaskPlayAnim(ped, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, false, false, false)
+    lib.requestAnimDict('switch@franklin@bed')
+    FreezeEntityPosition(cache.ped, false)
+    SetEntityInvincible(cache.ped, false)
+    SetEntityHeading(cache.ped, bedOccupyingData.coords.w + 90)
+    TaskPlayAnim(cache.ped, 'switch@franklin@bed', 'sleep_getup_rubeyes', 100.0, 1.0, -1, 8, -1, false, false, false)
     Wait(4000)
-    ClearPedTasks(ped)
+    ClearPedTasks(cache.ped)
     TriggerServerEvent('qbx_ambulancejob:server:playerLeftBed', hospitalOccupying, bedIndexOccupying)
     FreezeEntityPosition(bedObject, true)
     RenderScriptCams(false, true, 200, true, true)
@@ -270,10 +264,10 @@ local function leaveBed()
     exports.qbx_medical:EnableDamageEffects()
 
     if QBX.PlayerData.metadata.injail <= 0 then return end
-    TriggerEvent("prison:client:Enter", QBX.PlayerData.metadata.injail)
+    TriggerEvent('prison:client:Enter', QBX.PlayerData.metadata.injail)
 end
 
----shows player option to press key to leave bed when available.
+---Shows player option to press key to leave bed when available.
 CreateThread(function()
     while true do
         if IsInHospitalBed and CanLeaveBed then
@@ -289,7 +283,7 @@ CreateThread(function()
     end
 end)
 
----reset player settings that the server is storing
+---Reset player settings that the server is storing
 local function onPlayerUnloaded()
     if bedIndexOccupying then
         TriggerServerEvent('qbx_ambulancejob:server:playerLeftBed', hospitalOccupying, bedIndexOccupying)
@@ -299,6 +293,6 @@ end
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', onPlayerUnloaded)
 
 AddEventHandler('onResourceStop', function(resourceName)
-    if GetCurrentResourceName() ~= resourceName then return end
+    if cache.resource ~= resourceName then return end
     onPlayerUnloaded()
 end)

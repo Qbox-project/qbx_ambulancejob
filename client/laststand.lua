@@ -6,13 +6,13 @@ AddEventHandler('hospital:client:SetEscortingState', function(bool)
     isEscorting = bool
 end)
 
----use first aid pack on nearest player.
+---Use first aid pack on nearest player.
 lib.callback.register('hospital:client:UseFirstAid', function()
     if isEscorting then
         exports.qbx_core:Notify(Lang:t('error.impossible'), 'error')
         return
     end
-        
+
     local player = GetClosestPlayer()
     if player then
         local playerId = GetPlayerServerId(player)
@@ -27,7 +27,6 @@ end)
 ---@param targetId number playerId
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     if GetInvokingResource() then return end
-    local ped = cache.ped
     if lib.progressCircle({
         duration = math.random(30000, 60000),
         position = 'bottom',
@@ -46,11 +45,11 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
         },
     })
     then
-        ClearPedTasks(ped)
+        ClearPedTasks(cache.ped)
         exports.qbx_core:Notify(Lang:t('success.revived'), 'success')
-        TriggerServerEvent("hospital:server:RevivePlayer", targetId)
+        TriggerServerEvent('hospital:server:RevivePlayer', targetId)
     else
-        ClearPedTasks(ped)
+        ClearPedTasks(cache.ped)
         exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
     end
 end)
