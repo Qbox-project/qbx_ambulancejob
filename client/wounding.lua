@@ -1,10 +1,8 @@
 local config = require 'config.client'
 local painkillerAmount = 0
-
--- Events
+local ITEMS = exports.ox_inventory:Items()
 
 lib.callback.register('hospital:client:UseIfaks', function()
-    local ped = cache.ped
     if lib.progressCircle({
         duration = 3000,
         position = 'bottom',
@@ -18,15 +16,15 @@ lib.callback.register('hospital:client:UseIfaks', function()
             mouse = false,
         },
         anim = {
-            dict = "mp_suicide",
-            clip = "pill",
+            dict = 'mp_suicide',
+            clip = 'pill',
         },
     })
     then
-        StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerEvent("inventory:client:ItemBox", exports.ox_inventory:Items()["ifaks"], "remove")
+        StopAnimTask(cache.ped, 'mp_suicide', 'pill', 1.0)
+        TriggerEvent('inventory:client:ItemBox', ITEMS['ifaks'], 'remove')
         TriggerServerEvent('hud:server:RelieveStress', math.random(12, 24))
-        SetEntityHealth(ped, GetEntityHealth(ped) + 10)
+        SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) + 10)
         OnPainKillers = true
         exports.qbx_medical:DisableDamageEffects()
         if painkillerAmount < 3 then
@@ -37,14 +35,13 @@ lib.callback.register('hospital:client:UseIfaks', function()
         end
         return true
     else
-        StopAnimTask(ped, "mp_suicide", "pill", 1.0)
+        StopAnimTask(cache.ped, 'mp_suicide', 'pill', 1.0)
         exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
         return false
     end
 end)
 
 lib.callback.register('hospital:client:UseBandage', function()
-    local ped = cache.ped
     if lib.progressCircle({
         duration = 4000,
         position = 'bottom',
@@ -58,14 +55,14 @@ lib.callback.register('hospital:client:UseBandage', function()
             mouse = false,
         },
         anim = {
-            dict = "mp_suicide",
-            clip = "pill",
+            dict = 'mp_suicide',
+            clip = 'pill',
         },
     })
     then
-        StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        TriggerEvent("inventory:client:ItemBox", exports.ox_inventory:Items()["bandage"], "remove")
-        SetEntityHealth(ped, GetEntityHealth(ped) + 10)
+        StopAnimTask(cache.ped, 'anim@amb@business@weed@weed_inspecting_high_dry@', 'weed_inspecting_high_base_inspector', 1.0)
+        TriggerEvent('inventory:client:ItemBox', ITEMS['bandage'], 'remove')
+        SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) + 10)
         if math.random(1, 100) < 50 then
             exports.qbx_medical:removeBleed(1)
         end
@@ -74,14 +71,13 @@ lib.callback.register('hospital:client:UseBandage', function()
         end
         return true
     else
-        StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
+        StopAnimTask(cache.ped, 'anim@amb@business@weed@weed_inspecting_high_dry@', 'weed_inspecting_high_base_inspector', 1.0)
         exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
         return false
     end
 end)
 
 lib.callback.register('hospital:client:UsePainkillers', function()
-    local ped = cache.ped
     if lib.progressCircle({
         duration = 3000,
         position = 'bottom',
@@ -95,13 +91,13 @@ lib.callback.register('hospital:client:UsePainkillers', function()
             mouse = false,
         },
         anim = {
-            dict = "mp_suicide",
-            clip = "pill",
+            dict = 'mp_suicide',
+            clip = 'pill',
         },
     })
     then
-        StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerEvent("inventory:client:ItemBox", exports.ox_inventory:Items()["painkillers"], "remove")
+        StopAnimTask(cache.ped, 'mp_suicide', 'pill', 1.0)
+        TriggerEvent('inventory:client:ItemBox', ITEMS['painkillers'], 'remove')
         OnPainKillers = true
         exports.qbx_medical:DisableDamageEffects()
         if painkillerAmount < 3 then
@@ -109,7 +105,7 @@ lib.callback.register('hospital:client:UsePainkillers', function()
         end
         return true
     else
-        StopAnimTask(ped, "mp_suicide", "pill", 1.0)
+        StopAnimTask(cache.ped, 'mp_suicide', 'pill', 1.0)
         exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
         return false
     end

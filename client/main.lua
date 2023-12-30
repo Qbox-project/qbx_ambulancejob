@@ -1,16 +1,14 @@
 local sharedConfig = require 'config.shared'
-InBedDict = "anim@gangops@morgue@table@"
-InBedAnim = "body_search"
+InBedDict = 'anim@gangops@morgue@table@'
+InBedAnim = 'body_search'
 IsInHospitalBed = false
-HealAnimDict = "mini@cpr@char_a@cpr_str"
-HealAnim = "cpr_pumpchest"
+HealAnimDict = 'mini@cpr@char_a@cpr_str'
+HealAnim = 'cpr_pumpchest'
 EmsNotified = false
 CanLeaveBed = true
 OnPainKillers = false
 
--- Events
-
----notifies EMS of a injury at a location
+---Notifies EMS of a injury at a location
 ---@param coords vector3
 ---@param text string
 RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
@@ -19,7 +17,7 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
     exports.qbx_core:Notify({ title = Lang:t('text.alert'), description = text .. ' | ' .. street1name .. ' ' .. street2name, type = 'inform' })
-    PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
+    PlaySound(-1, 'Lose_1st', 'GTAO_FM_Events_Soundset', 0, 0, 1)
     local transG = 250
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
     local blip2 = AddBlipForCoord(coords.x, coords.y, coords.z)
@@ -55,18 +53,17 @@ end)
 ---Revives player, healing all injuries
 ---Intended to be called from client or server.
 RegisterNetEvent('hospital:client:Revive', function()
-    local ped = cache.ped
     if IsInHospitalBed then
         lib.requestAnimDict(InBedDict)
-        TaskPlayAnim(ped, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, 0, 0, 0)
-        SetEntityInvincible(ped, true)
+        TaskPlayAnim(cache.ped, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
+        SetEntityInvincible(cache.ped, true)
         CanLeaveBed = true
     end
 
     EmsNotified = false
 end)
 
----sends player phone email with hospital bill.
+---Sends player phone email with hospital bill.
 ---@param amount number
 RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
     if GetInvokingResource() then return end
@@ -82,9 +79,7 @@ RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
     end)
 end)
 
--- Threads
-
----sets blips for stations on map
+---Sets blips for stations on map
 CreateThread(function()
     for _, station in pairs(sharedConfig.locations.stations) do
         local blip = AddBlipForCoord(station.coords.x, station.coords.y, station.coords.z)
@@ -92,7 +87,7 @@ CreateThread(function()
         SetBlipAsShortRange(blip, true)
         SetBlipScale(blip, 0.8)
         SetBlipColour(blip, 25)
-        BeginTextCommandSetBlipName("STRING")
+        BeginTextCommandSetBlipName('STRING')
         AddTextComponentString(station.label)
         EndTextCommandSetBlipName(blip)
     end

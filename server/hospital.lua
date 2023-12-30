@@ -31,8 +31,8 @@ end)
 
 ---@param player Player
 local function billPlayer(player)
-	player.Functions.RemoveMoney("bank", sharedConfig.checkInCost, "respawned-at-hospital")
-	config.depositSociety("ambulance", sharedConfig.checkInCost)
+	player.Functions.RemoveMoney('bank', sharedConfig.checkInCost, 'respawned-at-hospital')
+	config.depositSociety('ambulance', sharedConfig.checkInCost)
 	TriggerClientEvent('hospital:client:SendBillEmail', player.PlayerData.source, sharedConfig.checkInCost)
 end
 
@@ -62,7 +62,7 @@ end)
 ---@param player Player
 local function wipeInventory(player)
 	player.Functions.ClearInventory()
-	TriggerClientEvent('ox_lib:notify', player.PlayerData.source, { description = Lang:t('error.possessions_taken'), type = 'error' })
+	exports.qbx_core:Notify(player.PlayerData.source, Lang:t('error.possessions_taken'), 'error')
 end
 
 lib.callback.register('qbx_ambulancejob:server:spawnVehicle', function(source, vehicleName, vehicleCoords)
@@ -76,7 +76,7 @@ local function sendDoctorAlert()
 	local _, doctors = exports.qbx_core:GetDutyCountType('ems')
 	for i = 1, #doctors do
 		local doctor = doctors[i]
-		TriggerClientEvent('ox_lib:notify', doctor, { description = Lang:t('info.dr_needed'), type = 'inform' })
+		exports.qbx_core:Notify(doctor, Lang:t('info.dr_needed'), 'inform')
 	end
 
 	SetTimeout(config.doctorCallCooldown * 60000, function()
@@ -87,7 +87,7 @@ end
 local function canCheckIn(source, hospitalName)
 	local numDoctors = exports.qbx_core:GetDutyCountType('ems')
 	if numDoctors >= sharedConfig.minForCheckIn then
-		TriggerClientEvent('ox_lib:notify', source, { description = Lang:t('info.dr_alert'), type = 'inform' })
+		exports.qbx_core:Notify(source, Lang:t('info.dr_alert'), 'inform')
 		sendDoctorAlert()
 		return false
 	end
@@ -127,7 +127,7 @@ local function respawn(src)
 	local player = exports.qbx_core:GetPlayer(src)
 	local closestHospital
 	if player.PlayerData.metadata.injail > 0 then
-		closestHospital = "jail"
+		closestHospital = 'jail'
 	else
 		local coords = GetEntityCoords(GetPlayerPed(src))
 		local closest = nil

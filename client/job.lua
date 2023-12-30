@@ -14,14 +14,14 @@ local function takeOutVehicle(data)
     end
     local veh = NetworkGetEntityFromNetworkId(netId)
     SetVehicleNumberPlateText(veh, data.vehiclePlatePrefix .. tostring(math.random(1000, 9999)))
-    TriggerEvent("vehiclekeys:client:SetOwner", GetPlate(veh))
+    TriggerEvent('vehiclekeys:client:SetOwner', GetPlate(veh))
     SetVehicleEngineOn(veh, true, true, true)
 
     local settings = config.vehicleSettings[data.vehicleName]
     if not settings then return end
 
     if settings.extras then
-        SetVehicleExtras(veh, settings.extras)
+        SetVehicleExtra(veh, settings.extras)
     end
 
     if settings.livery then
@@ -29,7 +29,7 @@ local function takeOutVehicle(data)
     end
 end
 
----show the garage spawn menu
+---Show the garage spawn menu
 ---@param vehicles AuthorizedVehicles
 ---@param vehiclePlatePrefix string
 ---@param coords vector4
@@ -56,14 +56,14 @@ local function showGarageMenu(vehicles, vehiclePlatePrefix, coords)
     lib.showContext('ambulance_garage_context_menu')
 end
 
----show patient's treatment menu.
+---Show patient's treatment menu.
 ---@param status string[]
 local function showTreatmentMenu(status)
     local statusMenu = {}
     for i=1, #status do
         statusMenu[i] = {
             title = status[i],
-            event = "hospital:client:TreatWounds",
+            event = 'hospital:client:TreatWounds',
         }
     end
 
@@ -144,11 +144,11 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
         },
     })
     then
-        StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
+        StopAnimTask(cache.ped, HealAnimDict, 'exit', 1.0)
         exports.qbx_core:Notify(Lang:t('success.revived'), 'success')
-        TriggerServerEvent("hospital:server:RevivePlayer", GetPlayerServerId(player))
+        TriggerServerEvent('hospital:server:RevivePlayer', GetPlayerServerId(player))
     else
-        StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
+        StopAnimTask(cache.ped, HealAnimDict, 'exit', 1.0)
         exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
     end
 end)
@@ -186,11 +186,11 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
         },
     })
     then
-        StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
+        StopAnimTask(cache.ped, HealAnimDict, 'exit', 1.0)
         exports.qbx_core:Notify(Lang:t('success.helped_player'), 'success')
-        TriggerServerEvent("hospital:server:TreatWounds", GetPlayerServerId(player))
+        TriggerServerEvent('hospital:server:TreatWounds', GetPlayerServerId(player))
     else
-        StopAnimTask(cache.ped, HealAnimDict, "exit", 1.0)
+        StopAnimTask(cache.ped, HealAnimDict, 'exit', 1.0)
         exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
     end
 end)
@@ -198,18 +198,18 @@ end)
 ---Opens the hospital stash.
 local function openStash()
     if not QBX.PlayerData.job.onduty then return end
-    TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_" .. QBX.PlayerData.citizenid)
-    TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBX.PlayerData.citizenid)
+    TriggerServerEvent('inventory:server:OpenInventory', 'stash', 'ambulancestash_' .. QBX.PlayerData.citizenid)
+    TriggerEvent('inventory:client:SetCurrentStash', 'ambulancestash_' .. QBX.PlayerData.citizenid)
 end
 
 ---Opens the hospital armory.
 local function openArmory()
     if QBX.PlayerData.job.onduty then
-        TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", config.items)
+        TriggerServerEvent('inventory:server:OpenInventory', 'shop', 'hospital', config.items)
     end
 end
 
----while in the garage pressing a key triggers storing the current vehicle or opening spawn menu.
+---While in the garage pressing a key triggers storing the current vehicle or opening spawn menu.
 ---@param vehicles AuthorizedVehicles
 ---@param vehiclePlatePrefix string
 ---@param coords vector4
@@ -234,14 +234,13 @@ end
 ---Teleports the player with a fade in/out effect
 ---@param coords vector4
 local function teleportPlayerWithFade(coords)
-    local ped = cache.ped
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do
         Wait(10)
     end
 
-    SetEntityCoords(ped, coords.x, coords.y, coords.z, false, false, false, false)
-    SetEntityHeading(ped, coords.w)
+    SetEntityCoords(cache.ped, coords.x, coords.y, coords.z, false, false, false, false)
+    SetEntityHeading(cache.ped, coords.w)
 
     Wait(100)
 
@@ -260,18 +259,18 @@ end
 
 ---Toggles the on duty status of the player.
 local function toggleDuty()
-    TriggerServerEvent("QBCore:ToggleDuty")
-    TriggerServerEvent("police:server:UpdateBlips")
+    TriggerServerEvent('QBCore:ToggleDuty')
+    TriggerServerEvent('police:server:UpdateBlips')
 end
 
----creates a zone that lets players store and retrieve job vehicles
+---Creates a zone that lets players store and retrieve job vehicles
 ---@param vehicles AuthorizedVehicles
 ---@param vehiclePlatePrefix string
 ---@param coords vector4
 local function createGarage(vehicles, vehiclePlatePrefix, coords)
 
     local function inVehicleZone()
-        if QBX.PlayerData.job.name == "ambulance" and QBX.PlayerData.job.onduty then
+        if QBX.PlayerData.job.name == 'ambulance' and QBX.PlayerData.job.onduty then
             lib.showTextUI(Lang:t('text.veh_button'))
             checkGarageAction(vehicles, vehiclePlatePrefix, coords)
         else
@@ -311,92 +310,92 @@ if config.useTarget then
     CreateThread(function()
         for i = 1, #sharedConfig.locations.duty do
             exports.ox_target:addBoxZone({
-                name = "duty" .. i,
+                name = 'duty' .. i,
                 coords = sharedConfig.locations.duty[i],
                 size = vec3(1.5, 1, 2),
                 rotation = 71,
                 debug = config.debugPoly,
                 options = {
                     {
-                        type = "client",
+                        type = 'client',
                         onSelect = toggleDuty,
-                        icon = "fa fa-clipboard",
+                        icon = 'fa fa-clipboard',
                         label = Lang:t('text.duty'),
                         distance = 2,
-                        groups = "ambulance",
+                        groups = 'ambulance',
                     }
                 }
             })
         end
         for i = 1, #sharedConfig.locations.stash do
             exports.ox_target:addBoxZone({
-                name = "stash" .. i,
+                name = 'stash' .. i,
                 coords = sharedConfig.locations.stash[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
                 options = {
                     {
-                        type = "client",
+                        type = 'client',
                         onSelect = openStash,
-                        icon = "fa fa-clipboard",
+                        icon = 'fa fa-clipboard',
                         label = Lang:t('text.pstash'),
                         distance = 2,
-                        groups = "ambulance",
+                        groups = 'ambulance',
                     }
                 }
             })
         end
         for i = 1, #sharedConfig.locations.armory do
             exports.ox_target:addBoxZone({
-                name = "armory" .. i,
+                name = 'armory' .. i,
                 coords = sharedConfig.locations.armory[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
                 options = {
                     {
-                        type = "client",
+                        type = 'client',
                         onSelect = openArmory,
-                        icon = "fa fa-clipboard",
+                        icon = 'fa fa-clipboard',
                         label = Lang:t('text.armory'),
                         distance = 1.5,
-                        groups = "ambulance",
+                        groups = 'ambulance',
                     }
                 }
             })
         end
         exports.ox_target:addBoxZone({
-            name = "roof1",
+            name = 'roof1',
             coords = sharedConfig.locations.roof[1],
             size = vec3(1, 2, 2),
             rotation = -20,
             debug = config.debugPoly,
             options = {
                 {
-                    type = "client",
+                    type = 'client',
                     onSelect = teleportToMainElevator,
-                    icon = "fas fa-hand-point-down",
+                    icon = 'fas fa-hand-point-down',
                     label = Lang:t('text.el_main'),
                     distance = 1.5,
-                    groups = "ambulance",
+                    groups = 'ambulance',
                 }
             }
         })
         exports.ox_target:addBoxZone({
-            name = "main1",
+            name = 'main1',
             coords = sharedConfig.locations.main[1],
             size = vec3(2, 1, 2),
             rotation = -20,
             debug = config.debugPoly,
             options = {
                 {
-                    type = "client",
+                    type = 'client',
                     onSelect = teleportToRoofElevator,
-                    icon = "fas fa-hand-point-up",
+                    icon = 'fas fa-hand-point-up',
                     label = Lang:t('text.el_roof'),
                     distance = 1.5,
-                    groups = "ambulance",
+                    groups = 'ambulance',
                 }
             }
         })
@@ -441,7 +440,7 @@ else
             local function outStashZone()
                 lib.hideTextUI()
             end
-            
+
             local function insideStashZone()
                 OnKeyPress(openStash)
             end

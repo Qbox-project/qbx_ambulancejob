@@ -1,3 +1,5 @@
+local ITEMS = exports.ox_inventory:Items()
+
 ---@alias source number
 
 lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
@@ -33,11 +35,11 @@ RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	local src = source
 	local player = exports.qbx_core:GetPlayer(src)
 	local patient = exports.qbx_core:GetPlayer(playerId)
-	if player.PlayerData.job.name ~= "ambulance" or not patient then return end
+	if player.PlayerData.job.name ~= 'ambulance' or not patient then return end
 
 	player.Functions.RemoveItem('bandage', 1)
-	TriggerClientEvent('inventory:client:ItemBox', src, exports.ox_inventory:Items()['bandage'], "remove")
-	TriggerClientEvent("hospital:client:HealInjuries", patient.PlayerData.source, "full")
+	TriggerClientEvent('inventory:client:ItemBox', src, ITEMS['bandage'], 'remove')
+	TriggerClientEvent('hospital:client:HealInjuries', patient.PlayerData.source, 'full')
 end)
 
 ---@param playerId number
@@ -48,7 +50,7 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 
 	if not patient then return end
 	player.Functions.RemoveItem('firstaid', 1)
-	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, exports.ox_inventory:Items()['firstaid'], "remove")
+	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, ITEMS['firstaid'], 'remove')
 	TriggerClientEvent('qbx_medical:client:playerRevived', patient.PlayerData.source)
 end)
 
@@ -61,26 +63,22 @@ RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 
 	local canHelp = lib.callback.await('hospital:client:canHelp', targetId)
 	if not canHelp then
-		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.cant_help'), type = 'error' })
+		exports.qbx_core:Notify(src, Lang:t('error.cant_help'), 'error')
 		return
 	end
 
 	TriggerClientEvent('hospital:client:HelpPerson', src, targetId)
 end)
 
--- Callbacks
-
 lib.callback.register('qbx_ambulancejob:server:getNumDoctors', function()
 	local count = exports.qbx_core:GetDutyCountType('ems')
 	return count
 end)
 
--- Commands
-
 lib.addCommand('911e', {
     help = Lang:t('info.ems_report'),
     params = {
-        { name = 'message', help = Lang:t('info.message_sent'), type = 'string', optional = true},
+        {name = 'message', help = Lang:t('info.message_sent'), type = 'string', optional = true},
     }
 }, function(source, args)
 	local message = args.message or Lang:t('info.civ_call')
@@ -98,8 +96,8 @@ end)
 ---@param event string
 local function triggerEventOnEmsPlayer(src, event)
 	local player = exports.qbx_core:GetPlayer(src)
-	if player.PlayerData.job.name ~= "ambulance" then
-		TriggerClientEvent('ox_lib:notify', src, { description = Lang:t('error.not_ems'), type = 'error' })
+	if player.PlayerData.job.name ~= 'ambulance' then
+		exports.qbx_core:Notify(src, Lang:t('error.not_ems'), 'error')
 		return
 	end
 
@@ -136,19 +134,19 @@ local function triggerItemEventOnPlayer(src, item, event)
 	player.Functions.RemoveItem(item.name, 1)
 end
 
-exports.qbx_core:CreateUseableItem("ifaks", function(source, item)
+exports.qbx_core:CreateUseableItem('ifaks', function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseIfaks')
 end)
 
-exports.qbx_core:CreateUseableItem("bandage", function(source, item)
+exports.qbx_core:CreateUseableItem('bandage', function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseBandage')
 end)
 
-exports.qbx_core:CreateUseableItem("painkillers", function(source, item)
+exports.qbx_core:CreateUseableItem('painkillers', function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UsePainkillers')
 end)
 
-exports.qbx_core:CreateUseableItem("firstaid", function(source, item)
+exports.qbx_core:CreateUseableItem('firstaid', function(source, item)
 	triggerItemEventOnPlayer(source, item, 'hospital:client:UseFirstAid')
 end)
 
