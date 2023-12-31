@@ -128,7 +128,7 @@ local function triggerItemEventOnPlayer(src, item, event)
 	if player.Functions.GetItemByName(item.name) == nil then return end
 	local removeItem = lib.callback.await(event, src)
 	if not removeItem then return end
-	exports.ox_inventory:RemoveItem(src, item.nam, 1)
+	exports.ox_inventory:RemoveItem(src, item.name, 1)
 end
 
 exports.qbx_core:CreateUseableItem('ifaks', function(source, item)
