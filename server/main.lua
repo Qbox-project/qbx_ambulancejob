@@ -1,5 +1,3 @@
-local ITEMS = exports.ox_inventory:Items()
-
 ---@alias source number
 
 lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
