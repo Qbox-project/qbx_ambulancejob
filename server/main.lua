@@ -1,5 +1,3 @@
-local ITEMS = exports.ox_inventory:Items()
-
 ---@alias source number
 
 lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
@@ -37,8 +35,7 @@ RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	local patient = exports.qbx_core:GetPlayer(playerId)
 	if player.PlayerData.job.name ~= 'ambulance' or not patient then return end
 
-	player.Functions.RemoveItem('bandage', 1)
-	TriggerClientEvent('inventory:client:ItemBox', src, ITEMS['bandage'], 'remove')
+	exports.ox_inventory:RemoveItem(src, 'bandage', 1)
 	TriggerClientEvent('hospital:client:HealInjuries', patient.PlayerData.source, 'full')
 end)
 
@@ -49,8 +46,8 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	local patient = exports.qbx_core:GetPlayer(playerId)
 
 	if not patient then return end
-	player.Functions.RemoveItem('firstaid', 1)
-	TriggerClientEvent('inventory:client:ItemBox', player.PlayerData.source, ITEMS['firstaid'], 'remove')
+
+	exports.ox_inventory:RemoveItem(player.PlayerData.source, 'firstaid', 1)
 	TriggerClientEvent('qbx_medical:client:playerRevived', patient.PlayerData.source)
 end)
 
@@ -131,7 +128,7 @@ local function triggerItemEventOnPlayer(src, item, event)
 	if player.Functions.GetItemByName(item.name) == nil then return end
 	local removeItem = lib.callback.await(event, src)
 	if not removeItem then return end
-	player.Functions.RemoveItem(item.name, 1)
+	exports.ox_inventory:RemoveItem(src, item.name, 1)
 end
 
 exports.qbx_core:CreateUseableItem('ifaks', function(source, item)
