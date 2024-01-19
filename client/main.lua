@@ -56,7 +56,7 @@ RegisterNetEvent('hospital:client:Revive', function()
     if IsInHospitalBed then
         lib.requestAnimDict(InBedDict)
         TaskPlayAnim(cache.ped, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
-        SetEntityInvincible(cache.ped, true)
+        TriggerEvent('qbx_medical:client:playerRevived')
         CanLeaveBed = true
     end
 
