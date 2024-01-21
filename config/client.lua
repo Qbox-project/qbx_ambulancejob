@@ -32,7 +32,7 @@ return {
     },
 
     ---@type AuthorizedVehicles for helicopters
-    authorizedHelicopter = {
+    authorizedHelicopters = {
         [0] = { -- Grade 0
             ['polmav'] = 'Helicopter',
         },
