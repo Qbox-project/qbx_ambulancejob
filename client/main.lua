@@ -23,7 +23,7 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local transG = 250
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
     local blip2 = AddBlipForCoord(coords.x, coords.y, coords.z)
-    local blipText = locale('info.ems_alert', { text = text })
+    local blipText = locale('info.ems_alert', text)
     SetBlipSprite(blip, 153)
     SetBlipSprite(blip2, 161)
     SetBlipColour(blip, 1)
@@ -75,7 +75,7 @@ RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
         TriggerServerEvent('qb-phone:server:sendNewMail', {
             sender = locale('mail.sender'),
             subject = locale('mail.subject'),
-            message = locale('mail.message', { gender = gender, lastname = charInfo.lastname, costs = amount }),
+            message = locale('mail.message', gender, charInfo.lastname, amount),
             button = {}
         })
     end)

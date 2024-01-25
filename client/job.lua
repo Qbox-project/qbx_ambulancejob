@@ -104,7 +104,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { locale('info.status'), locale('info.is_status', { status = status.bleedState }) }
+            args = { locale('info.status'), locale('info.is_status', status.bleedState) }
         })
     end
 
