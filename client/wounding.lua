@@ -6,7 +6,7 @@ lib.callback.register('hospital:client:UseIfaks', function()
     if lib.progressCircle({
         duration = 3000,
         position = 'bottom',
-        label = Lang:t('progress.ifaks'),
+        label = locale('progress.ifaks'),
         useWhileDead = false,
         canCancel = true,
         disable = {
@@ -36,7 +36,7 @@ lib.callback.register('hospital:client:UseIfaks', function()
         return true
     else
         StopAnimTask(cache.ped, 'mp_suicide', 'pill', 1.0)
-        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
+        exports.qbx_core:Notify(locale('error.canceled'), 'error')
         return false
     end
 end)
@@ -45,7 +45,7 @@ lib.callback.register('hospital:client:UseBandage', function()
     if lib.progressCircle({
         duration = 4000,
         position = 'bottom',
-        label = Lang:t('progress.bandage'),
+        label = locale('progress.bandage'),
         useWhileDead = false,
         canCancel = true,
         disable = {
@@ -72,7 +72,7 @@ lib.callback.register('hospital:client:UseBandage', function()
         return true
     else
         StopAnimTask(cache.ped, 'anim@amb@business@weed@weed_inspecting_high_dry@', 'weed_inspecting_high_base_inspector', 1.0)
-        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
+        exports.qbx_core:Notify(locale('error.canceled'), 'error')
         return false
     end
 end)
@@ -81,7 +81,7 @@ lib.callback.register('hospital:client:UsePainkillers', function()
     if lib.progressCircle({
         duration = 3000,
         position = 'bottom',
-        label = Lang:t('progress.painkillers'),
+        label = locale('progress.painkillers'),
         useWhileDead = false,
         canCancel = true,
         disable = {
@@ -106,7 +106,7 @@ lib.callback.register('hospital:client:UsePainkillers', function()
         return true
     else
         StopAnimTask(cache.ped, 'mp_suicide', 'pill', 1.0)
-        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
+        exports.qbx_core:Notify(locale('error.canceled'), 'error')
         return false
     end
 end)

@@ -50,7 +50,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     if IsInHospitalBed then return end
     if not skipOpenCheck then
         if lib.callback.await('qbx_ambulancejob:server:isBedTaken', false, hospitalName, bedIndex) then
-            exports.qbx_core:Notify(Lang:t('error.beds_taken'), 'error')
+            exports.qbx_core:Notify(locale('error.beds_taken'), 'error')
             return
         end
     end
@@ -66,7 +66,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     CreateThread(function()
         Wait(5)
         if isRevive then
-            exports.qbx_core:Notify(Lang:t('success.being_helped'), 'success')
+            exports.qbx_core:Notify(locale('success.being_helped'), 'success')
             Wait(config.aiHealTimer * 1000)
             TriggerEvent('hospital:client:Revive')
         else
@@ -89,7 +89,7 @@ local function checkIn(hospitalName)
     if lib.progressCircle({
         duration = 2000,
         position = 'bottom',
-        label = Lang:t('progress.checking_in'),
+        label = locale('progress.checking_in'),
         useWhileDead = false,
         canCancel = true,
         disable = {
@@ -104,7 +104,7 @@ local function checkIn(hospitalName)
         lib.callback('qbx_ambulancejob:server:checkIn', false, nil, cache.serverId, hospitalName)
     else
         exports.scully_emotemenu:cancelEmote()
-        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
+        exports.qbx_core:Notify(locale('error.canceled'), 'error')
     end
 end
 
@@ -129,7 +129,7 @@ if config.useTarget then
                                 checkIn(hospitalName)
                             end,
                             icon = 'fas fa-clipboard',
-                            label = Lang:t('text.check'),
+                            label = locale('text.check'),
                             distance = 1.5,
                         }
                     }
@@ -150,7 +150,7 @@ if config.useTarget then
                                 putPlayerInBed(hospitalName, i, false)
                             end,
                             icon = 'fas fa-clipboard',
-                            label = Lang:t('text.bed'),
+                            label = locale('text.bed'),
                             distance = 1.5,
                         },
                         {
@@ -165,7 +165,7 @@ if config.useTarget then
                                 end
                             end,
                             icon = 'fas fa-clipboard',
-                            label = Lang:t('text.put_bed'),
+                            label = locale('text.put_bed'),
                             distance = 1.5,
                         }
                     }
@@ -181,9 +181,9 @@ else
                 local function enterCheckInZone()
                     local numDoctors = lib.callback.await('qbx_ambulancejob:server:getNumDoctors')
                     if numDoctors >= sharedConfig.minForCheckIn then
-                        lib.showTextUI(Lang:t('text.call_doc'))
+                        lib.showTextUI(locale('text.call_doc'))
                     else
-                        lib.showTextUI(Lang:t('text.check_in'))
+                        lib.showTextUI(locale('text.check_in'))
                     end
                 end
 
@@ -213,7 +213,7 @@ else
                 local bed = hospital.beds[i]
                 local function enterBedZone()
                     if not IsInHospitalBed then
-                        lib.showTextUI(Lang:t('text.lie_bed'))
+                        lib.showTextUI(locale('text.lie_bed'))
                     end
                 end
 
@@ -271,7 +271,7 @@ end
 CreateThread(function()
     while true do
         if IsInHospitalBed and CanLeaveBed then
-            lib.showTextUI(Lang:t('text.bed_out'))
+            lib.showTextUI(locale('text.bed_out'))
             while IsInHospitalBed and CanLeaveBed do
                 OnKeyPress(leaveBed)
                 Wait(0)

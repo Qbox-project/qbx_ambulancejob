@@ -8,6 +8,8 @@ EmsNotified = false
 CanLeaveBed = true
 OnPainKillers = false
 
+lib.locale()
+
 ---Notifies EMS of a injury at a location
 ---@param coords vector3
 ---@param text string
@@ -16,12 +18,12 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
-    exports.qbx_core:Notify({ title = Lang:t('text.alert'), description = text .. ' | ' .. street1name .. ' ' .. street2name, type = 'inform' })
+    exports.qbx_core:Notify({ title = locale('text.alert'), description = text .. ' | ' .. street1name .. ' ' .. street2name, type = 'inform' })
     PlaySound(-1, 'Lose_1st', 'GTAO_FM_Events_Soundset', 0, 0, 1)
     local transG = 250
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
     local blip2 = AddBlipForCoord(coords.x, coords.y, coords.z)
-    local blipText = Lang:t('info.ems_alert', { text = text })
+    local blipText = locale('info.ems_alert', { text = text })
     SetBlipSprite(blip, 153)
     SetBlipSprite(blip2, 161)
     SetBlipColour(blip, 1)
@@ -69,11 +71,11 @@ RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
     if GetInvokingResource() then return end
     SetTimeout(math.random(2500, 4000), function()
         local charInfo = QBX.PlayerData.charinfo
-        local gender = charInfo.gender == 1 and Lang:t('info.mrs') or Lang:t('info.mr')
+        local gender = charInfo.gender == 1 and locale('info.mrs') or locale('info.mr')
         TriggerServerEvent('qb-phone:server:sendNewMail', {
-            sender = Lang:t('mail.sender'),
-            subject = Lang:t('mail.subject'),
-            message = Lang:t('mail.message', { gender = gender, lastname = charInfo.lastname, costs = amount }),
+            sender = locale('mail.sender'),
+            subject = locale('mail.subject'),
+            message = locale('mail.message', { gender = gender, lastname = charInfo.lastname, costs = amount }),
             button = {}
         })
     end)
