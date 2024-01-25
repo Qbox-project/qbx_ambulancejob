@@ -339,7 +339,7 @@ if config.useTarget then
                         type = 'client',
                         onSelect = openStash,
                         icon = 'fa fa-clipboard',
-                        label = Lang:t('text.pstash'),
+                        label = locale('text.pstash'),
                         distance = 2,
                         groups = 'ambulance',
                     }
@@ -358,7 +358,7 @@ if config.useTarget then
                         type = 'client',
                         onSelect = openArmory,
                         icon = 'fa fa-clipboard',
-                        label = Lang:t('text.armory'),
+                        label = locale('text.armory'),
                         distance = 1.5,
                         groups = 'ambulance',
                     }
@@ -433,7 +433,7 @@ else
         for i = 1, #sharedConfig.locations.stash do
             local function enteredStashZone()
                 if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(Lang:t('text.pstash_button'))
+                    lib.showTextUI(locale('text.pstash_button'))
                 end
             end
 
@@ -459,7 +459,7 @@ else
         for i = 1, #sharedConfig.locations.armory do
             local function enteredArmoryZone()
                 if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(Lang:t('text.armory_button'))
+                    lib.showTextUI(locale('text.armory_button'))
                 end
             end
 
