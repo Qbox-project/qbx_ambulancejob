@@ -20,10 +20,10 @@
         "civ_died": "Civil muerto",
         "civ_down": "Civil caído",
         "civ_call": "Llamada de civil",
-        "respawn_txt": "REAPARECERAS EN ${deathtime} SEGUNDOS",
-        "respawn_revive": "MANTÉN [E] DURANTE ${holdtime} SEGUNDOS PARA SER REVIVIDO POR ${cost}",
-        "bleed_out": "TE DESANGRARAS EN ${time} SEGUNDOS",
-        "bleed_out_help": "TE DESANGRARAS EN ${time} SEGUNDOS, PUEDES SER AYUDADO",
+        "respawn_txt": "REAPARECERAS EN %s SEGUNDOS",
+        "respawn_revive": "MANTÉN [E] DURANTE %s SEGUNDOS PARA SER REVIVIDO POR %s",
+        "bleed_out": "TE DESANGRARAS EN %s SEGUNDOS",
+        "bleed_out_help": "TE DESANGRARAS EN %s SEGUNDOS, PUEDES SER AYUDADO",
         "request_help": "PULSA [G] PARA PEDIR AYUDA",
         "help_requested": "EMS EN CAMINO",
         "amb_plate":  "LSMD",
@@ -46,7 +46,7 @@
     "mail": {
         "sender": "Hospital Pillbox",
         "subject": "Costos de hospital",
-        "message": "Querido ${gender} ${lastname}, <br /><br />Le adjuntamos la factura con los costos de su última estancia en el hospital.<br />El costo total es de: <strong>${costs}</strong><br /><br />¡Le deseamos una pronta recuperación!"
+        "message": "Querido %s %s, <br /><br />Le adjuntamos la factura con los costos de su última estancia en el hospital.<br />El costo total es de: <strong>$%s</strong><br /><br />¡Le deseamos una pronta recuperación!"
     },
     "menu": {
         "amb_vehicles": "Vehículos EMS",

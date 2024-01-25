@@ -20,10 +20,10 @@
         "civ_died": "موت مواطن",
         "civ_down": "سقوط مواطن",
         "civ_call": "اتصال مواطن",
-        "respawn_txt": "~r~${deathtime}~w~ ﻝﻼﺧ ﺕﻮﻤﻟﺍ",
-        "respawn_revive": "[~r~Hold E~w~] ${holdtime}~w~ ﻥﻭﺎﺒﺳﺭ $~r~${cost}~s~",
-        "bleed_out": "ﺔﻴﻧﺎﺛ ~r~${time}~w~ :ﻲﻓ ﻑﺰﻨﺗ ﻑﻮﺳ",
-        "bleed_out_help": "ﻚﺗﺪﻋﺎﺴﻣ ﻦﻜﻤﻳ ﻭ ﺔﻴﻧﺎﺛ ~r~${time}~w~ :ﻲﻓ ﻑﺰﻨﺗ ﻑﻮﺳ",
+        "respawn_txt": "~r~%s~w~ ﻝﻼﺧ ﺕﻮﻤﻟﺍ",
+        "respawn_revive": "[~r~Hold E~w~] %s~w~ ﻥﻭﺎﺒﺳﺭ $~r~%s~s~",
+        "bleed_out": "ﺔﻴﻧﺎﺛ ~r~%s~w~ :ﻲﻓ ﻑﺰﻨﺗ ﻑﻮﺳ",
+        "bleed_out_help": "ﻚﺗﺪﻋﺎﺴﻣ ﻦﻜﻤﻳ ﻭ ﺔﻴﻧﺎﺛ ~r~%s~w~ :ﻲﻓ ﻑﺰﻨﺗ ﻑﻮﺳ",
         "request_help": "[~r~G~s~] - ﺓﺪﻋﺎﺴﻤﻟﺍ ﺐﻠﻄﻟ",
         "help_requested": "ﺓﺪﻋﺎﺴﻤﻟﺍ ﺐﻠﻃ ﻢﺗ",
         "amb_plate": "AMBU",
@@ -46,7 +46,7 @@
     "mail": {
         "sender": "مستشفى بيلبوكس",
         "subject": "تكاليف المستشفى",
-        "message": "مرحبا ${gender} ${lastname}, <br /><br />بموجب هذا تلقيت رسالة بريد إلكتروني بتكاليف الزيارة الأخيرة للمستشفى<br />أصبحت التكاليف النهائية: <strong>${costs}</strong><br /><br />نتمنى لك الشفاء العاجل"
+        "message": "مرحبا %s %s, <br /><br />بموجب هذا تلقيت رسالة بريد إلكتروني بتكاليف الزيارة الأخيرة للمستشفى<br />أصبحت التكاليف النهائية: <strong>$%s</strong><br /><br />نتمنى لك الشفاء العاجل"
     },
     "menu": {
         "amb_vehicles": "سيارات المستشفى",

@@ -20,10 +20,10 @@
         "civ_died": "Civile morto",
         "civ_down": "Civile ferito",
         "civ_call": "Richiesta di intervento",
-        "respawn_txt": "RESPAWN TRA: ~r~${deathtime}~s~ SECONDI",
-        "respawn_revive": "PREMI [~r~E~s~] PER ${holdtime} SECONDI PER IL RESPAWN AL COSTO DI $~r~${cost}~s~",
-        "bleed_out": "MORIRAI DISSANGUATO TRA: ~r~${time}~s~ SECONDI",
-        "bleed_out_help": "MORIRAI DISSANGUATO TRA: ~r~${time}~s~ SECONDI, PUOI ESSERE AIUTATO",
+        "respawn_txt": "RESPAWN TRA: ~r~%s~s~ SECONDI",
+        "respawn_revive": "PREMI [~r~E~s~] PER %s SECONDI PER IL RESPAWN AL COSTO DI $~r~%s~s~",
+        "bleed_out": "MORIRAI DISSANGUATO TRA: ~r~%s~s~ SECONDI",
+        "bleed_out_help": "MORIRAI DISSANGUATO TRA: ~r~%s~s~ SECONDI, PUOI ESSERE AIUTATO",
         "request_help": "PREMI [~r~G~s~] PER RICHIEDERE AIUTO",
         "help_requested": "IL PERSONALE EMS È STATO AVVISATO",
         "amb_plate":  "AMBU",
@@ -46,7 +46,7 @@
     "mail": {
         "sender": "Pillbox Hospital",
         "subject": "Spese ospedaliere",
-        "message": "Salve ${gender} ${lastname}, <br /><br />Con la presente hai ricevuto un'e-mail con i costi dell'ultima visita in ospedale.<br />I costi totali sono: <strong>${costs}</strong><br /><br />Le auguriamo una pronta guarigione!"
+        "message": "Salve %s %s, <br /><br />Con la presente hai ricevuto un'e-mail con i costi dell'ultima visita in ospedale.<br />I costi totali sono: <strong>$%s</strong><br /><br />Le auguriamo una pronta guarigione!"
     },
     "menu": {
         "amb_vehicles": "Veicoli EMS",

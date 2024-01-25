@@ -20,10 +20,10 @@
         "civ_died": "Civilian Died",
         "civ_down": "Civilian Down",
         "civ_call": "Civilian Call",
-        "respawn_txt": "RESPAWN IN: ~r~${deathtime}~s~ SECONDS",
-        "respawn_revive": "HOLD [~r~E~s~] FOR ${holdtime} SECONDS TO RESPAWN FOR $~r~${cost}~s~",
-        "bleed_out": "YOU WILL BLEED OUT IN: ~r~${time}~s~ SECONDS",
-        "bleed_out_help": "YOU WILL BLEED OUT IN: ~r~${time}~s~ SECONDS, YOU CAN BE HELPED",
+        "respawn_txt": "RESPAWN IN: ~r~%s~s~ SECONDS",
+        "respawn_revive": "HOLD [~r~E~s~] FOR %s SECONDS TO RESPAWN FOR $~r~%s~s~",
+        "bleed_out": "YOU WILL BLEED OUT IN: ~r~%s~s~ SECONDS",
+        "bleed_out_help": "YOU WILL BLEED OUT IN: ~r~%s~s~ SECONDS, YOU CAN BE HELPED",
         "request_help": "PRESS [~r~G~s~] TO REQUEST HELP",
         "help_requested": "EMS PERSONNEL HAVE BEEN NOTIFIED",
         "amb_plate": "AMBU",
@@ -47,7 +47,7 @@
     "mail": {
         "sender": "Pillbox Hospital",
         "subject": "Hospital Costs",
-        "message": "Dear ${gender} ${lastname}, <br /><br />Hereby you received an email with the costs of the last hospital visit.<br />The final costs have become: <strong>${costs}</strong><br /><br />We wish you a quick recovery!"
+        "message": "Dear %s %s, <br /><br />Hereby you received an email with the costs of the last hospital visit.<br />The final costs have become: <strong>$%s</strong><br /><br />We wish you a quick recovery!"
     },
     "menu": {
         "amb_vehicles": "Ambulance Vehicles",

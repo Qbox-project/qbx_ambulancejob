@@ -20,10 +20,10 @@
         "civ_died": "Công dân chết",
         "civ_down": "Công dân bị ngất",
         "civ_call": "Công dân gọi",
-        "respawn_txt": "CHỜ BÁC SĨ : ~r~${deathtime}~s~ GIÂY",
+        "respawn_txt": "CHỜ BÁC SĨ : ~r~%s~s~ GIÂY",
         "respawn_revive": "GIỮ [~r~E~s~] VỀ BỆNH VIỆN(MẤT HẾT ~r~ITEM~s~) or /115 [~r~ID~s~] GỌI BÁC SĨ",
-        "bleed_out": "BẠN SẼ BỊ MẤT MÁU TỚI CHẾT TRONG VÒNG: ~r~${time}~s~ GIÂY, /115 ĐỂ GỌI BÁC SĨ",
-        "bleed_out_help": "BẠN SẼ BỊ MẤT MÁU TỚI CHẾT TRONG VÒNG: ~r~${time}~s~ GIÂY, /115 ĐỂ GỌI BÁC SĨ",
+        "bleed_out": "BẠN SẼ BỊ MẤT MÁU TỚI CHẾT TRONG VÒNG: ~r~%s~s~ GIÂY, /115 ĐỂ GỌI BÁC SĨ",
+        "bleed_out_help": "BẠN SẼ BỊ MẤT MÁU TỚI CHẾT TRONG VÒNG: ~r~%s~s~ GIÂY, /115 ĐỂ GỌI BÁC SĨ",
         "request_help": "ẤN [~r~G~s~] or /911e ĐỂ GỬI YÊU CẦU TRỢ GIÚP",
         "help_requested": "BÁC SĨ ĐÃ NHẬN ĐƯỢC THÔNG BÁO",
         "amb_plate":  "AMBU",
@@ -46,7 +46,7 @@
     "mail": {
         "sender": "Bệnh Viện",
         "subject": "Thoanh toán",
-        "message": "Kính gửi ${gender} ${lastname}, <br /><br />Hereby Bạn đã nhận được một email với hóa dơn bệnh viện .<br />Hóa đơn bạn phải trả là: <strong>${costs}</strong><br /><br />Chúng tôi chúc bạn có sức khỏe dồi dào!"
+        "message": "Kính gửi %s %s, <br /><br />Hereby Bạn đã nhận được một email với hóa dơn bệnh viện .<br />Hóa đơn bạn phải trả là: <strong>$%s</strong><br /><br />Chúng tôi chúc bạn có sức khỏe dồi dào!"
     },
     "menu": {
         "amb_vehicles": "Xe cứu thương",

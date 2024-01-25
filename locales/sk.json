@@ -20,10 +20,10 @@
         "civ_died": "Civilista zomrel",
         "civ_down": "Civilista v bezvedomí",
         "civ_call": "Hovor od civilistu",
-        "respawn_txt": "RESPAWN O: ~r~${deathtime}~s~ SEKÚND",
-        "respawn_revive": "DRŽ [~r~E~s~] NA ${holdtime} SEKÚND, PRE RESPAWN ZA $~r~${cost}~s~",
-        "bleed_out": "VYKRVÁCAŠ O: ~r~${time}~s~ SEKÚND",
-        "bleed_out_help": "VYKRVÁCAŠ O: ~r~${time}~s~ SEKÚND, NIEKTO VÁM EŠTE MÔŽE POMÔCŤ",
+        "respawn_txt": "RESPAWN O: ~r~%s~s~ SEKÚND",
+        "respawn_revive": "DRŽ [~r~E~s~] NA %s SEKÚND, PRE RESPAWN ZA $~r~%s~s~",
+        "bleed_out": "VYKRVÁCAŠ O: ~r~%s~s~ SEKÚND",
+        "bleed_out_help": "VYKRVÁCAŠ O: ~r~%s~s~ SEKÚND, NIEKTO VÁM EŠTE MÔŽE POMÔCŤ",
         "request_help": "STLAČ [~r~G~s~] PRE POŽIADANIE O POMOC",
         "help_requested": "EMS PRESONÁL BOL UPOZORNENÝ",
         "amb_plate":  "AMBU",
@@ -46,7 +46,7 @@
     "mail": {
         "sender": "Nemocnica Pillbox",
         "subject": "Nemocničné náklady",
-        "message": "Vážený/á ${gender} ${lastname}, <br /><br />Dostali e-mail s nákladmi na poslednú návštevu nemocnice.<br />Konečné náklady: <strong>${costs}</strong><br /><br />Prajeme skoré uzdravenie!"
+        "message": "Vážený/á %s %s, <br /><br />Dostali e-mail s nákladmi na poslednú návštevu nemocnice.<br />Konečné náklady: <strong>$%s</strong><br /><br />Prajeme skoré uzdravenie!"
     },
     "menu": {
         "amb_vehicles": "Nemocničné vozidlá",

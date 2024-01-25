@@ -20,10 +20,10 @@
         "civ_died": "Zivilist verstorben",
         "civ_down": "Zivilist Down",
         "civ_call": "Zivilisten Anruf",
-        "respawn_txt": "Wiederbelebung in: ~r~${deathtime}~s~ Sekunden",
-        "respawn_revive": "Halte [~r~E~s~] für ${holdtime} Sekunden um Wiederbelebt zu werden zu Preis von $~r~${cost}~s~",
-        "bleed_out": "Du blutest aus in: ~r~${time}~s~ Sekunden",
-        "bleed_out_help": "Du blutest aus in: ~r~${time}~s~ Sekunden, dir kann geholfen werden",
+        "respawn_txt": "Wiederbelebung in: ~r~%s~s~ Sekunden",
+        "respawn_revive": "Halte [~r~E~s~] für %s Sekunden um Wiederbelebt zu werden zu Preis von $~r~%s~s~",
+        "bleed_out": "Du blutest aus in: ~r~%s~s~ Sekunden",
+        "bleed_out_help": "Du blutest aus in: ~r~%s~s~ Sekunden, dir kann geholfen werden",
         "request_help": "Drücke [~r~G~s~] für eine hilfeanfrage",
         "help_requested": "Rettungsdienst wurde verständigt",
         "amb_plate":  "AMBU",
@@ -46,7 +46,7 @@
     "mail": {
         "sender": "Pillbox Krankenhaus",
         "subject": "Krankenhauskosten",
-        "message": "Hallo ${gender} ${lastname}, <br /><br />Hiermit erhalten Sie eine Email über die Kosten ihres letzten Krankenhaus besuchs.<br />Die gesammt Kosten betragen: <strong>${costs}</strong><br /><br />Wir wünschen eine schnelle Genesung!"
+        "message": "Hallo %s %s, <br /><br />Hiermit erhalten Sie eine Email über die Kosten ihres letzten Krankenhaus besuchs.<br />Die gesammt Kosten betragen: <strong>$%s</strong><br /><br />Wir wünschen eine schnelle Genesung!"
     },
     "menu": {
         "amb_vehicles": "Rettungsdienst Fahrzeuge",

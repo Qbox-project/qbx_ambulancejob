@@ -20,10 +20,10 @@
         "civ_died": "Siviili on kuollut",
         "civ_down": "Siviili on tajuton",
         "civ_call": "Siviilipuhelu",
-        "respawn_txt": "Teholle pääsy: ~r~${deathtime}~s~ sekuntia",
-        "respawn_revive": "Pidä [~r~E~s~] pohjassa  ${holdtime} sekunnin ajan päästäksesi teholle hintaan $~r~${cost}~s~",
-        "bleed_out": "Vuodat kuiviin ~r~${time}~s~ sekunnin kuluttua",
-        "bleed_out_help": "Vuodat kuiviin ~r~${time}~s~ sekunnin kuluttua, sinua voidaan vielä auttaa!",
+        "respawn_txt": "Teholle pääsy: ~r~%s~s~ sekuntia",
+        "respawn_revive": "Pidä [~r~E~s~] pohjassa  %s sekunnin ajan päästäksesi teholle hintaan $~r~%s~s~",
+        "bleed_out": "Vuodat kuiviin ~r~%s~s~ sekunnin kuluttua",
+        "bleed_out_help": "Vuodat kuiviin ~r~%s~s~ sekunnin kuluttua, sinua voidaan vielä auttaa!",
         "request_help": "Paina [~r~G~s~] pyytääksesi apua!",
         "help_requested": "Ensihoitoa on ilmoitettu!",
         "amb_plate":  "HUSL",
@@ -47,7 +47,7 @@
     "mail": {
         "sender": "Sairaala",
         "subject": "Hoidon lasku",
-        "message": "Hyvä ${gender} ${lastname}, <br /><br /> Viimeisimmän sairaalakäynnin hoidon lasku on nyt annettu teille.<br /> Laskun summaksi tuli: <strong>${costs}€</strong><br /><br />Toivomme Teille pikaista paranemista! <br /> Ystävällisin terveisin, <br /> Sairaalan henkilökunta "
+        "message": "Hyvä %s %s, <br /><br /> Viimeisimmän sairaalakäynnin hoidon lasku on nyt annettu teille.<br /> Laskun summaksi tuli: <strong>$%s€</strong><br /><br />Toivomme Teille pikaista paranemista! <br /> Ystävällisin terveisin, <br /> Sairaalan henkilökunta "
     },
     "menu": {
         "amb_vehicles": "Ajoneuvot",

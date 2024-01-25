@@ -20,10 +20,10 @@
         "civ_died": "borgaralegur lést",
         "civ_down": "borgaralegur Niður",
         "civ_call": "borgaralegur Hringdu",
-        "respawn_txt": "ENDURLAGT INN: ~r~${deathtime}~s~ SEKUNDUR",
-        "respawn_revive": "HOLD [~r~E~s~] FOR ${holdtime} SEKUNDUR TIL AÐ RESPAWN FYRIR $~r~${cost}~s~",
-        "bleed_out": "ÞÚ MUN BLÆÐA ÚT INN: ~r~${time}~s~ SEKUNDUR",
-        "bleed_out_help": "ÞÚ MUN BLÆÐA ÚT INN: ~r~${time}~s~ SEKUNDUR, ÞÉR ER HÆGT AÐ HJÁLP",
+        "respawn_txt": "ENDURLAGT INN: ~r~%s~s~ SEKUNDUR",
+        "respawn_revive": "HOLD [~r~E~s~] FOR %s SEKUNDUR TIL AÐ RESPAWN FYRIR $~r~%s~s~",
+        "bleed_out": "ÞÚ MUN BLÆÐA ÚT INN: ~r~%s~s~ SEKUNDUR",
+        "bleed_out_help": "ÞÚ MUN BLÆÐA ÚT INN: ~r~%s~s~ SEKUNDUR, ÞÉR ER HÆGT AÐ HJÁLP",
         "request_help": "ÝTTU [~r~G~s~] TIL AÐ BEIÐA HJÁLP",
         "help_requested": "STARFSMENN EMS hafa fengið tilkynningu",
         "amb_plate":  "AMBU",
@@ -47,7 +47,7 @@
     "mail": {
         "sender": "Pillbox Hospital",
         "subject": "Sjúkrahúskostnaður",
-        "message": "Kæri ${gender} ${lastname}, <br /><br />Hér með færðu tölvupóst með kostnaði við síðustu sjúkrahúsheimsókn.<br />Endanlegur kostnaður er orðinn: <strong>${costs}</strong><br /><br />Við óskum þér skjóts bata!"
+        "message": "Kæri %s %s, <br /><br />Hér með færðu tölvupóst með kostnaði við síðustu sjúkrahúsheimsókn.<br />Endanlegur kostnaður er orðinn: <strong>$%s</strong><br /><br />Við óskum þér skjóts bata!"
     },
     "menu": {
         "amb_vehicles": "Sjúkrabílar",

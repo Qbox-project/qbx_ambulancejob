@@ -20,10 +20,10 @@
         "civ_died": "Person Död",
         "civ_down": "Person Medvetslös",
         "civ_call": "Samtal",
-        "respawn_txt": "RESPAWN OM: ~r~${deathtime}~s~ SEKUNDER",
-        "respawn_revive": "HÅLL [~r~E~s~] I ${holdtime} SEKUNDER FÖR ATT RESPAWNA (~r~${cost}KR~s~",
-        "bleed_out": "DU KOMMER BLÖDA UT OM: ~r~${time}~s~ SEKUNDER",
-        "bleed_out_help": "DU KOMMER BLÖDA UT OM: ~r~${time}~s~ SEKUNDER, DU KAN FÅ HJÄLP",
+        "respawn_txt": "RESPAWN OM: ~r~%s~s~ SEKUNDER",
+        "respawn_revive": "HÅLL [~r~E~s~] I %s SEKUNDER FÖR ATT RESPAWNA (~r~%sKR~s~",
+        "bleed_out": "DU KOMMER BLÖDA UT OM: ~r~%s~s~ SEKUNDER",
+        "bleed_out_help": "DU KOMMER BLÖDA UT OM: ~r~%s~s~ SEKUNDER, DU KAN FÅ HJÄLP",
         "request_help": "TRYCK [~r~G~s~] FÖR ATT KALLA PÅ HJÄLP",
         "help_requested": "SJUKHUSPERSONAL HAR BLIVIT UNDERRÄTTADE",
         "amb_plate":  "SJUK",
@@ -47,7 +47,7 @@
     "mail": {
         "sender": "Pillbox Sjukhus",
         "subject": "Sjukkostnad",
-        "message": "${firstname} ${lastname},<br /><br />Du har fått ett mail med kostnaderna för det senaste sjukhusbesöket.<br />De slutliga kostnaderna: <strong>${costs}kr</strong><br /><br />MVH Region Los Santos!"
+        "message": "${firstname} ${lastname},<br /><br />Du har fått ett mail med kostnaderna för det senaste sjukhusbesöket.<br />De slutliga kostnaderna: <strong>$%skr</strong><br /><br />MVH Region Los Santos!"
     },
     "menu": {
         "amb_vehicles": "Fordon",
