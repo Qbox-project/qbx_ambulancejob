@@ -62,7 +62,7 @@ end)
 ---@param player Player
 local function wipeInventory(player)
 	player.Functions.ClearInventory()
-	exports.qbx_core:Notify(player.PlayerData.source, Lang:t('error.possessions_taken'), 'error')
+	exports.qbx_core:Notify(player.PlayerData.source, locale('error.possessions_taken'), 'error')
 end
 
 lib.callback.register('qbx_ambulancejob:server:spawnVehicle', function(source, vehicleName, vehicleCoords)
@@ -76,7 +76,7 @@ local function sendDoctorAlert()
 	local _, doctors = exports.qbx_core:GetDutyCountType('ems')
 	for i = 1, #doctors do
 		local doctor = doctors[i]
-		exports.qbx_core:Notify(doctor, Lang:t('info.dr_needed'), 'inform')
+		exports.qbx_core:Notify(doctor, locale('info.dr_needed'), 'inform')
 	end
 
 	SetTimeout(config.doctorCallCooldown * 60000, function()
@@ -87,7 +87,7 @@ end
 local function canCheckIn(source, hospitalName)
 	local numDoctors = exports.qbx_core:GetDutyCountType('ems')
 	if numDoctors >= sharedConfig.minForCheckIn then
-		exports.qbx_core:Notify(source, Lang:t('info.dr_alert'), 'inform')
+		exports.qbx_core:Notify(source, locale('info.dr_alert'), 'inform')
 		sendDoctorAlert()
 		return false
 	end
@@ -111,7 +111,7 @@ local function checkIn(src, patientSrc, hospitalName)
 
 	local bedIndex = getOpenBed(hospitalName)
 	if not bedIndex then
-		exports.qbx_core:Notify(src, Lang:t('error.beds_taken'), 'error')
+		exports.qbx_core:Notify(src, locale('error.beds_taken'), 'error')
 		return false
 	end
 
@@ -144,7 +144,7 @@ local function respawn(src)
 
 	local bedIndex = getOpenBed(closestHospital)
 	if not bedIndex then
-		exports.qbx_core:Notify(src, Lang:t('error.beds_taken'), 'error')
+		exports.qbx_core:Notify(src, locale('error.beds_taken'), 'error')
 		return
 	end
 	TriggerClientEvent('qbx_ambulancejob:client:checkedIn', src, closestHospital, bedIndex)

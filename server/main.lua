@@ -1,3 +1,5 @@
+lib.locale()
+
 ---@alias source number
 
 lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
@@ -18,7 +20,7 @@ end
 RegisterNetEvent('hospital:server:ambulanceAlert', function()
 	if GetInvokingResource() then return end
 	local src = source
-	alertAmbulance(src, Lang:t('info.civ_down'))
+	alertAmbulance(src, locale('info.civ_down'))
 end)
 
 RegisterNetEvent('qbx_medical:server:onPlayerLaststand', function(text)
@@ -60,7 +62,7 @@ RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 
 	local canHelp = lib.callback.await('hospital:client:canHelp', targetId)
 	if not canHelp then
-		exports.qbx_core:Notify(src, Lang:t('error.cant_help'), 'error')
+		exports.qbx_core:Notify(src, locale('error.cant_help'), 'error')
 		return
 	end
 
@@ -73,12 +75,12 @@ lib.callback.register('qbx_ambulancejob:server:getNumDoctors', function()
 end)
 
 lib.addCommand('911e', {
-    help = Lang:t('info.ems_report'),
+    help = locale('info.ems_report'),
     params = {
-        {name = 'message', help = Lang:t('info.message_sent'), type = 'string', optional = true},
+        {name = 'message', help = locale('info.message_sent'), type = 'string', optional = true},
     }
 }, function(source, args)
-	local message = args.message or Lang:t('info.civ_call')
+	local message = args.message or locale('info.civ_call')
 	local ped = GetPlayerPed(source)
 	local coords = GetEntityCoords(ped)
 	local players = exports.qbx_core:GetQBPlayers()
@@ -94,7 +96,7 @@ end)
 local function triggerEventOnEmsPlayer(src, event)
 	local player = exports.qbx_core:GetPlayer(src)
 	if player.PlayerData.job.name ~= 'ambulance' then
-		exports.qbx_core:Notify(src, Lang:t('error.not_ems'), 'error')
+		exports.qbx_core:Notify(src, locale('error.not_ems'), 'error')
 		return
 	end
 
@@ -102,19 +104,19 @@ local function triggerEventOnEmsPlayer(src, event)
 end
 
 lib.addCommand('status', {
-    help = Lang:t('info.check_health'),
+    help = locale('info.check_health'),
 }, function(source)
 	triggerEventOnEmsPlayer(source, 'hospital:client:CheckStatus')
 end)
 
 lib.addCommand('heal', {
-    help = Lang:t('info.heal_player'),
+    help = locale('info.heal_player'),
 }, function(source)
 	triggerEventOnEmsPlayer(source, 'hospital:client:TreatWounds')
 end)
 
 lib.addCommand('revivep', {
-    help = Lang:t('info.revive_player'),
+    help = locale('info.revive_player'),
 }, function(source)
 	triggerEventOnEmsPlayer(source, 'hospital:client:RevivePlayer')
 end)
@@ -150,5 +152,5 @@ end)
 RegisterNetEvent('qbx_medical:server:playerDied', function()
 	if GetInvokingResource() then return end
 	local src = source
-	alertAmbulance(src, Lang:t('info.civ_died'))
+	alertAmbulance(src, locale('info.civ_died'))
 end)

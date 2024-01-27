@@ -69,7 +69,7 @@ return {
         },
     
         stations = {
-            {label = Lang:t('info.pb_hospital'), coords = vec4(304.27, -600.33, 43.28, 272.249)},
+            {label = locale('info.pb_hospital'), coords = vec4(304.27, -600.33, 43.28, 272.249)},
         }
     },
 

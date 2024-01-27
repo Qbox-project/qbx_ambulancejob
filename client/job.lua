@@ -50,7 +50,7 @@ local function showGarageMenu(vehicles, vehiclePlatePrefix, coords)
 
     lib.registerContext({
         id = 'ambulance_garage_context_menu',
-        title = Lang:t('menu.amb_vehicles'),
+        title = locale('menu.amb_vehicles'),
         options = optionsMenu
     })
     lib.showContext('ambulance_garage_context_menu')
@@ -69,7 +69,7 @@ local function showTreatmentMenu(status)
 
     lib.registerContext({
         id = 'ambulance_status_context_menu',
-        title = Lang:t('menu.status'),
+        title = locale('menu.status'),
         options = statusMenu
     })
     lib.showContext('ambulance_status_context_menu')
@@ -80,7 +80,7 @@ end
 RegisterNetEvent('hospital:client:CheckStatus', function()
     local player = GetClosestPlayer()
     if not player then
-        exports.qbx_core:Notify(Lang:t('error.no_player'), 'error')
+        exports.qbx_core:Notify(locale('error.no_player'), 'error')
         return
     end
     local playerId = GetPlayerServerId(player)
@@ -88,7 +88,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
 
     local status = lib.callback.await('qbx_ambulancejob:server:getPlayerStatus', false, playerId)
     if #status.injuries == 0 then
-        exports.qbx_core:Notify(Lang:t('success.healthy_player'), 'success')
+        exports.qbx_core:Notify(locale('success.healthy_player'), 'success')
         return
     end
 
@@ -96,7 +96,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { Lang:t('info.status'), WEAPONS[hash].damagereason }
+            args = { locale('info.status'), WEAPONS[hash].damagereason }
         })
     end
 
@@ -104,7 +104,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { Lang:t('info.status'), Lang:t('info.is_status', { status = status.bleedState }) }
+            args = { locale('info.status'), locale('info.is_status', status.bleedState) }
         })
     end
 
@@ -116,20 +116,20 @@ end)
 RegisterNetEvent('hospital:client:RevivePlayer', function()
     local hasFirstAid = exports.ox_inventory:Search('count', 'firstaid') > 0
     if not hasFirstAid then
-        exports.qbx_core:Notify(Lang:t('error.no_firstaid'), 'error')
+        exports.qbx_core:Notify(locale('error.no_firstaid'), 'error')
         return
     end
 
     local player = GetClosestPlayer()
     if not player then
-        exports.qbx_core:Notify(Lang:t('error.no_player'), 'error')
+        exports.qbx_core:Notify(locale('error.no_player'), 'error')
         return
     end
 
     if lib.progressCircle({
         duration = 5000,
         position = 'bottom',
-        label = Lang:t('progress.revive'),
+        label = locale('progress.revive'),
         useWhileDead = false,
         canCancel = true,
         disable = {
@@ -145,11 +145,11 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
     })
     then
         StopAnimTask(cache.ped, HealAnimDict, 'exit', 1.0)
-        exports.qbx_core:Notify(Lang:t('success.revived'), 'success')
+        exports.qbx_core:Notify(locale('success.revived'), 'success')
         TriggerServerEvent('hospital:server:RevivePlayer', GetPlayerServerId(player))
     else
         StopAnimTask(cache.ped, HealAnimDict, 'exit', 1.0)
-        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
+        exports.qbx_core:Notify(locale('error.canceled'), 'error')
     end
 end)
 
@@ -158,20 +158,20 @@ end)
 RegisterNetEvent('hospital:client:TreatWounds', function()
     local hasBandage = exports.ox_inventory:Search('count', 'bandage') > 0
     if not hasBandage then
-        exports.qbx_core:Notify(Lang:t('error.no_bandage'), 'error')
+        exports.qbx_core:Notify(locale('error.no_bandage'), 'error')
         return
     end
 
     local player = GetClosestPlayer()
     if not player then
-        exports.qbx_core:Notify(Lang:t('error.no_player'), 'error')
+        exports.qbx_core:Notify(locale('error.no_player'), 'error')
         return
     end
 
     if lib.progressCircle({
         duration = 5000,
         position = 'bottom',
-        label = Lang:t('progress.healing'),
+        label = locale('progress.healing'),
         useWhileDead = false,
         canCancel = true,
         disable = {
@@ -187,11 +187,11 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
     })
     then
         StopAnimTask(cache.ped, HealAnimDict, 'exit', 1.0)
-        exports.qbx_core:Notify(Lang:t('success.helped_player'), 'success')
+        exports.qbx_core:Notify(locale('success.helped_player'), 'success')
         TriggerServerEvent('hospital:server:TreatWounds', GetPlayerServerId(player))
     else
         StopAnimTask(cache.ped, HealAnimDict, 'exit', 1.0)
-        exports.qbx_core:Notify(Lang:t('error.canceled'), 'error')
+        exports.qbx_core:Notify(locale('error.canceled'), 'error')
     end
 end)
 
@@ -271,7 +271,7 @@ local function createGarage(vehicles, vehiclePlatePrefix, coords)
 
     local function inVehicleZone()
         if QBX.PlayerData.job.name == 'ambulance' and QBX.PlayerData.job.onduty then
-            lib.showTextUI(Lang:t('text.veh_button'))
+            lib.showTextUI(locale('text.veh_button'))
             checkGarageAction(vehicles, vehiclePlatePrefix, coords)
         else
             checkVehicle = false
@@ -297,11 +297,11 @@ end
 ---Creates air and land garages to spawn vehicles at for EMS personnel
 CreateThread(function()
     for _, coords in pairs(sharedConfig.locations.vehicle) do
-        createGarage(config.authorizedVehicles, Lang:t('info.amb_plate'), coords)
+        createGarage(config.authorizedVehicles, locale('info.amb_plate'), coords)
     end
 
     for _, coords in pairs(sharedConfig.locations.helicopter) do
-        createGarage(config.authorizedHelicopters, Lang:t('info.heli_plate'), coords)
+        createGarage(config.authorizedHelicopters, locale('info.heli_plate'), coords)
     end
 end)
 
@@ -320,7 +320,7 @@ if config.useTarget then
                         type = 'client',
                         onSelect = toggleDuty,
                         icon = 'fa fa-clipboard',
-                        label = Lang:t('text.duty'),
+                        label = locale('text.duty'),
                         distance = 2,
                         groups = 'ambulance',
                     }
@@ -339,7 +339,7 @@ if config.useTarget then
                         type = 'client',
                         onSelect = openStash,
                         icon = 'fa fa-clipboard',
-                        label = Lang:t('text.pstash'),
+                        label = locale('text.pstash'),
                         distance = 2,
                         groups = 'ambulance',
                     }
@@ -358,7 +358,7 @@ if config.useTarget then
                         type = 'client',
                         onSelect = openArmory,
                         icon = 'fa fa-clipboard',
-                        label = Lang:t('text.armory'),
+                        label = locale('text.armory'),
                         distance = 1.5,
                         groups = 'ambulance',
                     }
@@ -376,7 +376,7 @@ if config.useTarget then
                     type = 'client',
                     onSelect = teleportToMainElevator,
                     icon = 'fas fa-hand-point-down',
-                    label = Lang:t('text.el_main'),
+                    label = locale('text.el_main'),
                     distance = 1.5,
                     groups = 'ambulance',
                 }
@@ -393,7 +393,7 @@ if config.useTarget then
                     type = 'client',
                     onSelect = teleportToRoofElevator,
                     icon = 'fas fa-hand-point-up',
-                    label = Lang:t('text.el_roof'),
+                    label = locale('text.el_roof'),
                     distance = 1.5,
                     groups = 'ambulance',
                 }
@@ -405,9 +405,9 @@ else
         for i = 1, #sharedConfig.locations.duty do
             local function enteredSignInZone()
                 if not QBX.PlayerData.job.onduty then
-                    lib.showTextUI(Lang:t('text.onduty_button'))
+                    lib.showTextUI(locale('text.onduty_button'))
                 else
-                    lib.showTextUI(Lang:t('text.offduty_button'))
+                    lib.showTextUI(locale('text.offduty_button'))
                 end
             end
 
@@ -433,7 +433,7 @@ else
         for i = 1, #sharedConfig.locations.stash do
             local function enteredStashZone()
                 if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(Lang:t('text.pstash_button'))
+                    lib.showTextUI(locale('text.pstash_button'))
                 end
             end
 
@@ -459,7 +459,7 @@ else
         for i = 1, #sharedConfig.locations.armory do
             local function enteredArmoryZone()
                 if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(Lang:t('text.armory_button'))
+                    lib.showTextUI(locale('text.armory_button'))
                 end
             end
 
@@ -484,9 +484,9 @@ else
 
         local function enteredRoofZone()
             if QBX.PlayerData.job.onduty then
-                lib.showTextUI(Lang:t('text.elevator_main'))
+                lib.showTextUI(locale('text.elevator_main'))
             else
-                lib.showTextUI(Lang:t('error.not_ems'))
+                lib.showTextUI(locale('error.not_ems'))
             end
         end
 
@@ -510,9 +510,9 @@ else
 
         local function enteredMainZone()
             if QBX.PlayerData.job.onduty then
-                lib.showTextUI(Lang:t('text.elevator_roof'))
+                lib.showTextUI(locale('text.elevator_roof'))
             else
-                lib.showTextUI(Lang:t('error.not_ems'))
+                lib.showTextUI(locale('error.not_ems'))
             end
         end
 
