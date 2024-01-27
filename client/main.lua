@@ -8,8 +8,6 @@ EmsNotified = false
 CanLeaveBed = true
 OnPainKillers = false
 
-lib.locale()
-
 ---Notifies EMS of a injury at a location
 ---@param coords vector3
 ---@param text string
