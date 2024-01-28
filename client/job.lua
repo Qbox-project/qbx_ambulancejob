@@ -330,14 +330,14 @@ if config.useTarget then
         for i = 1, #sharedConfig.locations.stash do
             exports.ox_target:addBoxZone({
                 name = 'stash' .. i,
-                coords = sharedConfig.locations.stash[i],
+                coords = sharedConfig.locations.stash[i].location,
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
                 options = {
                     {
                         type = 'client',
-                        onSelect = openStash,
+                        onSelect = openStash(i),
                         icon = 'fa fa-clipboard',
                         label = locale('text.pstash'),
                         distance = 2,
@@ -349,45 +349,7 @@ if config.useTarget then
         for i = 1, #sharedConfig.locations.armory do
             exports.ox_target:addBoxZone({
                 name = 'armory' .. i,
-                coords = sharedConfig.locations.armory[i],
-                size = vec3(1, 1, 2),
-                rotation = -20,
-                debug = config.debugPoly,
-                options = {
-                    {
-                        type = 'client',
-                        onSelect = openArmory,
-                        icon = 'fa fa-clipboard',
-                        label = locale('text.armory'),
-                        distance = 1.5,
-                        groups = 'ambulance',
-                    }
-                }
-            })
-        end
-        for i = 1, #sharedConfig.locations.stash do
-            exports.ox_target:addBoxZone({
-                name = 'stash' .. i,
-                coords = sharedConfig.locations.stash[i],
-                size = vec3(1, 1, 2),
-                rotation = -20,
-                debug = config.debugPoly,
-                options = {
-                    {
-                        type = 'client',
-                        onSelect = openStash(i),
-                        icon = 'fa fa-clipboard',
-                        label = Lang:t('text.pstash'),
-                        distance = 2,
-                        groups = 'ambulance',
-                    }
-                }
-            })
-        end
-        for i = 1, #sharedConfig.locations.armory do
-            exports.ox_target:addBoxZone({
-                name = 'armory' .. i,
-                coords = sharedConfig.locations.armory[i],
+                coords = sharedConfig.locations.armory[i].locations,
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
@@ -396,7 +358,7 @@ if config.useTarget then
                         type = 'client',
                         onSelect = openArmory(i),
                         icon = 'fa fa-clipboard',
-                        label = Lang:t('text.armory'),
+                        label = locale('text.armory'),
                         distance = 1.5,
                         groups = 'ambulance',
                     }
@@ -523,7 +485,7 @@ else
         for i = 1, #sharedConfig.locations.stash do
             local function enteredStashZone()
                 if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(Lang:t('text.pstash_button'))
+                    lib.showTextUI(locale('text.pstash_button'))
                 end
             end
 
@@ -536,7 +498,7 @@ else
             end
 
             lib.zones.box({
-                coords = sharedConfig.locations.stash[i],
+                coords = sharedConfig.locations.stash[i].location,
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
@@ -549,7 +511,7 @@ else
         for i = 1, #sharedConfig.locations.armory do
             local function enteredArmoryZone()
                 if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(Lang:t('text.armory_button'))
+                    lib.showTextUI(locale('text.armory_button'))
                 end
             end
 
@@ -562,7 +524,7 @@ else
             end
 
             lib.zones.box({
-                coords = sharedConfig.locations.armory[i].locations,
+                coords = sharedConfig.locations.armory[i].locations[1],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
