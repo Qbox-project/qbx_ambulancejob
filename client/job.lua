@@ -195,20 +195,6 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
     end
 end)
 
----Opens the hospital stash.
-local function openStash()
-    if not QBX.PlayerData.job.onduty then return end
-    TriggerServerEvent('inventory:server:OpenInventory', 'stash', 'ambulancestash_' .. QBX.PlayerData.citizenid)
-    TriggerEvent('inventory:client:SetCurrentStash', 'ambulancestash_' .. QBX.PlayerData.citizenid)
-end
-
----Opens the hospital armory.
-local function openArmory()
-    if QBX.PlayerData.job.onduty then
-        TriggerServerEvent('inventory:server:OpenInventory', 'shop', 'hospital', config.items)
-    end
-end
-
 ---While in the garage pressing a key triggers storing the current vehicle or opening spawn menu.
 ---@param vehicles AuthorizedVehicles
 ---@param vehiclePlatePrefix string
