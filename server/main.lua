@@ -1,4 +1,3 @@
-local config = require 'config.server'
 local sharedConfig = require 'config.shared'
 ---@alias source number
 
@@ -19,7 +18,7 @@ end
 
 local function registerArmory()
 	for _, armory in pairs(sharedConfig.locations.armory) do
-    	exports.ox_inventory:RegisterShop(armory.name, armory)
+		exports.ox_inventory:RegisterShop(armory.name, armory)
 	end
 end
 
