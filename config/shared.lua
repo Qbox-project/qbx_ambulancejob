@@ -15,10 +15,10 @@ return {
             vec4(351.58, -587.45, 74.16, 160.5),
             vec4(-475.43, 5988.353, 31.716, 31.34),
         },
-        armory =  {
+        armory = {
             {
                 shopName = 'ambulanceShop',
-                name = locale('text.armory'),
+                name = 'Armory',
                 groups = { ambulance = 0 },
                 inventory = {
                     { name = 'radio', price = 0 },
@@ -29,7 +29,7 @@ return {
                     { name = 'weapon_fireextinguisher', price = 0 },
                 },
                 locations = {
-                    vector3(309.93, -602.94, 43.29) -- Only a single location is supported.
+                    vec3(309.93, -602.94, 43.29) -- Only a single location is supported.
                 }
             }
         },
@@ -42,12 +42,12 @@ return {
         stash = {
             {
                 name = 'ambulanceStash',
-                label = locale('text.pstash'),
+                label = 'Personal stash',
                 weight = 100000,
                 slots = 30,
                 groups = { ambulance = 0 },
                 owner = true, -- Set to false for group stash
-                location = vector3(309.78, -596.6, 43.29)
+                location = vec3(309.78, -596.6, 43.29)
             }
         },
 
@@ -92,8 +92,7 @@ return {
         },
 
         stations = {
-            {label = locale('info.pb_hospital'), coords = vec4(304.27, -600.33, 43.28, 272.249)},
+            {label = 'Pillbox Hospital', coords = vec4(304.27, -600.33, 43.28, 272.249)},
         }
     },
-
 }

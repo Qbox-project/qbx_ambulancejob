@@ -32,7 +32,6 @@
         "is_staus": "Bị ${status}",
         "healthy": "Bạn đã được chữa lành!",
         "safe": "Hospital Safe",
-        "pb_hospital": "Bệnh Viện",
         "ems_alert": "${text} - Gọi Cấp Cứu",
         "mr": "Ông",
         "mrs": "Bà.",

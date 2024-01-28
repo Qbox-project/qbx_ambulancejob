@@ -33,7 +33,6 @@
         "is_staus": "Est ${status}",
         "healthy": "Vous êtes maintenant en parfaite santé !",
         "safe": "Coffre de l'hopital",
-        "pb_hospital": "Hopital de Pillbox",
         "ems_alert": "Alerte EMS - ${text}",
         "mr": "M.",
         "mrs": "Mme.",

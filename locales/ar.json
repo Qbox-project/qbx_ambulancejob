@@ -32,7 +32,6 @@
         "is_staus": "${status} انه",
         "healthy": "أنت بصحة جيدة مرة أخرى",
         "safe": "مستشفى آمن",
-        "pb_hospital": "Pillbox Hospital",
         "ems_alert": "ﻪﻴﺒﻨﺗ - ${text}",
         "mr": "السيد.",
         "mrs": "السيدة.",

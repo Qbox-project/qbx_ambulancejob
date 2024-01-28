@@ -32,7 +32,6 @@
         "is_staus": "È ${status}",
         "healthy": "Sei di completamente in salute!",
         "safe": "Hospital Safe",
-        "pb_hospital": "Pillbox Hospital",
         "ems_alert": "EMS Alert - ${text}",
         "mr": "Sig.",
         "mrs": "Sig.ra",

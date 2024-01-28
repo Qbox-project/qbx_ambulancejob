@@ -32,7 +32,6 @@
         "is_staus": "je ${status}",
         "healthy": "Si opäť úplne zdravý!",
         "safe": "Nemocničný trezor",
-        "pb_hospital": "Nemocnica Pillbox",
         "ems_alert": "EMS Upozornenie - ${text}",
         "mr": "Pán",
         "mrs": "Pani",

@@ -32,7 +32,6 @@
         "is_staus": "Er ${status}",
         "healthy": "Þú ert alveg heilbrigð aftur!",
         "safe": "Sjúkrahús örugg",
-        "pb_hospital": "Pillbox sjúkrahúsið",
         "ems_alert": "EMS viðvörun - ${text}",
         "mr": "Mr.",
         "mrs": "Mrs.",

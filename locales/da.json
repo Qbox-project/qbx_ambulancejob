@@ -32,7 +32,6 @@
         "is_staus": "Er ${status}",
         "healthy": "Du er helt rask igen!",
         "safe": "Hospital Sikkert",
-        "pb_hospital": "Pillbox Hospital",
         "ems_alert": "EMS Alarm - ${text}",
         "mr": "Hr.",
         "mrs": "Fru",
@@ -49,7 +48,7 @@
         "subject": "Hospitalsomkostninger",
         "message": "Kære %s %s, <br /><br />Hermed modtager du en e-mail med omkostningerne ved det sidste hospitalsbesøg.<br />De endelige omkostninger er: <strong>$%s</strong><br /><br />Vi ønsker dig en hurtig bedring!"
     },
-    
+
     "menu": {
         "amb_vehicles": "Ambulance Køretøjer",
         "status": "Sundhedsstatus"
