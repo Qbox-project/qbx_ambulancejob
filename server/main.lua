@@ -1,3 +1,5 @@
+local config = require 'config.server'
+local sharedConfig = require 'config.shared'
 ---@alias source number
 
 lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
@@ -13,6 +15,18 @@ local function alertAmbulance(src, text)
 			TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
 		end
 	end
+end
+
+local function registerArmory()
+	for _, armory in pairs(sharedConfig.locations.armory) do
+    	exports.ox_inventory:RegisterShop(armory.name, armory)
+	end
+end
+
+local function registerStashes()
+    for _, stash in pairs(sharedConfig.locations.stash) do
+        exports.ox_inventory:RegisterStash(stash.name, stash.label, stash.slots, stash.weight, stash.owner, stash.groups, stash.location)
+    end
 end
 
 RegisterNetEvent('hospital:server:ambulanceAlert', function()
@@ -151,4 +165,10 @@ RegisterNetEvent('qbx_medical:server:playerDied', function()
 	if GetInvokingResource() then return end
 	local src = source
 	alertAmbulance(src, locale('info.civ_died'))
+end)
+
+AddEventHandler('onServerResourceStart', function(resource)
+    if resource ~= 'ox_inventory' then return end
+    registerArmory()
+    registerStashes()
 end)
