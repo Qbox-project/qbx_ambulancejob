@@ -5,8 +5,6 @@ description 'qbx_ambulancejob'
 repository 'https://github.com/Qbox-project/qbx_ambulancejob'
 version '1.0.0'
 
-ox_lib 'locale'
-
 shared_scripts {
 	'@ox_lib/init.lua',
 	'@qbx_core/modules/utils.lua',

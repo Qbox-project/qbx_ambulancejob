@@ -1,4 +1,7 @@
 local sharedConfig = require 'config.shared'
+
+lib.locale()
+
 ---@alias source number
 
 lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
