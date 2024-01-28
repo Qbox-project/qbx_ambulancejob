@@ -449,58 +449,6 @@ else
             end
 
             local function insideStashZone()
-                OnKeyPress(openStash)
-            end
-
-            lib.zones.box({
-                coords = sharedConfig.locations.stash[i],
-                size = vec3(1, 1, 2),
-                rotation = -20,
-                debug = config.debugPoly,
-                onEnter = enteredStashZone,
-                onExit = outStashZone,
-                inside = insideStashZone,
-            })
-        end
-
-        for i = 1, #sharedConfig.locations.armory do
-            local function enteredArmoryZone()
-                if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(locale('text.armory_button'))
-                end
-            end
-
-            local function outArmoryZone()
-                lib.hideTextUI()
-            end
-
-            local function insideArmoryZone()
-                OnKeyPress(openArmory)
-            end
-
-            lib.zones.box({
-                coords = sharedConfig.locations.armory[i],
-                size = vec3(1, 1, 2),
-                rotation = -20,
-                debug = config.debugPoly,
-                onEnter = enteredArmoryZone,
-                onExit = outArmoryZone,
-                inside = insideArmoryZone,
-            })
-        end
-
-        for i = 1, #sharedConfig.locations.stash do
-            local function enteredStashZone()
-                if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(locale('text.pstash_button'))
-                end
-            end
-
-            local function outStashZone()
-                lib.hideTextUI()
-            end
-
-            local function insideStashZone()
                 OnKeyPress(function()
                     openStash(i)
                 end)
