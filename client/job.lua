@@ -207,7 +207,7 @@ end
 ---@param stashNumber integer id of armory to open
 local function openArmory(stashNumber)
     if not QBX.PlayerData.job.onduty then return end
-    exports.ox_inventory:openInventory('shop', { type = sharedConfig.locations.armory[stashNumber].shopName })
+    exports.ox_inventory:openInventory('shop', { type = sharedConfig.locations.armory[stashNumber].shopType, id = 1 })
 end
 
 ---While in the garage pressing a key triggers storing the current vehicle or opening spawn menu.

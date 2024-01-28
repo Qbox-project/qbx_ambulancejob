@@ -17,7 +17,7 @@ return {
         },
         armory = {
             {
-                shopName = 'ambulanceShop',
+                shopType = 'AmbulanceArmory',
                 name = 'Armory',
                 groups = { ambulance = 0 },
                 inventory = {

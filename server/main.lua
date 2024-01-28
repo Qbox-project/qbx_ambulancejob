@@ -21,7 +21,7 @@ end
 
 local function registerArmory()
 	for _, armory in pairs(sharedConfig.locations.armory) do
-		exports.ox_inventory:RegisterShop(armory.name, armory)
+		exports.ox_inventory:RegisterShop(armory.shopType, armory)
 	end
 end
 
@@ -169,8 +169,9 @@ RegisterNetEvent('qbx_medical:server:playerDied', function()
 	alertAmbulance(src, locale('info.civ_died'))
 end)
 
-AddEventHandler('onServerResourceStart', function(resource)
-    if resource ~= 'ox_inventory' then return end
+AddEventHandler('onResourceStart', function(resource)
+    if resource ~= GetCurrentResourceName() then return end
+
     registerArmory()
     registerStashes()
 end)
