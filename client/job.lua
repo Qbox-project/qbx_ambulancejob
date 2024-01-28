@@ -21,7 +21,9 @@ local function takeOutVehicle(data)
     if not settings then return end
 
     if settings.extras then
-        SetVehicleExtra(veh, settings.extras)
+        for k in pairs(settings.extras) do
+            SetVehicleExtra(veh, tonumber(k) --[[@as number]], false)
+        end
     end
 
     if settings.livery then
@@ -195,7 +197,6 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
     end
 end)
 
----Opens the hospital stash.
 ---@param stashNumber integer id of stash to open
 local function openStash(stashNumber)
     if not QBX.PlayerData.job.onduty then return end
@@ -232,7 +233,7 @@ local function checkGarageAction(vehicles, vehiclePlatePrefix, coords)
 end
 
 ---Teleports the player with a fade in/out effect
----@param coords vector4
+---@param coords vector3 | vector4
 local function teleportPlayerWithFade(coords)
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do
@@ -240,7 +241,9 @@ local function teleportPlayerWithFade(coords)
     end
 
     SetEntityCoords(cache.ped, coords.x, coords.y, coords.z, false, false, false, false)
-    SetEntityHeading(cache.ped, coords.w)
+    if coords.w then
+        SetEntityHeading(cache.ped, coords.w)
+    end
 
     Wait(100)
 
@@ -337,7 +340,9 @@ if config.useTarget then
                 options = {
                     {
                         type = 'client',
-                        onSelect = openStash(i),
+                        onSelect = function()
+                            openStash(i)
+                        end,
                         icon = 'fa fa-clipboard',
                         label = locale('text.pstash'),
                         distance = 2,
@@ -356,7 +361,9 @@ if config.useTarget then
                 options = {
                     {
                         type = 'client',
-                        onSelect = openArmory(i),
+                        onSelect = function()
+                            openArmory(i)
+                        end,
                         icon = 'fa fa-clipboard',
                         label = locale('text.armory'),
                         distance = 1.5,
@@ -494,7 +501,9 @@ else
             end
 
             local function insideStashZone()
-                OnKeyPress(openStash(i))
+                OnKeyPress(function()
+                    openStash(i)
+                end)
             end
 
             lib.zones.box({
@@ -520,7 +529,9 @@ else
             end
 
             local function insideArmoryZone()
-                OnKeyPress(openArmory(i))
+                OnKeyPress(function()
+                    openArmory(i)
+                end)
             end
 
             lib.zones.box({
