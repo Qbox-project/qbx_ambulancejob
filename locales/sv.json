@@ -20,6 +20,7 @@
         "civ_died": "Person Död",
         "civ_down": "Person Medvetslös",
         "civ_call": "Samtal",
+        "ems_down": "Doctor %s Down",
         "respawn_txt": "RESPAWN OM: ~r~%s~s~ SEKUNDER",
         "respawn_revive": "HÅLL [~r~E~s~] I %s SEKUNDER FÖR ATT RESPAWNA (~r~%sKR~s~",
         "bleed_out": "DU KOMMER BLÖDA UT OM: ~r~%s~s~ SEKUNDER",

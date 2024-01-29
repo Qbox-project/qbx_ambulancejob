@@ -1,7 +1,5 @@
 local sharedConfig = require 'config.shared'
 
-lib.locale()
-
 ---@alias source number
 
 lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
@@ -31,16 +29,23 @@ local function registerStashes()
     end
 end
 
-RegisterNetEvent('hospital:server:ambulanceAlert', function()
+RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
+	if GetInvokingResource() then return end
+	local src = source
+	alertAmbulance(src, text or locale('info.civ_down'))
+end)
+
+RegisterNetEvent('hospital:server:emergencyAlert', function()
+	if GetInvokingResource() then return end
+	local src = source
+	local player = exports.qbx_core:GetPlayer(src)
+	alertAmbulance(src, locale('info.ems_down', player.PlayerData.charinfo.lastname))
+end)
+
+RegisterNetEvent('qbx_medical:server:onPlayerLaststand', function()
 	if GetInvokingResource() then return end
 	local src = source
 	alertAmbulance(src, locale('info.civ_down'))
-end)
-
-RegisterNetEvent('qbx_medical:server:onPlayerLaststand', function(text)
-	if GetInvokingResource() then return end
-	local src = source
-	alertAmbulance(src, text)
 end)
 
 ---@param playerId number

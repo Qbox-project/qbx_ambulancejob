@@ -20,6 +20,7 @@
         "civ_died": "Civilista zemřel",
         "civ_down": "Civilista je na zemi",
         "civ_call": "Volání civilisty",
+        "ems_down": "Doctor %s Down",
         "respawn_txt": "OŽIVENÍ ZA: ~r~%s~s~ SEKUND",
         "respawn_revive": "DRŽTE [~r~E~s~] PO DOBU %s SEKUND PRO OŽIVENÍ ZA $~r~%s~s~",
         "bleed_out": "VYKRVÁCÍTE ZA: ~r~%s~s~ SEKUND",

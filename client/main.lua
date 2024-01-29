@@ -8,8 +8,6 @@ EmsNotified = false
 CanLeaveBed = true
 OnPainKillers = false
 
-lib.locale()
-
 ---Notifies EMS of a injury at a location
 ---@param coords vector3
 ---@param text string
@@ -18,8 +16,8 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
-    exports.qbx_core:Notify({ title = locale('text.alert'), description = text .. ' | ' .. street1name .. ' ' .. street2name, type = 'inform' })
-    PlaySound(-1, 'Lose_1st', 'GTAO_FM_Events_Soundset', 0, 0, 1)
+    exports.qbx_core:Notify(locale('text.alert'), 'inform', nil, text .. ' | ' .. street1name .. ' ' .. street2name)
+    PlaySound(-1, 'Lose_1st', 'GTAO_FM_Events_Soundset', false, 0, true)
     local transG = 250
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
     local blip2 = AddBlipForCoord(coords.x, coords.y, coords.z)

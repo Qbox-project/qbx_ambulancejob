@@ -20,6 +20,7 @@
         "civ_died": "Civil muerto",
         "civ_down": "Civil caído",
         "civ_call": "Llamada de civil",
+        "ems_down": "Doctor %s Down",
         "respawn_txt": "REAPARECERAS EN %s SEGUNDOS",
         "respawn_revive": "MANTÉN [E] DURANTE %s SEGUNDOS PARA SER REVIVIDO POR %s",
         "bleed_out": "TE DESANGRARAS EN %s SEGUNDOS",

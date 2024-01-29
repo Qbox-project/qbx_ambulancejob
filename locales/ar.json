@@ -20,6 +20,7 @@
         "civ_died": "موت مواطن",
         "civ_down": "سقوط مواطن",
         "civ_call": "اتصال مواطن",
+        "ems_down": "Doctor %s Down",
         "respawn_txt": "~r~%s~w~ ﻝﻼﺧ ﺕﻮﻤﻟﺍ",
         "respawn_revive": "[~r~Hold E~w~] %s~w~ ﻥﻭﺎﺒﺳﺭ $~r~%s~s~",
         "bleed_out": "ﺔﻴﻧﺎﺛ ~r~%s~w~ :ﻲﻓ ﻑﺰﻨﺗ ﻑﻮﺳ",

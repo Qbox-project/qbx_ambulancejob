@@ -20,6 +20,7 @@
         "civ_died": "Zivilist verstorben",
         "civ_down": "Zivilist Down",
         "civ_call": "Zivilisten Anruf",
+        "ems_down": "Doctor %s Down",
         "respawn_txt": "Wiederbelebung in: ~r~%s~s~ Sekunden",
         "respawn_revive": "Halte [~r~E~s~] für %s Sekunden um Wiederbelebt zu werden zu Preis von $~r~%s~s~",
         "bleed_out": "Du blutest aus in: ~r~%s~s~ Sekunden",

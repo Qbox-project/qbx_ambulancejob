@@ -20,6 +20,7 @@
         "civ_died": "Cidadão morreu",
         "civ_down": "Cidadão caído",
         "civ_call": "Chamada de cidadão",
+        "ems_down": "Doctor %s Down",
         "respawn_txt": "RENASCER EM: ~r~%s~s~ SEGUNDOS",
         "respawn_revive": "PRESSIONA [~r~E~s~] DURANTE %s SGUNDOS PARA RENASCERES POR $~r~%s~s~",
         "bleed_out": "ESVAIR-TE-ÁS EM SANGUE DENTRO DE: ~r~%s~s~ SEGUNDOS",

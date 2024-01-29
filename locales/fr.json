@@ -20,6 +20,7 @@
         "civ_died": "Civil décédé",
         "civ_down": "Civil blessé",
         "civ_call": "Appel Civil",
+        "ems_down": "Doctor %s Down",
         "wep_unknown": "Inconnu",
         "respawn_txt": "RÉAPPARAITRE DANS: ~r~%s~s~ SECONDES",
         "respawn_revive": "MAINTENEZ [~r~E~s~] POUR %s SECONDES POUR RÉAPPARAITRE PO $~r~%s~s~",

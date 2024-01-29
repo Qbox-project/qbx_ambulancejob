@@ -20,6 +20,7 @@
         "civ_died": "Công dân chết",
         "civ_down": "Công dân bị ngất",
         "civ_call": "Công dân gọi",
+        "ems_down": "Doctor %s Down",
         "respawn_txt": "CHỜ BÁC SĨ : ~r~%s~s~ GIÂY",
         "respawn_revive": "GIỮ [~r~E~s~] VỀ BỆNH VIỆN(MẤT HẾT ~r~ITEM~s~) or /115 [~r~ID~s~] GỌI BÁC SĨ",
         "bleed_out": "BẠN SẼ BỊ MẤT MÁU TỚI CHẾT TRONG VÒNG: ~r~%s~s~ GIÂY, /115 ĐỂ GỌI BÁC SĨ",

@@ -20,6 +20,7 @@
         "civ_died": "Civile morto",
         "civ_down": "Civile ferito",
         "civ_call": "Richiesta di intervento",
+        "ems_down": "Doctor %s Down",
         "respawn_txt": "RESPAWN TRA: ~r~%s~s~ SECONDI",
         "respawn_revive": "PREMI [~r~E~s~] PER %s SECONDI PER IL RESPAWN AL COSTO DI $~r~%s~s~",
         "bleed_out": "MORIRAI DISSANGUATO TRA: ~r~%s~s~ SECONDI",

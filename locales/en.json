@@ -20,6 +20,7 @@
         "civ_died": "Civilian Died",
         "civ_down": "Civilian Down",
         "civ_call": "Civilian Call",
+        "ems_down": "Doctor %s Down",
         "respawn_txt": "RESPAWN IN: ~r~%s~s~ SECONDS",
         "respawn_revive": "HOLD [~r~E~s~] FOR %s SECONDS TO RESPAWN FOR $~r~%s~s~",
         "bleed_out": "YOU WILL BLEED OUT IN: ~r~%s~s~ SECONDS",

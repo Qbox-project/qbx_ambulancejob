@@ -20,6 +20,7 @@
         "civ_died": "Siviili on kuollut",
         "civ_down": "Siviili on tajuton",
         "civ_call": "Siviilipuhelu",
+        "ems_down": "Doctor %s Down",
         "respawn_txt": "Teholle pääsy: ~r~%s~s~ sekuntia",
         "respawn_revive": "Pidä [~r~E~s~] pohjassa  %s sekunnin ajan päästäksesi teholle hintaan $~r~%s~s~",
         "bleed_out": "Vuodat kuiviin ~r~%s~s~ sekunnin kuluttua",
