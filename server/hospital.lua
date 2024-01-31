@@ -66,7 +66,7 @@ local function wipeInventory(player)
 end
 
 lib.callback.register('qbx_ambulancejob:server:spawnVehicle', function(source, vehicleName, vehicleCoords)
-	local netId = SpawnVehicle(source, vehicleName, vehicleCoords, true)
+	local netId = qbx.spawnVehicle({ spawnSource = vehicleCoords or source, model = vehicleName, warp = source })
 	return netId
 end)
 

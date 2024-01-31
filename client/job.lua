@@ -14,7 +14,7 @@ local function takeOutVehicle(data)
     end
     local veh = NetworkGetEntityFromNetworkId(netId)
     SetVehicleNumberPlateText(veh, data.vehiclePlatePrefix .. tostring(math.random(1000, 9999)))
-    TriggerEvent('vehiclekeys:client:SetOwner', GetPlate(veh))
+    TriggerEvent('vehiclekeys:client:SetOwner', qbx.getVehiclePlate(veh))
     SetVehicleEngineOn(veh, true, true, true)
 
     local settings = config.vehicleSettings[data.vehicleName]
