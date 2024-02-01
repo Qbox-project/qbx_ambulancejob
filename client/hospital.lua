@@ -85,7 +85,6 @@ local function checkIn(hospitalName)
     local canCheckIn = lib.callback.await('qbx_ambulancejob:server:canCheckIn', false, hospitalName)
     if not canCheckIn then return end
 
-    exports.scully_emotemenu:playEmoteByCommand('notepad')
     if lib.progressCircle({
         duration = 2000,
         position = 'bottom',
@@ -98,12 +97,29 @@ local function checkIn(hospitalName)
             combat = true,
             mouse = false,
         },
+        anim = {
+            clip = 'base',
+            dict= 'missheistdockssetup1clipboard@base',
+            flag = 16
+        },
+        prop = {
+            {
+                model = 'prop_notepad_01',
+                bone = 18905,
+                pos = vec3(0.1, 0.02, 0.05),
+                rot = vec3(10.0, 0.0, 0.0),
+            },
+            {
+                model = 'prop_pencil_01',
+                bone = 58866,
+                pos = vec3(0.11, -0.02, 0.001),
+                rot = vec3(-120.0, 0.0, 0.0)
+            }
+        }
     })
     then
-        exports.scully_emotemenu:cancelEmote()
         lib.callback('qbx_ambulancejob:server:checkIn', false, nil, cache.serverId, hospitalName)
     else
-        exports.scully_emotemenu:cancelEmote()
         exports.qbx_core:Notify(locale('error.canceled'), 'error')
     end
 end
