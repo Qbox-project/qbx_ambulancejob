@@ -204,10 +204,11 @@ local function openStash(stashNumber)
 end
 
 ---Opens the hospital armory.
----@param stashNumber integer id of armory to open
-local function openArmory(stashNumber)
+---@param armoryId integer id of armory to open
+---@param stashId integer id of armory to open
+local function openArmory(armoryId, stashId)
     if not QBX.PlayerData.job.onduty then return end
-    exports.ox_inventory:openInventory('shop', { type = sharedConfig.locations.armory[stashNumber].shopType, id = 1 })
+    exports.ox_inventory:openInventory('shop', { type = sharedConfig.locations.armory[armoryId].shopType, id = stashId })
 end
 
 ---While in the garage pressing a key triggers storing the current vehicle or opening spawn menu.
@@ -352,25 +353,27 @@ if config.useTarget then
             })
         end
         for i = 1, #sharedConfig.locations.armory do
-            exports.ox_target:addBoxZone({
-                name = 'armory' .. i,
-                coords = sharedConfig.locations.armory[i].locations,
-                size = vec3(1, 1, 2),
-                rotation = -20,
-                debug = config.debugPoly,
-                options = {
-                    {
-                        type = 'client',
-                        onSelect = function()
-                            openArmory(i)
-                        end,
-                        icon = 'fa fa-clipboard',
-                        label = locale('text.armory'),
-                        distance = 1.5,
-                        groups = 'ambulance',
+            for ii = 1, #sharedConfig.locations.armory[i].locations do
+                exports.ox_target:addBoxZone({
+                    name = 'armory' .. i .. ':' .. ii,
+                    coords = sharedConfig.locations.armory[i].locations[ii],
+                    size = vec3(1, 1, 2),
+                    rotation = -20,
+                    debug = config.debugPoly,
+                    options = {
+                        {
+                            type = 'client',
+                            onSelect = function()
+                                openArmory(i, ii)
+                            end,
+                            icon = 'fa fa-clipboard',
+                            label = locale('text.armory'),
+                            distance = 1.5,
+                            groups = 'ambulance',
+                        }
                     }
-                }
-            })
+                })
+            end
         end
         exports.ox_target:addBoxZone({
             name = 'roof1',
@@ -466,31 +469,33 @@ else
         end
 
         for i = 1, #sharedConfig.locations.armory do
-            local function enteredArmoryZone()
-                if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(locale('text.armory_button'))
+            for ii = 1, #sharedConfig.locations.armory[i].locations do
+                local function enteredArmoryZone()
+                    if QBX.PlayerData.job.onduty then
+                        lib.showTextUI(locale('text.armory_button'))
+                    end
                 end
-            end
 
-            local function outArmoryZone()
-                lib.hideTextUI()
-            end
+                local function outArmoryZone()
+                    lib.hideTextUI()
+                end
 
-            local function insideArmoryZone()
-                OnKeyPress(function()
-                    openArmory(i)
-                end)
-            end
+                local function insideArmoryZone()
+                    OnKeyPress(function()
+                        openArmory(i, ii)
+                    end)
+                end
 
-            lib.zones.box({
-                coords = sharedConfig.locations.armory[i].locations[1],
-                size = vec3(1, 1, 2),
-                rotation = -20,
-                debug = config.debugPoly,
-                onEnter = enteredArmoryZone,
-                onExit = outArmoryZone,
-                inside = insideArmoryZone,
-            })
+                lib.zones.box({
+                    coords = sharedConfig.locations.armory[i].locations[ii],
+                    size = vec3(1, 1, 2),
+                    rotation = -20,
+                    debug = config.debugPoly,
+                    onEnter = enteredArmoryZone,
+                    onExit = outArmoryZone,
+                    inside = insideArmoryZone,
+                })
+            end
         end
 
         local function enteredRoofZone()
