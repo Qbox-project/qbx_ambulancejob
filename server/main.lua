@@ -147,7 +147,7 @@ local function triggerItemEventOnPlayer(src, item, event)
 	local player = exports.qbx_core:GetPlayer(src)
 	if not player then return end
 
-	if not exports.ox_inventory:Search(src, 'count', item.name) > 0 then return end
+	if not exports.ox_inventory:Search(src, 'count', item.name) then return end
 
 	local removeItem = lib.callback.await(event, src)
 	if not removeItem then return end
