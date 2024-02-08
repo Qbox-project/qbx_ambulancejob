@@ -1,10 +1,10 @@
 local config = require 'config.client'
 local sharedConfig = require 'config.shared'
-local bedObject = nil
-local bedOccupyingData = nil
-local cam = nil
-local hospitalOccupying = nil
-local bedIndexOccupying = nil
+local bedObject
+local bedOccupyingData
+local cam
+local hospitalOccupying
+local bedIndexOccupying
 
 ---Teleports the player to lie down in bed and sets the player's camera.
 local function setBedCam()
@@ -14,7 +14,7 @@ local function setBedCam()
         Wait(100)
     end
 
-    if IsPedDeadOrDying(cache.ped) then
+    if IsPedDeadOrDying(cache.ped, true) then
         local pos = GetEntityCoords(cache.ped, true)
         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(cache.ped), true, false)
     end
@@ -22,7 +22,7 @@ local function setBedCam()
     bedObject = GetClosestObjectOfType(bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z, 1.0, bedOccupyingData.model, false, false, false)
     FreezeEntityPosition(bedObject, true)
 
-    SetEntityCoords(cache.ped, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02)
+    SetEntityCoords(cache.ped, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02, true, true, true, false)
     Wait(500)
     FreezeEntityPosition(cache.ped, true)
 
@@ -171,7 +171,7 @@ if config.useTarget then
                         },
                         {
                             canInteract = function()
-                                return QBX.PlayerData.job.name == 'ambulance'
+                                return QBX.PlayerData.job.type == 'ems'
                             end,
                             onSelect = function()
                                 local player = GetClosestPlayer()
