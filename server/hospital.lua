@@ -61,7 +61,7 @@ end)
 
 ---@param player Player
 local function wipeInventory(player)
-	player.Functions.ClearInventory()
+	exports.ox_inventory:ClearInventory(player)
 	exports.qbx_core:Notify(player.PlayerData.source, locale('error.possessions_taken'), 'error')
 end
 
@@ -92,10 +92,7 @@ local function canCheckIn(source, hospitalName)
 		return false
 	end
 
-	if not triggerEventHooks('checkIn', {
-		source = source,
-		hospitalName = hospitalName,
-	}) then return false end
+	if not triggerEventHooks('checkIn', { source = source, hospitalName = hospitalName }) then return false end
 
 	return true
 end

@@ -11,7 +11,7 @@ local function alertAmbulance(src, text)
 	local coords = GetEntityCoords(ped)
 	local players = exports.qbx_core:GetQBPlayers()
 	for _, v in pairs(players) do
-		if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+		if v.PlayerData.job.type == 'ems' and v.PlayerData.job.onduty then
 			TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
 		end
 	end
@@ -54,7 +54,7 @@ RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	local src = source
 	local player = exports.qbx_core:GetPlayer(src)
 	local patient = exports.qbx_core:GetPlayer(playerId)
-	if player.PlayerData.job.name ~= 'ambulance' or not patient then return end
+	if player.PlayerData.job.type ~= 'ems' or not patient then return end
 
 	exports.ox_inventory:RemoveItem(src, 'bandage', 1)
 	TriggerClientEvent('hospital:client:HealInjuries', patient.PlayerData.source, 'full')
@@ -89,8 +89,7 @@ RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 end)
 
 lib.callback.register('qbx_ambulancejob:server:getNumDoctors', function()
-	local count = exports.qbx_core:GetDutyCountType('ems')
-	return count
+	return exports.qbx_core:GetDutyCountType('ems')
 end)
 
 lib.addCommand('911e', {
@@ -104,7 +103,7 @@ lib.addCommand('911e', {
 	local coords = GetEntityCoords(ped)
 	local players = exports.qbx_core:GetQBPlayers()
 	for _, v in pairs(players) do
-		if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+		if v.PlayerData.job.type == 'ems' and v.PlayerData.job.onduty then
 			TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message)
 		end
 	end
@@ -114,7 +113,7 @@ end)
 ---@param event string
 local function triggerEventOnEmsPlayer(src, event)
 	local player = exports.qbx_core:GetPlayer(src)
-	if player.PlayerData.job.name ~= 'ambulance' then
+	if player.PlayerData.job.type ~= 'ems' then
 		exports.qbx_core:Notify(src, locale('error.not_ems'), 'error')
 		return
 	end
@@ -146,9 +145,13 @@ end)
 ---@param event string
 local function triggerItemEventOnPlayer(src, item, event)
 	local player = exports.qbx_core:GetPlayer(src)
-	if player.Functions.GetItemByName(item.name) == nil then return end
+	if not player then return end
+
+	if not exports.ox_inventory:Search(src, 'count', item.name) > 0 then return end
+
 	local removeItem = lib.callback.await(event, src)
 	if not removeItem then return end
+
 	exports.ox_inventory:RemoveItem(src, item.name, 1)
 end
 
