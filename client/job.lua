@@ -8,13 +8,12 @@ local WEAPONS = exports.qbx_core:GetWeapons()
 local function takeOutVehicle(data)
     local netId = lib.callback.await('qbx_ambulancejob:server:spawnVehicle', false, data.vehicleName, data.coords)
 
-    lib.waitFor(function()
+    local veh = lib.waitFor(function()
         if NetworkDoesEntityExistWithNetworkId(netId) then
             return NetToVeh(netId)
         end
     end)
 
-    local veh = NetworkGetEntityFromNetworkId(netId)
     SetVehicleEngineOn(veh, true, true, true)
 
     local settings = config.vehicleSettings[data.vehicleName]
