@@ -4,26 +4,24 @@ local checkVehicle = false
 local WEAPONS = exports.qbx_core:GetWeapons()
 
 ---Configures and spawns a vehicle and teleports player to the driver seat.
----@param data { vehicleName: string, vehiclePlatePrefix: string, coords: vector4}
+---@param data { vehicleName: string, coords: vector4}
 local function takeOutVehicle(data)
     local netId = lib.callback.await('qbx_ambulancejob:server:spawnVehicle', false, data.vehicleName, data.coords)
-    local timeout = 100
-    while not NetworkDoesEntityExistWithNetworkId(netId) and timeout > 0 do
-        Wait(10)
-        timeout -= 1
-    end
+
+    lib.waitFor(function()
+        if NetworkDoesEntityExistWithNetworkId(netId) then
+            return NetToVeh(netId)
+        end
+    end)
+
     local veh = NetworkGetEntityFromNetworkId(netId)
-    SetVehicleNumberPlateText(veh, data.vehiclePlatePrefix .. tostring(math.random(1000, 9999)))
-    TriggerEvent('vehiclekeys:client:SetOwner', qbx.getVehiclePlate(veh))
     SetVehicleEngineOn(veh, true, true, true)
 
     local settings = config.vehicleSettings[data.vehicleName]
     if not settings then return end
 
     if settings.extras then
-        for k in pairs(settings.extras) do
-            SetVehicleExtra(veh, tonumber(k) --[[@as number]], false)
-        end
+        qbx.setVehicleExtras(veh, settings.extras)
     end
 
     if settings.livery then
@@ -33,9 +31,8 @@ end
 
 ---Show the garage spawn menu
 ---@param vehicles AuthorizedVehicles
----@param vehiclePlatePrefix string
 ---@param coords vector4
-local function showGarageMenu(vehicles, vehiclePlatePrefix, coords)
+local function showGarageMenu(vehicles, coords)
     local authorizedVehicles = vehicles[QBX.PlayerData.job.grade.level]
     local optionsMenu = {}
     for veh, label in pairs(authorizedVehicles) do
@@ -44,7 +41,6 @@ local function showGarageMenu(vehicles, vehiclePlatePrefix, coords)
             onSelect = takeOutVehicle,
             args = {
                 vehicleName = veh,
-                vehiclePlatePrefix = vehiclePlatePrefix,
                 coords = coords,
             }
         }
@@ -55,6 +51,7 @@ local function showGarageMenu(vehicles, vehiclePlatePrefix, coords)
         title = locale('menu.amb_vehicles'),
         options = optionsMenu
     })
+
     lib.showContext('ambulance_garage_context_menu')
 end
 
@@ -74,6 +71,7 @@ local function showTreatmentMenu(status)
         title = locale('menu.status'),
         options = statusMenu
     })
+
     lib.showContext('ambulance_status_context_menu')
 end
 
@@ -212,9 +210,8 @@ end
 
 ---While in the garage pressing a key triggers storing the current vehicle or opening spawn menu.
 ---@param vehicles AuthorizedVehicles
----@param vehiclePlatePrefix string
 ---@param coords vector4
-local function checkGarageAction(vehicles, vehiclePlatePrefix, coords)
+local function checkGarageAction(vehicles, coords)
     checkVehicle = true
     CreateThread(function()
         while checkVehicle do
@@ -224,7 +221,7 @@ local function checkGarageAction(vehicles, vehiclePlatePrefix, coords)
                 if cache.vehicle then
                     DeleteEntity(cache.vehicle)
                 else
-                    showGarageMenu(vehicles, vehiclePlatePrefix, coords)
+                    showGarageMenu(vehicles, coords)
                 end
             end
             Wait(0)
@@ -268,43 +265,37 @@ end
 
 ---Creates a zone that lets players store and retrieve job vehicles
 ---@param vehicles AuthorizedVehicles
----@param vehiclePlatePrefix string
 ---@param coords vector4
-local function createGarage(vehicles, vehiclePlatePrefix, coords)
-
-    local function inVehicleZone()
-        if QBX.PlayerData.job.type == 'ems' and QBX.PlayerData.job.onduty then
-            lib.showTextUI(locale('text.veh_button'))
-            checkGarageAction(vehicles, vehiclePlatePrefix, coords)
-        else
-            checkVehicle = false
-            lib.hideTextUI()
-        end
-    end
-
-    local function outVehicleZone()
-        checkVehicle = false
-        lib.hideTextUI()
-    end
-
+local function createGarage(vehicles, coords)
     lib.zones.box({
         coords = coords.xyz,
         size = vec3(5, 5, 2),
         rotation = coords.w,
         debug = config.debugPoly,
-        inside = inVehicleZone,
-        onExit = outVehicleZone
+        inside = function()
+            if QBX.PlayerData.job.type == 'ems' and QBX.PlayerData.job.onduty then
+                lib.showTextUI(locale('text.veh_button'))
+                checkGarageAction(vehicles, coords)
+            else
+                checkVehicle = false
+                lib.hideTextUI()
+            end
+        end,
+        onExit = function()
+            checkVehicle = false
+            lib.hideTextUI()
+        end,
     })
 end
 
 ---Creates air and land garages to spawn vehicles at for EMS personnel
 CreateThread(function()
     for _, coords in pairs(sharedConfig.locations.vehicle) do
-        createGarage(config.authorizedVehicles, locale('info.amb_plate'), coords)
+        createGarage(config.authorizedVehicles, coords)
     end
 
     for _, coords in pairs(sharedConfig.locations.helicopter) do
-        createGarage(config.authorizedHelicopters, locale('info.heli_plate'), coords)
+        createGarage(config.authorizedHelicopters, coords)
     end
 end)
 
@@ -320,16 +311,16 @@ if config.useTarget then
                 debug = config.debugPoly,
                 options = {
                     {
-                        type = 'client',
-                        onSelect = toggleDuty,
                         icon = 'fa fa-clipboard',
                         label = locale('text.duty'),
+                        onSelect = toggleDuty,
                         distance = 2,
                         groups = 'ambulance',
                     }
                 }
             })
         end
+
         for i = 1, #sharedConfig.locations.stash do
             exports.ox_target:addBoxZone({
                 name = 'stash' .. i,
@@ -339,18 +330,18 @@ if config.useTarget then
                 debug = config.debugPoly,
                 options = {
                     {
-                        type = 'client',
+                        icon = 'fa fa-clipboard',
+                        label = locale('text.pstash'),
                         onSelect = function()
                             openStash(i)
                         end,
-                        icon = 'fa fa-clipboard',
-                        label = locale('text.pstash'),
                         distance = 2,
                         groups = 'ambulance',
                     }
                 }
             })
         end
+
         for i = 1, #sharedConfig.locations.armory do
             exports.ox_target:addBoxZone({
                 name = 'armory' .. i,
@@ -360,18 +351,18 @@ if config.useTarget then
                 debug = config.debugPoly,
                 options = {
                     {
-                        type = 'client',
+                        icon = 'fa fa-clipboard',
+                        label = locale('text.armory'),
                         onSelect = function()
                             openArmory(i)
                         end,
-                        icon = 'fa fa-clipboard',
-                        label = locale('text.armory'),
                         distance = 1.5,
                         groups = 'ambulance',
                     }
                 }
             })
         end
+
         exports.ox_target:addBoxZone({
             name = 'roof1',
             coords = sharedConfig.locations.roof[1],
@@ -380,15 +371,15 @@ if config.useTarget then
             debug = config.debugPoly,
             options = {
                 {
-                    type = 'client',
-                    onSelect = teleportToMainElevator,
                     icon = 'fas fa-hand-point-down',
                     label = locale('text.el_main'),
+                    onSelect = teleportToMainElevator,
                     distance = 1.5,
                     groups = 'ambulance',
                 }
             }
         })
+
         exports.ox_target:addBoxZone({
             name = 'main1',
             coords = sharedConfig.locations.main[1],
@@ -397,10 +388,9 @@ if config.useTarget then
             debug = config.debugPoly,
             options = {
                 {
-                    type = 'client',
-                    onSelect = teleportToRoofElevator,
                     icon = 'fas fa-hand-point-up',
                     label = locale('text.el_roof'),
+                    onSelect = teleportToRoofElevator,
                     distance = 1.5,
                     groups = 'ambulance',
                 }
@@ -410,103 +400,69 @@ if config.useTarget then
 else
     CreateThread(function()
         for i = 1, #sharedConfig.locations.duty do
-            local function enteredSignInZone()
-                if not QBX.PlayerData.job.onduty then
-                    lib.showTextUI(locale('text.onduty_button'))
-                else
-                    lib.showTextUI(locale('text.offduty_button'))
-                end
-            end
-
-            local function outSignInZone()
-                lib.hideTextUI()
-            end
-
-            local function insideDutyZone()
-                OnKeyPress(toggleDuty)
-            end
-
             lib.zones.box({
                 coords = sharedConfig.locations.duty[i],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
-                onEnter = enteredSignInZone,
-                onExit = outSignInZone,
-                inside = insideDutyZone,
+                onEnter = function()
+                    if not QBX.PlayerData.job.onduty then
+                        lib.showTextUI(locale('text.onduty_button'))
+                    else
+                        lib.showTextUI(locale('text.offduty_button'))
+                    end
+                end,
+                onExit = function()
+                    lib.hideTextUI()
+                end,
+                inside = function()
+                    OnKeyPress(toggleDuty)
+                end,
             })
         end
 
         for i = 1, #sharedConfig.locations.stash do
-            local function enteredStashZone()
-                if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(locale('text.pstash_button'))
-                end
-            end
-
-            local function outStashZone()
-                lib.hideTextUI()
-            end
-
-            local function insideStashZone()
-                OnKeyPress(function()
-                    openStash(i)
-                end)
-            end
-
             lib.zones.box({
                 coords = sharedConfig.locations.stash[i].location,
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
-                onEnter = enteredStashZone,
-                onExit = outStashZone,
-                inside = insideStashZone,
+                onEnter = function()
+                    if QBX.PlayerData.job.onduty then
+                        lib.showTextUI(locale('text.pstash_button'))
+                    end
+                end,
+                onExit = function()
+                    lib.hideTextUI()
+                end,
+                inside = function()
+                    OnKeyPress(function()
+                        openStash(i)
+                    end)
+                end,
             })
         end
 
         for i = 1, #sharedConfig.locations.armory do
-            local function enteredArmoryZone()
-                if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(locale('text.armory_button'))
-                end
-            end
-
-            local function outArmoryZone()
-                lib.hideTextUI()
-            end
-
-            local function insideArmoryZone()
-                OnKeyPress(function()
-                    openArmory(i)
-                end)
-            end
-
             lib.zones.box({
                 coords = sharedConfig.locations.armory[i].locations[1],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
-                onEnter = enteredArmoryZone,
-                onExit = outArmoryZone,
-                inside = insideArmoryZone,
+                onEnter = function()
+                    if QBX.PlayerData.job.onduty then
+                        lib.showTextUI(locale('text.armory_button'))
+                    end
+                end,
+                onExit = function()
+                    lib.hideTextUI()
+                end,
+                inside = function()
+                    OnKeyPress(function()
+                        openArmory(i)
+                    end)
+                end,
             })
-        end
-
-        local function enteredRoofZone()
-            if QBX.PlayerData.job.onduty then
-                lib.showTextUI(locale('text.elevator_main'))
-            else
-                lib.showTextUI(locale('error.not_ems'))
-            end
-        end
-
-        local function outRoofZone()
-            lib.hideTextUI()
-        end
-
-        local function insideRoofZone()
-            OnKeyPress(teleportToMainElevator)
         end
 
         lib.zones.box({
@@ -514,35 +470,39 @@ else
             size = vec3(1, 1, 2),
             rotation = -20,
             debug = config.debugPoly,
-            onEnter = enteredRoofZone,
-            onExit = outRoofZone,
-            inside = insideRoofZone,
+            onEnter = function()
+                if QBX.PlayerData.job.onduty then
+                    lib.showTextUI(locale('text.elevator_main'))
+                else
+                    lib.showTextUI(locale('error.not_ems'))
+                end
+            end,
+            onExit = function()
+                lib.hideTextUI()
+            end,
+            inside = function()
+                OnKeyPress(teleportToMainElevator)
+            end,
         })
-
-        local function enteredMainZone()
-            if QBX.PlayerData.job.onduty then
-                lib.showTextUI(locale('text.elevator_roof'))
-            else
-                lib.showTextUI(locale('error.not_ems'))
-            end
-        end
-
-        local function outMainZone()
-            lib.hideTextUI()
-        end
-
-        local function insideMainZone()
-            OnKeyPress(teleportToRoofElevator)
-        end
 
         lib.zones.box({
             coords = sharedConfig.locations.main[1],
             size = vec3(1, 1, 2),
             rotation = -20,
             debug = config.debugPoly,
-            onEnter = enteredMainZone,
-            onExit = outMainZone,
-            inside = insideMainZone,
+            onEnter = function()
+                if QBX.PlayerData.job.onduty then
+                    lib.showTextUI(locale('text.elevator_roof'))
+                else
+                    lib.showTextUI(locale('error.not_ems'))
+                end
+            end,
+            onExit = function()
+                lib.hideTextUI()
+            end,
+            inside = function()
+                OnKeyPress(teleportToRoofElevator)
+            end,
         })
     end)
 end
