@@ -75,7 +75,7 @@ lib.callback.register('qbx_ambulancejob:server:spawnVehicle', function(source, v
 	local plate = platePrefix .. tostring(math.random(1000, 9999))
 
 	SetVehicleNumberPlateText(veh, plate)
-    TriggerClientEvent('vehiclekeys:client:SetOwner', source, plate)
+	TriggerClientEvent('vehiclekeys:client:SetOwner', source, plate)
 	return netId
 end)
 

@@ -271,18 +271,21 @@ local function createGarage(vehicles, coords)
         size = vec3(5, 5, 2),
         rotation = coords.w,
         debug = config.debugPoly,
-        inside = function()
+        onEnter = function()
             if QBX.PlayerData.job.type == 'ems' and QBX.PlayerData.job.onduty then
                 lib.showTextUI(locale('text.veh_button'))
-                checkGarageAction(vehicles, coords)
-            else
-                checkVehicle = false
-                lib.hideTextUI()
             end
         end,
         onExit = function()
             checkVehicle = false
             lib.hideTextUI()
+        end,
+        inside = function()
+            if QBX.PlayerData.job.type == 'ems' and QBX.PlayerData.job.onduty then
+                checkGarageAction(vehicles, coords)
+            else
+                checkVehicle = false
+            end
         end,
     })
 end
@@ -405,11 +408,8 @@ else
                 rotation = -20,
                 debug = config.debugPoly,
                 onEnter = function()
-                    if not QBX.PlayerData.job.onduty then
-                        lib.showTextUI(locale('text.onduty_button'))
-                    else
-                        lib.showTextUI(locale('text.offduty_button'))
-                    end
+                    local label = QBX.PlayerData.job.onduty and locale('text.onduty_button') or locale('text.offduty_button')
+                    lib.showTextUI(label)
                 end,
                 onExit = function()
                     lib.hideTextUI()
@@ -470,11 +470,8 @@ else
             rotation = -20,
             debug = config.debugPoly,
             onEnter = function()
-                if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(locale('text.elevator_main'))
-                else
-                    lib.showTextUI(locale('error.not_ems'))
-                end
+                local label = QBX.PlayerData.job.onduty and locale('text.elevator_main') or locale('error.not_ems')
+                lib.showTextUI(label)
             end,
             onExit = function()
                 lib.hideTextUI()
@@ -490,11 +487,8 @@ else
             rotation = -20,
             debug = config.debugPoly,
             onEnter = function()
-                if QBX.PlayerData.job.onduty then
-                    lib.showTextUI(locale('text.elevator_roof'))
-                else
-                    lib.showTextUI(locale('error.not_ems'))
-                end
+                local label = QBX.PlayerData.job.onduty and locale('text.elevator_roof') or locale('error.not_ems')
+                lib.showTextUI(label)
             end,
             onExit = function()
                 lib.hideTextUI()

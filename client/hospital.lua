@@ -211,7 +211,6 @@ else
                     end,
                     inside = function()
                         if IsControlJustPressed(0, 38) then
-                            lib.hideTextUI()
                             checkIn(hospitalName)
                         end
                     end,
