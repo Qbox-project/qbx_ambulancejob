@@ -354,7 +354,7 @@ if config.useTarget then
         for i = 1, #sharedConfig.locations.armory do
             exports.ox_target:addBoxZone({
                 name = 'armory' .. i,
-                coords = sharedConfig.locations.armory[i].locations,
+                coords = sharedConfig.locations.armory[i].locations[1],
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
