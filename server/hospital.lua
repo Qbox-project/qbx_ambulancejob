@@ -59,10 +59,10 @@ lib.callback.register('qbx_ambulancejob:server:isBedTaken', function(_, hospital
 	return hospitalBedsTaken[hospitalName][bedIndex]
 end)
 
----@param player Player
-local function wipeInventory(player)
-	player.Functions.ClearInventory()
-	exports.qbx_core:Notify(player.PlayerData.source, locale('error.possessions_taken'), 'error')
+---@param src number
+local function wipeInventory(src)
+	exports.ox_inventory:ClearInventory(src)
+	exports.qbx_core:Notify(src, locale('error.possessions_taken'), 'error')
 end
 
 lib.callback.register('qbx_ambulancejob:server:spawnVehicle', function(source, vehicleName, vehicleCoords)
@@ -92,10 +92,7 @@ local function canCheckIn(source, hospitalName)
 		return false
 	end
 
-	if not triggerEventHooks('checkIn', {
-		source = source,
-		hospitalName = hospitalName,
-	}) then return false end
+	if not triggerEventHooks('checkIn', { source = source, hospitalName = hospitalName }) then return false end
 
 	return true
 end
@@ -150,7 +147,7 @@ local function respawn(src)
 	TriggerClientEvent('qbx_ambulancejob:client:checkedIn', src, closestHospital, bedIndex)
 
 	if config.wipeInvOnRespawn then
-		wipeInventory(player)
+		wipeInventory(src)
 	end
 end
 

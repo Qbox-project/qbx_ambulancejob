@@ -1,10 +1,10 @@
 local config = require 'config.client'
 local sharedConfig = require 'config.shared'
-local bedObject = nil
-local bedOccupyingData = nil
-local cam = nil
-local hospitalOccupying = nil
-local bedIndexOccupying = nil
+local bedObject
+local bedOccupyingData
+local cam
+local hospitalOccupying
+local bedIndexOccupying
 
 ---Teleports the player to lie down in bed and sets the player's camera.
 local function setBedCam()
@@ -14,7 +14,7 @@ local function setBedCam()
         Wait(100)
     end
 
-    if IsPedDeadOrDying(cache.ped) then
+    if IsPedDeadOrDying(cache.ped, true) then
         local pos = GetEntityCoords(cache.ped, true)
         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(cache.ped), true, false)
     end
@@ -22,7 +22,7 @@ local function setBedCam()
     bedObject = GetClosestObjectOfType(bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z, 1.0, bedOccupyingData.model, false, false, false)
     FreezeEntityPosition(bedObject, true)
 
-    SetEntityCoords(cache.ped, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02)
+    SetEntityCoords(cache.ped, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02, true, true, true, false)
     Wait(500)
     FreezeEntityPosition(cache.ped, true)
 
@@ -85,7 +85,6 @@ local function checkIn(hospitalName)
     local canCheckIn = lib.callback.await('qbx_ambulancejob:server:canCheckIn', false, hospitalName)
     if not canCheckIn then return end
 
-    exports.scully_emotemenu:playEmoteByCommand('notepad')
     if lib.progressCircle({
         duration = 2000,
         position = 'bottom',
@@ -98,12 +97,29 @@ local function checkIn(hospitalName)
             combat = true,
             mouse = false,
         },
+        anim = {
+            clip = 'base',
+            dict= 'missheistdockssetup1clipboard@base',
+            flag = 16
+        },
+        prop = {
+            {
+                model = 'prop_notepad_01',
+                bone = 18905,
+                pos = vec3(0.1, 0.02, 0.05),
+                rot = vec3(10.0, 0.0, 0.0),
+            },
+            {
+                model = 'prop_pencil_01',
+                bone = 58866,
+                pos = vec3(0.11, -0.02, 0.001),
+                rot = vec3(-120.0, 0.0, 0.0)
+            }
+        }
     })
     then
-        exports.scully_emotemenu:cancelEmote()
         lib.callback('qbx_ambulancejob:server:checkIn', false, nil, cache.serverId, hospitalName)
     else
-        exports.scully_emotemenu:cancelEmote()
         exports.qbx_core:Notify(locale('error.canceled'), 'error')
     end
 end
@@ -155,7 +171,7 @@ if config.useTarget then
                         },
                         {
                             canInteract = function()
-                                return QBX.PlayerData.job.name == 'ambulance'
+                                return QBX.PlayerData.job.type == 'ems'
                             end,
                             onSelect = function()
                                 local player = GetClosestPlayer()

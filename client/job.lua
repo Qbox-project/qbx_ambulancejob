@@ -62,7 +62,7 @@ end
 ---@param status string[]
 local function showTreatmentMenu(status)
     local statusMenu = {}
-    for i=1, #status do
+    for i = 1, #status do
         statusMenu[i] = {
             title = status[i],
             event = 'hospital:client:TreatWounds',
@@ -85,8 +85,8 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         exports.qbx_core:Notify(locale('error.no_player'), 'error')
         return
     end
-    local playerId = GetPlayerServerId(player)
 
+    local playerId = GetPlayerServerId(player)
 
     local status = lib.callback.await('qbx_ambulancejob:server:getPlayerStatus', false, playerId)
     if #status.injuries == 0 then
@@ -274,7 +274,7 @@ end
 local function createGarage(vehicles, vehiclePlatePrefix, coords)
 
     local function inVehicleZone()
-        if QBX.PlayerData.job.name == 'ambulance' and QBX.PlayerData.job.onduty then
+        if QBX.PlayerData.job.type == 'ems' and QBX.PlayerData.job.onduty then
             lib.showTextUI(locale('text.veh_button'))
             checkGarageAction(vehicles, vehiclePlatePrefix, coords)
         else
