@@ -29,7 +29,7 @@ return {
                     { name = 'weapon_fireextinguisher', price = 0 },
                 },
                 locations = {
-                    vec3(309.93, -602.94, 43.29) -- Only a single location is supported.
+                    vec3(309.93, -602.94, 43.29)
                 }
             }
         },
