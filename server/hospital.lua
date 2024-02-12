@@ -29,18 +29,18 @@ lib.callback.register('qbx_ambulancejob:server:getOpenBed', function(_, hospital
 	return getOpenBed(hospitalName)
 end)
 
----@param player Player
-local function billPlayer(player)
+---@param src number
+local function billPlayer(src)
+	local player = exports.qbx_core:GetPlayer(src)
 	player.Functions.RemoveMoney('bank', sharedConfig.checkInCost, 'respawned-at-hospital')
 	config.depositSociety('ambulance', sharedConfig.checkInCost)
-	TriggerClientEvent('hospital:client:SendBillEmail', player.PlayerData.source, sharedConfig.checkInCost)
+	TriggerClientEvent('hospital:client:SendBillEmail', src, sharedConfig.checkInCost)
 end
 
 RegisterNetEvent('qbx_ambulancejob:server:playerEnteredBed', function(hospitalName, bedIndex)
 	if GetInvokingResource() then return end
 	local src = source
-	local player = exports.qbx_core:GetPlayer(src)
-	billPlayer(player)
+	billPlayer(src)
 	hospitalBedsTaken[hospitalName][bedIndex] = true
 end)
 
@@ -67,6 +67,15 @@ end
 
 lib.callback.register('qbx_ambulancejob:server:spawnVehicle', function(source, vehicleName, vehicleCoords)
 	local netId = qbx.spawnVehicle({ spawnSource = vehicleCoords or source, model = vehicleName, warp = source })
+
+	local veh = NetworkGetEntityFromNetworkId(netId)
+
+	local vehType = GetVehicleType(veh)
+	local platePrefix = (vehType == 'heli') and locale('info.heli_plate') or locale('info.amb_plate')
+	local plate = platePrefix .. tostring(math.random(1000, 9999))
+
+	SetVehicleNumberPlateText(veh, plate)
+	TriggerClientEvent('vehiclekeys:client:SetOwner', source, plate)
 	return netId
 end)
 
