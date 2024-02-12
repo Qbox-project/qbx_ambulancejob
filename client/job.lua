@@ -358,7 +358,7 @@ if config.useTarget then
                             icon = 'fa fa-clipboard',
                             label = locale('text.armory'),
                             onSelect = function()
-                                openArmory(i)
+                                openArmory(i, ii)
                             end,
                             distance = 1.5,
                             groups = 'ambulance',
@@ -448,7 +448,7 @@ else
         for i = 1, #sharedConfig.locations.armory do
             for ii = 1, #sharedConfig.locations.armory[i].locations do
                 lib.zones.box({
-                    coords = sharedConfig.locations.armory[i].locations[1],
+                    coords = sharedConfig.locations.armory[i].locations[ii],
                     size = vec3(1, 1, 2),
                     rotation = -20,
                     debug = config.debugPoly,
@@ -462,7 +462,7 @@ else
                     end,
                     inside = function()
                         OnKeyPress(function()
-                            openArmory(i)
+                            openArmory(i, ii)
                         end)
                     end,
                 })
