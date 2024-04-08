@@ -27,15 +27,5 @@ files {
 	'config/shared.lua',
 }
 
-dependencies {
-	'ox_lib',
-	'ox_target',
-	'ox_inventory',
-	'qbx_core',
-	'qbx_policejob',
-	'qbx_management',
-	'qbx_medical',
-}
-
 lua54 'yes'
 use_experimental_fxv2_oal 'yes'
