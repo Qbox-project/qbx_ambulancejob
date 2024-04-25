@@ -61,6 +61,10 @@ RegisterNetEvent('hospital:client:Revive', function()
     EmsNotified = false
 end)
 
+RegisterNetEvent('qbx_medical:client:playerRevived', function()
+    EmsNotified = false
+end)
+
 ---Sends player phone email with hospital bill.
 ---@param amount number
 RegisterNetEvent('hospital:client:SendBillEmail', function(amount)

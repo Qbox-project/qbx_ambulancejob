@@ -61,8 +61,6 @@ local function handleLastStand()
         qbx.drawText2d({ text = locale('info.bleed_out_help', math.ceil(laststandTime)), coords = vec2(1.0, 1.44), scale = 0.6 })
         handleRequestingEms()
     end
-
-    exports.qbx_medical:playLastStandAnimationDeprecated()
 end
 
 ---Set dead and last stand states.

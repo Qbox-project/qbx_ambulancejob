@@ -45,11 +45,9 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
         },
     })
     then
-        ClearPedTasks(cache.ped)
         exports.qbx_core:Notify(locale('success.revived'), 'success')
         TriggerServerEvent('hospital:server:RevivePlayer', targetId)
     else
-        ClearPedTasks(cache.ped)
         exports.qbx_core:Notify(locale('error.canceled'), 'error')
     end
 end)
