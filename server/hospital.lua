@@ -113,7 +113,7 @@ lib.callback.register('qbx_ambulancejob:server:canCheckIn', canCheckIn)
 ---@param patientSrc number the player being checked in
 ---@param hospitalName string name of the hospital matching the config where player should be placed
 local function checkIn(src, patientSrc, hospitalName)
-	if not canCheckIn(patientSrc, hospitalName) then return false end
+	if src == patientSrc and not canCheckIn(patientSrc, hospitalName) then return false end
 
 	local bedIndex = getOpenBed(hospitalName)
 	if not bedIndex then

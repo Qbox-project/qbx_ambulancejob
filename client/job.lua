@@ -208,27 +208,6 @@ local function openArmory(armoryId, stashId)
     exports.ox_inventory:openInventory('shop', { type = sharedConfig.locations.armory[armoryId].shopType, id = stashId })
 end
 
----While in the garage pressing a key triggers storing the current vehicle or opening spawn menu.
----@param vehicles AuthorizedVehicles
----@param coords vector4
-local function checkGarageAction(vehicles, coords)
-    checkVehicle = true
-    CreateThread(function()
-        while checkVehicle do
-            if IsControlJustPressed(0, 38) then
-                lib.hideTextUI()
-                checkVehicle = false
-                if cache.vehicle then
-                    DeleteEntity(cache.vehicle)
-                else
-                    showGarageMenu(vehicles, coords)
-                end
-            end
-            Wait(0)
-        end
-    end)
-end
-
 ---Teleports the player with a fade in/out effect
 ---@param coords vector3 | vector4
 local function teleportPlayerWithFade(coords)
@@ -278,14 +257,15 @@ local function createGarage(vehicles, coords)
             end
         end,
         onExit = function()
-            checkVehicle = false
-            lib.hideTextUI()
+                        lib.hideTextUI()
         end,
         inside = function()
-            if QBX.PlayerData.job.type == 'ems' and QBX.PlayerData.job.onduty then
-                checkGarageAction(vehicles, coords)
+            if QBX.PlayerData.job.type == 'ems' and QBX.PlayerData.job.onduty and IsControlJustPressed(0, 38) then
+                if cache.vehicle then
+                    DeleteEntity(cache.vehicle)
             else
-                checkVehicle = false
+                showGarageMenu(vehicles, coords)
+                end
             end
         end,
     })

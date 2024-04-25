@@ -146,7 +146,7 @@ if config.useTarget then
                             end,
                             icon = 'fas fa-clipboard',
                             label = locale('text.check'),
-                            distance = 1.5,
+                            distance = 3.0,
                         }
                     }
                 })
@@ -167,7 +167,7 @@ if config.useTarget then
                             end,
                             icon = 'fas fa-clipboard',
                             label = locale('text.bed'),
-                            distance = 1.5,
+                            distance = 3.0,
                         },
                         {
                             canInteract = function()
@@ -182,7 +182,7 @@ if config.useTarget then
                             end,
                             icon = 'fas fa-clipboard',
                             label = locale('text.put_bed'),
-                            distance = 1.5,
+                            distance = 3.0,
                         }
                     }
                 })
