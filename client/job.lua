@@ -1,7 +1,7 @@
 local config = require 'config.client'
 local sharedConfig = require 'config.shared'
 local checkVehicle = false
-local WEAPONS = exports.qbx_core:GetWeapons()
+local damageReasons = require '@qbx_medical.config.damage_reasons'
 
 ---Configures and spawns a vehicle and teleports player to the driver seat.
 ---@param data { vehicleName: string, coords: vector4}
@@ -95,7 +95,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
         TriggerEvent('chat:addMessage', {
             color = { 255, 0, 0 },
             multiline = false,
-            args = { locale('info.status'), WEAPONS[hash].damagereason }
+            args = { locale('info.status'), damageReasons[hash] }
         })
     end
 
