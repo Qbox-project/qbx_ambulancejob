@@ -1,6 +1,5 @@
 local config = require 'config.client'
 local sharedConfig = require 'config.shared'
-local checkVehicle = false
 local WEAPONS = exports.qbx_core:GetWeapons()
 
 ---Configures and spawns a vehicle and teleports player to the driver seat.
