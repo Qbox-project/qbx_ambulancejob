@@ -118,7 +118,7 @@ local function checkIn(hospitalName)
         }
     })
     then
-        lib.callback('qbx_ambulancejob:server:checkIn', false, nil, cache.serverId, hospitalName)
+        lib.callback.await('qbx_ambulancejob:server:checkIn', false, cache.serverId, hospitalName)
     else
         exports.qbx_core:Notify(locale('error.canceled'), 'error')
     end

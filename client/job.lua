@@ -291,6 +291,9 @@ if config.useTarget then
                 size = vec3(1.5, 1, 2),
                 rotation = 71,
                 debug = config.debugPoly,
+                canInteract = function()
+                    return QBX.PlayerData.job.type == 'ems'
+                end,
                 options = {
                     {
                         icon = 'fa fa-clipboard',
@@ -310,6 +313,9 @@ if config.useTarget then
                 size = vec3(1, 1, 2),
                 rotation = -20,
                 debug = config.debugPoly,
+                canInteract = function()
+                    return QBX.PlayerData.job.type == 'ems'
+                end,
                 options = {
                     {
                         icon = 'fa fa-clipboard',
@@ -332,6 +338,9 @@ if config.useTarget then
                     size = vec3(1, 1, 2),
                     rotation = -20,
                     debug = config.debugPoly,
+                    canInteract = function()
+                        return QBX.PlayerData.job.type == 'ems'
+                    end,
                     options = {
                         {
                             icon = 'fa fa-clipboard',
@@ -390,13 +399,16 @@ else
                 rotation = -20,
                 debug = config.debugPoly,
                 onEnter = function()
+                    if QBX.PlayerData.job.type ~= 'ems' then return end
                     local label = QBX.PlayerData.job.onduty and locale('text.onduty_button') or locale('text.offduty_button')
                     lib.showTextUI(label)
                 end,
                 onExit = function()
+                    if QBX.PlayerData.job.type ~= 'ems' then return end
                     lib.hideTextUI()
                 end,
                 inside = function()
+                    if QBX.PlayerData.job.type ~= 'ems' then return end
                     OnKeyPress(toggleDuty)
                 end,
             })
@@ -409,14 +421,17 @@ else
                 rotation = -20,
                 debug = config.debugPoly,
                 onEnter = function()
+                    if QBX.PlayerData.job.type ~= 'ems' then return end
                     if QBX.PlayerData.job.onduty then
                         lib.showTextUI(locale('text.pstash_button'))
                     end
                 end,
                 onExit = function()
+                    if QBX.PlayerData.job.type ~= 'ems' then return end
                     lib.hideTextUI()
                 end,
                 inside = function()
+                    if QBX.PlayerData.job.type ~= 'ems' then return end
                     OnKeyPress(function()
                         openStash(i)
                     end)
@@ -432,14 +447,17 @@ else
                     rotation = -20,
                     debug = config.debugPoly,
                     onEnter = function()
+                        if QBX.PlayerData.job.type ~= 'ems' then return end
                         if QBX.PlayerData.job.onduty then
                             lib.showTextUI(locale('text.armory_button'))
                         end
                     end,
                     onExit = function()
+                        if QBX.PlayerData.job.type ~= 'ems' then return end
                         lib.hideTextUI()
                     end,
                     inside = function()
+                        if QBX.PlayerData.job.type ~= 'ems' then return end
                         OnKeyPress(function()
                             openArmory(i, ii)
                         end)
