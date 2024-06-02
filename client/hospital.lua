@@ -60,7 +60,7 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     bedOccupyingData = sharedConfig.locations.hospitals[hospitalName].beds[bedIndex]
     IsInHospitalBed = true
     exports.qbx_medical:DisableDamageEffects()
-    exports.qbx_medical:disableRespawn()
+    exports.qbx_medical:DisableRespawn()
     CanLeaveBed = false
     setBedCam()
     CreateThread(function()

@@ -21,7 +21,7 @@ lib.callback.register('hospital:client:UseFirstAid', function()
 end)
 
 lib.callback.register('hospital:client:canHelp', function()
-    return exports.qbx_medical:getLaststand() and exports.qbx_medical:getLaststandTime() <= 300
+    return exports.qbx_medical:GetLaststand() and exports.qbx_medical:GetLaststandTime() <= 300
 end)
 
 ---@param targetId number playerId
