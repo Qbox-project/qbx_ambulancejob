@@ -28,7 +28,7 @@ lib.callback.register('hospital:client:UseIfaks', function()
             painkillerAmount += 1
         end
         if math.random(1, 100) < 50 then
-            exports.qbx_medical:removeBleed(1)
+            exports.qbx_medical:RemoveBleed(1)
         end
         return true
     else
@@ -58,10 +58,10 @@ lib.callback.register('hospital:client:UseBandage', function()
     then
         SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) + 10)
         if math.random(1, 100) < 50 then
-            exports.qbx_medical:removeBleed(1)
+            exports.qbx_medical:RemoveBleed(1)
         end
         if math.random(1, 100) < 7 then
-            exports.qbx_medical:resetMinorInjuries()
+            exports.qbx_medical:ResetMinorInjuries()
         end
         return true
     else

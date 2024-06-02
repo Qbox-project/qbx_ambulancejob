@@ -7,12 +7,12 @@ local function getDoctorCount()
 end
 
 local function displayRespawnText()
-    local deathTime = exports.qbx_medical:getDeathTime()
+    local deathTime = exports.qbx_medical:GetDeathTime()
     if deathTime > 0 and doctorCount > 0 then
         qbx.drawText2d({ text = locale('info.respawn_txt', math.ceil(deathTime)), coords = vec2(1.0, 1.44), scale = 0.6 })
     else
         qbx.drawText2d({
-            text = locale('info.respawn_revive', exports.qbx_medical:getRespawnHoldTimeDeprecated(), sharedConfig.checkInCost),
+            text = locale('info.respawn_revive', exports.qbx_medical:GetRespawnHoldTimeDeprecated(), sharedConfig.checkInCost),
             coords = vec2(1.0, 1.44),
             scale = 0.6
         })
@@ -27,7 +27,7 @@ local function playDeadAnimation(ped)
             TaskPlayAnim(ped, InBedDict, InBedAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
         end
     else
-        exports.qbx_medical:playDeadAnimation()
+        exports.qbx_medical:PlayDeadAnimation()
     end
 end
 
@@ -54,7 +54,7 @@ local function handleRequestingEms()
 end
 
 local function handleLastStand()
-    local laststandTime = exports.qbx_medical:getLaststandTime()
+    local laststandTime = exports.qbx_medical:GetLaststandTime()
     if laststandTime > config.laststandTimer or doctorCount == 0 then
         qbx.drawText2d({ text = locale('info.bleed_out', math.ceil(laststandTime)), coords = vec2(1.0, 1.44), scale = 0.6 })
     else
@@ -66,8 +66,8 @@ end
 ---Set dead and last stand states.
 CreateThread(function()
     while true do
-        local isDead = exports.qbx_medical:isDead()
-        local inLaststand = exports.qbx_medical:getLaststand()
+        local isDead = exports.qbx_medical:IsDead()
+        local inLaststand = exports.qbx_medical:GetLaststand()
         if isDead or inLaststand then
             if isDead then
                 handleDead(cache.ped)
