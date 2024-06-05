@@ -67,7 +67,7 @@ end
 CreateThread(function()
     while true do
         local isDead = exports.qbx_medical:IsDead()
-        local inLaststand = exports.qbx_medical:GetLaststand()
+        local inLaststand = exports.qbx_medical:IsLaststand()
         if isDead or inLaststand then
             if isDead then
                 handleDead(cache.ped)

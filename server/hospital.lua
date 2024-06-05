@@ -66,7 +66,8 @@ local function wipeInventory(src)
 end
 
 lib.callback.register('qbx_ambulancejob:server:spawnVehicle', function(source, vehicleName, vehicleCoords)
-	local netId, veh = qbx.spawnVehicle({ spawnSource = vehicleCoords or source, model = vehicleName, warp = source })
+	local netId, veh = qbx.spawnVehicle({ spawnSource = vehicleCoords or source, model = vehicleName, warp = GetPlayerPed(source)})
+
 	local vehType = GetVehicleType(veh)
 	local platePrefix = (vehType == 'heli') and locale('info.heli_plate') or locale('info.amb_plate')
 	local plate = platePrefix .. tostring(math.random(1000, 9999))
