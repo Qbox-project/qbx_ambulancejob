@@ -422,11 +422,9 @@ else
                 rotation = -20,
                 debug = config.debugPoly,
                 onEnter = function()
-                    if QBX.PlayerData.job.type ~= 'ems' then return end
-                    if QBX.PlayerData.job.onduty then
-                        lib.showTextUI(locale('text.pstash_button'))
-                    end
-                end,
+                    if QBX.PlayerData.job.type ~= 'ems' or not QBX.PlayerData.job.onduty then return end
+                    lib.showTextUI(locale('text.pstash_button'))
+                    end,
                 onExit = function()
                     local _, text = lib.isTextUIOpen()
                     if text == locale('text.pstash_button') then lib.hideTextUI() end
@@ -448,11 +446,9 @@ else
                     rotation = -20,
                     debug = config.debugPoly,
                     onEnter = function()
-                        if QBX.PlayerData.job.type ~= 'ems' then return end
-                        if QBX.PlayerData.job.onduty then
-                            lib.showTextUI(locale('text.armory_button'))
-                        end
-                    end,
+                        if QBX.PlayerData.job.type ~= 'ems' or not QBX.PlayerData.job.onduty then return end
+                        lib.showTextUI(locale('text.armory_button'))
+                        end,
                     onExit = function()
                         local _, text = lib.isTextUIOpen()
                         if text == locale('text.armory_button') then lib.hideTextUI() end
