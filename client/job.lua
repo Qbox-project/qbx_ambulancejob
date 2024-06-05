@@ -256,7 +256,8 @@ local function createGarage(vehicles, coords)
             end
         end,
         onExit = function()
-                        lib.hideTextUI()
+            local _, text = lib.isTextUIOpen()
+            if text == locale('text.veh_button') then lib.hideTextUI() end
         end,
         inside = function()
             if QBX.PlayerData.job.type == 'ems' and QBX.PlayerData.job.onduty and IsControlJustPressed(0, 38) then
@@ -404,8 +405,8 @@ else
                     lib.showTextUI(label)
                 end,
                 onExit = function()
-                    if QBX.PlayerData.job.type ~= 'ems' then return end
-                    lib.hideTextUI()
+                    local _, text = lib.isTextUIOpen()
+                    if text == locale('text.onduty_button') or text == locale('text.offduty_button') then lib.hideTextUI() end
                 end,
                 inside = function()
                     if QBX.PlayerData.job.type ~= 'ems' then return end
@@ -427,8 +428,8 @@ else
                     end
                 end,
                 onExit = function()
-                    if QBX.PlayerData.job.type ~= 'ems' then return end
-                    lib.hideTextUI()
+                    local _, text = lib.isTextUIOpen()
+                    if text == locale('text.pstash_button') then lib.hideTextUI() end
                 end,
                 inside = function()
                     if QBX.PlayerData.job.type ~= 'ems' then return end
@@ -453,8 +454,8 @@ else
                         end
                     end,
                     onExit = function()
-                        if QBX.PlayerData.job.type ~= 'ems' then return end
-                        lib.hideTextUI()
+                        local _, text = lib.isTextUIOpen()
+                        if text == locale('text.armory_button') then lib.hideTextUI() end
                     end,
                     inside = function()
                         if QBX.PlayerData.job.type ~= 'ems' then return end
@@ -476,7 +477,8 @@ else
                 lib.showTextUI(label)
             end,
             onExit = function()
-                lib.hideTextUI()
+                local _, text = lib.isTextUIOpen()
+                if text == locale('text.elevator_main') or text == locale('error.not_ems') then lib.hideTextUI() end
             end,
             inside = function()
                 OnKeyPress(teleportToMainElevator)
@@ -493,7 +495,8 @@ else
                 lib.showTextUI(label)
             end,
             onExit = function()
-                lib.hideTextUI()
+                local _, text = lib.isTextUIOpen()
+                if text == locale('text.elevator_roof') or text == locale('error.not_ems') then lib.hideTextUI() end
             end,
             inside = function()
                 OnKeyPress(teleportToRoofElevator)
