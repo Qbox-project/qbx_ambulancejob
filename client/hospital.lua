@@ -26,9 +26,7 @@ local function setBedCam()
     Wait(500)
     FreezeEntityPosition(cache.ped, true)
 
-    lib.requestAnimDict(InBedDict)
-
-    TaskPlayAnim(cache.ped, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
+    lib.playAnim(cache.ped, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
     SetEntityHeading(cache.ped, bedOccupyingData.coords.w)
 
     cam = CreateCam('DEFAULT_SCRIPTED_CAMERA', true)
@@ -246,11 +244,12 @@ end
 
 ---Plays animation to get out of bed and resets variables
 local function leaveBed()
-    lib.requestAnimDict('switch@franklin@bed')
+    lib.requestAnimDict('switch@franklin@bed', 10000)
     FreezeEntityPosition(cache.ped, false)
     SetEntityInvincible(cache.ped, false)
     SetEntityHeading(cache.ped, bedOccupyingData.coords.w + 90)
     TaskPlayAnim(cache.ped, 'switch@franklin@bed', 'sleep_getup_rubeyes', 100.0, 1.0, -1, 8, -1, false, false, false)
+    RemoveAnimDict('switch@franklin@bed')
     Wait(4000)
     ClearPedTasks(cache.ped)
     TriggerServerEvent('qbx_ambulancejob:server:playerLeftBed', hospitalOccupying, bedIndexOccupying)

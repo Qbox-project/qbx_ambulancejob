@@ -23,8 +23,7 @@ end
 local function playDeadAnimation(ped)
     if IsInHospitalBed then
         if not IsEntityPlayingAnim(ped, InBedDict, InBedAnim, 3) then
-            lib.requestAnimDict(InBedDict)
-            TaskPlayAnim(ped, InBedDict, InBedAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
+            lib.playAnim(ped, InBedDict, InBedAnim, 1.0, 1.0, -1, 1, 0, false, false, false)
         end
     else
         exports.qbx_medical:PlayDeadAnimation()
