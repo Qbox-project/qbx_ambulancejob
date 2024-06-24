@@ -52,8 +52,7 @@ end)
 ---Intended to be called from client or server.
 RegisterNetEvent('hospital:client:Revive', function()
     if IsInHospitalBed then
-        lib.requestAnimDict(InBedDict)
-        TaskPlayAnim(cache.ped, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
+        lib.playAnim(cache.ped, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
         TriggerEvent('qbx_medical:client:playerRevived')
         CanLeaveBed = true
     end
