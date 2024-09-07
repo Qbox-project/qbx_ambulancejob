@@ -1,3 +1,4 @@
+local config = require 'config.server'
 local sharedConfig = require 'config.shared'
 
 ---@param job? string
@@ -39,7 +40,7 @@ lib.callback.register('qbx_police:server:spawnVehicle', function(source, model, 
         }
     })
 
-    exports.qbx_vehiclekeys:GiveKeys(source, plate)
+    config.giveVehicleKeys(source, plate)
 
     return netId
 end)
