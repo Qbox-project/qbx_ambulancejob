@@ -21,11 +21,13 @@ client_scripts {
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     'server/main.lua',
+    'server/commands.lua'
 }
 
 files {
     'config/client.lua',
     'config/shared.lua',
+    'locales/*.json',
     'client/vehicles.lua',
 }
 

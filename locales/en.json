@@ -1,0 +1,38 @@
+{
+    "blip": "Hospital",
+    "targets": {
+        "duty": "Clock In/Out",
+        "boss_menu": "Open Job Management",
+        "closet": "Open Medical Supply Closet",
+        "personal_stash": "Open Personal Stash",
+        "garage": "Open Garage",
+        "store_vehicle": "Store Vehicle",
+        "helipad": "Open Helipad",
+        "store_helicopter": "Store Helicopter"
+    },
+    "radial": {
+        "label": "EMS",
+        "check_status": "Check Health Status",
+        "escort": "Escort",
+        "ems_down": "10-99A",
+        "ems_down_urgent": "10-99B"
+    },
+    "notify": {
+        "in_vehicle": "You're already in a vehicle...",
+        "not_around": "It looks like that person is not around right now..."
+    },
+    "vehicles": {
+        "garage_title": "EMS Garage",
+        "helipad_title": "EMS Helipad",
+        "not_helipad_grade": "You're not the appropriate grade to pilot a helicopter yet...",
+        "something_wrong": "Something went wrong while attempting to spawn the emergency medical vehicle..."
+    },
+    "commands": {
+        "callsign": {
+            "help": "Give yourself a callsign",
+            "params": {
+                "callsign": "Your new callsign (A-101, A101, 101)"
+            }
+        }
+    }
+}
