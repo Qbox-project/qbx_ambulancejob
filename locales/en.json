@@ -4,11 +4,7 @@
         "duty": "Clock In/Out",
         "boss_menu": "Open Job Management",
         "closet": "Open Medical Supply Closet",
-        "personal_stash": "Open Personal Stash",
-        "garage": "Open Garage",
-        "store_vehicle": "Store Vehicle",
-        "helipad": "Open Helipad",
-        "store_helicopter": "Store Helicopter"
+        "personal_stash": "Open Personal Stash"
     },
     "radial": {
         "label": "EMS",
@@ -22,6 +18,10 @@
         "not_around": "It looks like that person is not around right now..."
     },
     "vehicles": {
+        "open_helipad": "E - Open Helipad",
+        "store_helicopter": "E - Store Helicopter",
+        "open_garage": "E - Open Garage",
+        "store_vehicle": "E - Store Vehicle",
         "garage_title": "EMS Garage",
         "helipad_title": "EMS Helipad",
         "not_helipad_grade": "You're not the appropriate grade to pilot a helicopter yet...",
