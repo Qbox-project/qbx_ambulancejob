@@ -26,17 +26,18 @@ local function registerSupplyCloset(hospital)
 end
 
 ---@param source number
----@param model string
+---@param vehicle table
 ---@param spawn vector4
-lib.callback.register('qbx_police:server:spawnVehicle', function(source, model, spawn)
+lib.callback.register('qbx_ems:server:spawnVehicle', function(source, vehicle, spawn)
     local ped = GetPlayerPed(source)
     local plate = ('EMS%s'):format(math.random(10000, 99999))
     local netId, _ = qbx.spawnVehicle({
         spawnSource = spawn,
-        model = model,
+        model = vehicle.name,
         warp = ped,
         props = {
-            plate = plate
+            plate = plate,
+            modLivery = vehicle.livery or 0
         }
     })
 
