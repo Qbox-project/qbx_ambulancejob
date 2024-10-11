@@ -55,7 +55,7 @@ return {
         ---@field coords vector4
         ---@field model number
 
-        ---@type table<string, {coords: vector3, checkIn?: vector3, beds: Bed[]}>
+        ---@type table<string, {coords: vector3, checkIn?: vector3|vector3[], beds: Bed[]}>
         hospitals = {
             pillbox = {
                 coords = vec3(350, -580, 43),
