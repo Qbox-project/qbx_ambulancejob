@@ -134,7 +134,7 @@ if config.useTarget then
                 if type(hospital.checkIn) ~= 'table' then hospital.checkIn = { hospital.checkIn } end
                 for i = 1, #hospital.checkIn do
                     exports.ox_target:addBoxZone({
-                        name = hospitalName..'_checkin',
+                        name = hospitalName..'_checkin_'..i,
                         coords = hospital.checkIn[i],
                         size = vec3(2, 1, 2),
                         rotation = 18,
