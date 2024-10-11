@@ -131,23 +131,26 @@ if config.useTarget then
     CreateThread(function()
         for hospitalName, hospital in pairs(sharedConfig.locations.hospitals) do
             if hospital.checkIn then
-                exports.ox_target:addBoxZone({
-                    name = hospitalName..'_checkin',
-                    coords = hospital.checkIn,
-                    size = vec3(2, 1, 2),
-                    rotation = 18,
-                    debug = config.debugPoly,
-                    options = {
-                        {
-                            onSelect = function()
-                                checkIn(hospitalName)
-                            end,
-                            icon = 'fas fa-clipboard',
-                            label = locale('text.check'),
-                            distance = 3.0,
+                if type(hospital.checkIn) ~= 'table' then hospital.checkIn = { hospital.checkIn } end
+                for i = 1, #hospital.checkIn do
+                    exports.ox_target:addBoxZone({
+                        name = hospitalName..'_checkin_'..i,
+                        coords = hospital.checkIn[i],
+                        size = vec3(2, 1, 2),
+                        rotation = 18,
+                        debug = config.debugPoly,
+                        options = {
+                            {
+                                onSelect = function()
+                                    checkIn(hospitalName)
+                                end,
+                                icon = 'fas fa-clipboard',
+                                label = locale('text.check'),
+                                distance = 3.0,
+                            }
                         }
-                    }
-                })
+                    })
+                end
             end
 
             for i = 1, #hospital.beds do
