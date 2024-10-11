@@ -1,16 +1,8 @@
 # qb-ambulancejob
 EMS Job. See qbx_medical for medical system
 
-# Server.cfg Convar Update
-- Global DrawTextUi Option
-```
-setr UseTarget false
-```
-
-- Global Target Option
-```
-setr UseTarget true
-```
+# Toggle target / DrawTextUi
+Set `useTarget` to `true`/`false` in `config/client.lua`
 
 # Using DrawTextUi (Screenshots DrawTextColor was changed)
 
