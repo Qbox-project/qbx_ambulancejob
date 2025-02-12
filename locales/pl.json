@@ -1,0 +1,87 @@
+{
+    "error": {
+        "canceled": "Anulowano",
+        "impossible": "Akcja niemożliwa...",
+        "no_player": "Brak gracza w pobliżu",
+        "no_firstaid": "Wymagany jest zestaw pierwszej pomocy",
+        "no_bandage": "Wymagany jest bandaż",
+        "beds_taken": "Łóżka są zajęte...",
+        "possessions_taken": "Wszystkie przedmioty zostały zabrane...",
+        "cant_help": "Nie można pomóc tej osobie...",
+        "not_ems": "Nie jesteś ratownikiem medycznym lub nie jesteś na służbie"
+    },
+    "success": {
+        "revived": "Osoba została ożywiona",
+        "healthy_player": "Gracz jest zdrowy",
+        "helped_player": "Udzielono pomocy osobie",
+        "being_helped": "Otrzymywana jest pomoc..."
+    },
+    "info": {
+        "civ_died": "Cywil zmarł",
+        "civ_down": "Cywil ranny",
+        "civ_call": "Wezwanie cywila",
+        "ems_down": "Lekarz %s ranny",
+        "respawn_txt": "ODRODZENIE ZA: ~r~%s~s~ SEKUND",
+        "respawn_revive": "PRZYTRZYMAJ [~r~E~s~] PRZEZ %s SEKUND, ABY SIĘ ODRODZIĆ ZA $~r~%s~s~",
+        "bleed_out": "WYKRWAWISZ SIĘ ZA: ~r~%s~s~ SEKUND",
+        "bleed_out_help": "WYKRWAWISZ SIĘ ZA: ~r~%s~s~ SEKUND, MOŻESZ OTRZYMAĆ POMOC",
+        "request_help": "NACIŚNIJ [~r~G~s~], ABY WEZWAĆ POMOC",
+        "help_requested": "POWIADOMIONO RATOWNIKÓW MEDYCZNYCH",
+        "amb_plate": "AMBU",
+        "heli_plate": "LIFE",
+        "status": "Sprawdzenie stanu",
+        "is_status": "Stan: %s",
+        "healthy": "Jesteś całkowicie zdrowy/a!",
+        "safe": "Szpital bezpieczny",
+        "ems_alert": "Alarm medyczny - %s",
+        "mr": "Pan",
+        "mrs": "Pani",
+        "dr_needed": "Potrzebny lekarz w Szpitalu Pillbox",
+        "dr_alert": "Lekarz został już powiadomiony",
+        "ems_report": "Raport medyczny",
+        "message_sent": "Wiadomość do wysłania",
+        "check_health": "Sprawdź stan zdrowia gracza",
+        "heal_player": "Ulecz gracza",
+        "revive_player": "Ożywij gracza"
+    },
+    "mail": {
+        "sender": "Szpital Pillbox",
+        "subject": "Koszty szpitalne",
+        "message": "Szanowny/a %s %s, <br /><br />Otrzymano e-mail z kosztami ostatniej wizyty w szpitalu.<br />Końcowe koszty wyniosły: <strong>$%s</strong><br /><br />Życzymy szybkiego powrotu do zdrowia!"
+    },
+    "menu": {
+        "amb_vehicles": "Pojazdy karetki",
+        "status": "Stan zdrowia"
+    },
+    "text": {
+        "pstash_button": "[E] - Prywatny schowek",
+        "pstash": "Prywatny schowek",
+        "onduty_button": "[E] - Rozpocznij służbę",
+        "offduty_button": "[E] - Zakończ służbę",
+        "duty": "Rozpocznij/Zakończ służbę",
+        "armory_button": "[E] - Zbrojownia",
+        "armory": "Zbrojownia",
+        "veh_button": "[E] - Weź/Schowaj pojazd",
+        "elevator_roof": "[E] - Weź windę na dach",
+        "elevator_main": "[E] - Weź windę na parter",
+        "el_roof": "Weź windę na dach",
+        "el_main": "Weź windę na parter",
+        "call_doc": "[E] - Wezwij lekarza",
+        "call": "Wezwij",
+        "check_in": "[E] - Zameldowanie",
+        "check": "Zamelduj się",
+        "lie_bed": "[E] - Połóż się do łóżka",
+        "bed": "Połóż się do łóżka",
+        "put_bed": "Umieść cywila w łóżku",
+        "bed_out": "[E] - Wstań z łóżka...",
+        "alert": "Alarm!"
+    },
+    "progress": {
+        "ifaks": "Stosowanie ifaksów...",
+        "bandage": "Używanie bandaża...",
+        "painkillers": "Zażywanie leków przeciwbólowych...",
+        "revive": "Ożywianie osoby...",
+        "healing": "Leczenie ran...",
+        "checking_in": "Zameldowywanie się..."
+    }
+}
