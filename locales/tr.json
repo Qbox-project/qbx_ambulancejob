@@ -1,0 +1,87 @@
+{
+  "error": {
+    "canceled": "İptal edildi",
+    "impossible": "İşlem imkansız...",
+    "no_player": "Yakınlarda oyuncu yok",
+    "no_firstaid": "İlk yardım çantasına ihtiyacın var",
+    "no_bandage": "Bandaja ihtiyacın var",
+    "beds_taken": "Yataklar dolu...",
+    "possessions_taken": "Tüm eşyaların alındı...",
+    "cant_help": "Bu kişiye yardım edemezsin...",
+    "not_ems": "EMS değilsin veya mesaide değilsin"
+  },
+  "success": {
+    "revived": "Bir kişiyi hayata döndürdün",
+    "healthy_player": "Oyuncu sağlıklı",
+    "helped_player": "Kişiye yardım ettin",
+    "being_helped": "Yardım ediliyorsun..."
+  },
+  "info": {
+    "civ_died": "Sivil öldü",
+    "civ_down": "Sivil bayıldı",
+    "civ_call": "Sivil Çağrısı",
+    "ems_down": "Doktor %s bayıldı",
+    "respawn_txt": "Yeniden Doğuş: ~r~%s~s~ SANIYE içinde",
+    "respawn_revive": "[~r~E~s~]'ye %s SANIYE basılı tutarak $~r~%s~s~ karşılığında yeniden doğ",
+    "bleed_out": "Kan kaybı: ~r~%s~s~ SANIYE içinde",
+    "bleed_out_help": "Kan kaybı: ~r~%s~s~ SANIYE içinde, yardım edilebilir",
+    "request_help": "[~r~G~s~]'ye basarak yardım iste",
+    "help_requested": "EMS ekibi bilgilendirildi",
+    "amb_plate": "EMS",
+    "heli_plate": "EMS",
+    "status": "Durum Kontrolü",
+    "is_status": "Durum: %s",
+    "healthy": "Tamamen sağlıklısın!",
+    "safe": "Hastane Güvenli",
+    "ems_alert": "EMS Uyarısı - %s",
+    "mr": "Bay",
+    "mrs": "Bayan",
+    "dr_needed": "Pillbox Hastanesi'nde bir doktora ihtiyaç var",
+    "dr_alert": "Doktor zaten bilgilendirildi",
+    "ems_report": "EMS Raporu",
+    "message_sent": "Gönderilecek mesaj",
+    "check_health": "Oyuncunun sağlığını kontrol et",
+    "heal_player": "Bir oyuncuyu iyileştir",
+    "revive_player": "Bir oyuncuyu hayata döndür"
+  },
+  "mail": {
+    "sender": "Pillbox Hastanesi",
+    "subject": "Hastane Masrafları",
+    "message": "Sevgili %s %s, <br /><br />Son hastane ziyaretinin masraflarını içeren bir e-posta aldınız.<br />Son maliyet: <strong>$%s</strong><br /><br />Geçmiş olsun dileklerimizle!"
+  },
+  "menu": {
+    "amb_vehicles": "Ambulans Araçları",
+    "status": "Sağlık Durumu"
+  },
+  "text": {
+    "pstash_button": "[E] - Kişisel depo",
+    "pstash": "Kişisel depo",
+    "onduty_button": "[E] - Mesai Başla",
+    "offduty_button": "[E] - Mesaiden Çık",
+    "duty": "Mesaidesin / Mesaiden Çıktın",
+    "armory_button": "[E] - Cephanelik",
+    "armory": "Cephanelik",
+    "veh_button": "[E] - Aracı Al / Depola",
+    "elevator_roof": "[E] - Asansörle çatıya çık",
+    "elevator_main": "[E] - Asansörle in",
+    "el_roof": "Asansörle çatıya çık",
+    "el_main": "Asansörle ana kata in",
+    "call_doc": "[E] - Doktor Çağır",
+    "call": "Çağır",
+    "check_in": "[E] - Giriş Yap",
+    "check": "Giriş Yap",
+    "lie_bed": "[E] - Yatakta uzan",
+    "bed": "Yatağa uzan",
+    "put_bed": "Vatandaşı yatağa yatır",
+    "bed_out": "[E] - Yataktan kalk",
+    "alert": "Uyarı!"
+  },
+  "progress": {
+    "ifaks": "İfaks alınıyor...",
+    "bandage": "Bandaj kullanılıyor...",
+    "painkillers": "Ağrı kesici alınıyor...",
+    "revive": "Kişi hayata döndürülüyor...",
+    "healing": "Yaralar iyileştiriliyor...",
+    "checking_in": "Giriş yapılıyor..."
+  }
+}
