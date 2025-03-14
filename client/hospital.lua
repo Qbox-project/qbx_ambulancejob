@@ -122,6 +122,10 @@ local function checkIn(hospitalName)
     end
 end
 
+RegisterNetEvent('qbx_ambulancejob:client:checkIn', function(hospitalName)
+    checkIn(hospitalName)
+end)
+
 RegisterNetEvent('qbx_ambulancejob:client:checkedIn', function(hospitalName, bedIndex)
     putPlayerInBed(hospitalName, bedIndex, true, true)
 end)
