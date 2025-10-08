@@ -62,28 +62,34 @@ local function handleLastStand()
     end
 end
 
----Set dead and last stand states.
-CreateThread(function()
+local deathStateCfg = require("@qbx_medical.config.shared").deathState
+local deathState    = deathStateCfg.ALIVE
+
+local running       = false
+local function stateLoop()
+    if running then return end
+    running = true
     local lastUpdate = GetGameTimer()
-    while true do
-        local isDead = exports.qbx_medical:IsDead()
-        local inLaststand = exports.qbx_medical:IsLaststand()
-        if isDead or inLaststand then
-            if isDead then
-                handleDead(cache.ped)
-            elseif inLaststand then
-                handleLastStand()
-            end
-
-            local currentTime = GetGameTimer()
-            if (currentTime - lastUpdate) > 60000 then
-                doctorCount = getDoctorCount()
-                lastUpdate = currentTime
-            end
-
-            Wait(0)
-        else
-            Wait(1000)
+    while deathState == deathStateCfg.LAST_STAND or deathState == deathStateCfg.DEAD do
+        if deathState == deathStateCfg.LAST_STAND then
+            handleLastStand()
         end
+        if deathState == deathStateCfg.DEAD then
+            handleDead(cache.ped)
+        end
+        local currentTime = GetGameTimer()
+        if (currentTime - lastUpdate) > 60000 then
+            doctorCount = getDoctorCount()
+            lastUpdate = currentTime
+        end
+        Wait(0)
+    end
+    running = false
+end
+
+AddStateBagChangeHandler(DEATH_STATE_STATE_BAG, ('player:%s'):format(cache.serverId), function(_, _, value)
+    deathState = value
+    if (value == deathStateCfg.LAST_STAND) or (value == deathStateCfg.DEAD) then
+        stateLoop()
     end
 end)
