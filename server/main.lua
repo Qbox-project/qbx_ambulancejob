@@ -56,8 +56,11 @@ RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	local patient = exports.qbx_core:GetPlayer(playerId)
 	if player.PlayerData.job.type ~= 'ems' or not patient then return end
 
-	exports.ox_inventory:RemoveItem(src, 'bandage', 1)
-	TriggerClientEvent('hospital:client:HealInjuries', patient.PlayerData.source, 'full')
+	if exports.ox_inventory:RemoveItem(src, 'bandage', 1) then
+        TriggerClientEvent('hospital:client:HealInjuries', patient.PlayerData.source, 'full')
+    else
+        exports.qbx_core:Notify(src, locale('error.no_bandage'), 'error')
+    end
 end)
 
 ---@param playerId number
@@ -65,11 +68,18 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	if GetInvokingResource() then return end
 	local player = exports.qbx_core:GetPlayer(source)
 	local patient = exports.qbx_core:GetPlayer(playerId)
-
 	if not patient then return end
 
-	exports.ox_inventory:RemoveItem(player.PlayerData.source, 'firstaid', 1)
-	TriggerClientEvent('qbx_medical:client:playerRevived', patient.PlayerData.source)
+    if player.PlayerData.job.type ~= 'ems' then
+        lib.logger(source, 'RevivePlayer', ('"%s" triggered event for "%s" bus was missing the required job'):format(player.PlayerData.citizenid, patient.PlayerData.citizenid or ''))
+        return
+    end
+
+	if exports.ox_inventory:RemoveItem(player.PlayerData.source, 'firstaid', 1) then
+        TriggerClientEvent('qbx_medical:client:playerRevived', patient.PlayerData.source)
+    else
+        exports.qbx_core:Notify(player.PlayerData.source, locale('error.no_firstaid'), 'error')
+    end
 end)
 
 ---@param targetId number
