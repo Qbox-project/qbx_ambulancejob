@@ -226,13 +226,15 @@ local function teleportPlayerWithFade(coords)
 end
 
 ---Teleports the player to main elevator
-local function teleportToMainElevator()
-    teleportPlayerWithFade(sharedConfig.locations.main[1])
+---@param n integer index of the elevator 
+local function teleportToMainElevator(n)
+    teleportPlayerWithFade(sharedConfig.locations.main[n])
 end
 
 ---Teleports the player to roof elevator
-local function teleportToRoofElevator()
-    teleportPlayerWithFade(sharedConfig.locations.roof[1])
+---@param n number index of the eleveator
+local function teleportToRoofElevator(n)
+    teleportPlayerWithFade(sharedConfig.locations.roof[n])
 end
 
 ---Toggles the on duty status of the player.
@@ -281,6 +283,17 @@ CreateThread(function()
         createGarage(config.authorizedHelicopters, coords)
     end
 end)
+
+---@param table table haystack table
+---@param coords vector3 needle coords
+local function doCoordsExistInTable(table, coords)
+    for _, c in ipairs(table) do
+        if c.x == coords.x and c.y == coords.y and c.z == coords.z then
+            return true
+        end
+    end
+    return false
+end
 
 ---Sets up duty toggle, stash, armory, and elevator interactions using either target or zones.
 if config.useTarget then
@@ -356,40 +369,64 @@ if config.useTarget then
                 })
             end
         end
+        
+        local roofLocations = {}
+        for i = 1, #sharedConfig.locations.roof do
+            local coords = sharedConfig.locations.roof[i]
+            
+            if doCoordsExistInTable(roofLocations, coords) then
+                goto continue_roof
+            end
 
-        exports.ox_target:addBoxZone({
-            name = 'roof1',
-            coords = sharedConfig.locations.roof[1],
-            size = vec3(1, 2, 2),
-            rotation = -20,
-            debug = config.debugPoly,
-            options = {
-                {
-                    icon = 'fas fa-hand-point-down',
-                    label = locale('text.el_main'),
-                    onSelect = teleportToMainElevator,
-                    distance = 1.5,
-                    groups = 'ambulance',
+            exports.ox_target:addBoxZone({
+                name = 'roof' .. i,
+                coords = coords,
+                size = vec3(1, 2, 2),
+                rotation = -20,
+                debug = config.debugPoly,
+                options = {
+                    {
+                        icon = 'fas fa-hand-point-down',
+                        label = locale('text.el_main'),
+                        onSelect = function() teleportToMainElevator(i) end,
+                        distance = 1.5,
+                        groups = 'ambulance',
+                    }
                 }
-            }
-        })
+            })
 
-        exports.ox_target:addBoxZone({
-            name = 'main1',
-            coords = sharedConfig.locations.main[1],
-            size = vec3(2, 1, 2),
-            rotation = -20,
-            debug = config.debugPoly,
-            options = {
-                {
-                    icon = 'fas fa-hand-point-up',
-                    label = locale('text.el_roof'),
-                    onSelect = teleportToRoofElevator,
-                    distance = 1.5,
-                    groups = 'ambulance',
+            table.insert(roofLocations, coords)
+            ::continue_roof::
+        end
+        
+        local mainLocations = {}
+        for i = 1, #sharedConfig.locations.main do
+            local coords = sharedConfig.locations.main[i]
+            
+            if doCoordsExistInTable(mainLocations, coords) then
+                goto continue_main
+            end
+
+            exports.ox_target:addBoxZone({
+                name = 'main' .. i,
+                coords = coords,
+                size = vec3(2, 1, 2),
+                rotation = -20,
+                debug = config.debugPoly,
+                options = {
+                    {
+                        icon = 'fas fa-hand-point-up',
+                        label = locale('text.el_roof'),
+                        onSelect = function() teleportToRoofElevator(i) end,
+                        distance = 1.5,
+                        groups = 'ambulance',
+                    }
                 }
-            }
-        })
+            })
+            
+            table.insert(mainLocations, coords)
+            ::continue_main::
+        end
     end)
 else
     CreateThread(function()
