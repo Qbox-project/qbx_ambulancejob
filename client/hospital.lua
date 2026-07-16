@@ -71,9 +71,6 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
             CanLeaveBed = true
         end
     end)
-    if isRevive then
-        TriggerServerEvent('qbx_ambulancejob:server:playerEnteredBed', hospitalName, bedIndex)
-    end
 end
 
 RegisterNetEvent('qbx_ambulancejob:client:putPlayerInBed', function(hospitalName, bedIndex)
