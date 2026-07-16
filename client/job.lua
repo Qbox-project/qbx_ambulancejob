@@ -6,6 +6,7 @@ local WEAPONS = exports.qbx_core:GetWeapons()
 ---@param data { vehicleName: string, coords: vector4}
 local function takeOutVehicle(data)
     local netId = lib.callback.await('qbx_ambulancejob:server:spawnVehicle', false, data.vehicleName, data.coords)
+    if not netId then return end
 
     local veh = lib.waitFor(function()
         if NetworkDoesEntityExistWithNetworkId(netId) then
@@ -85,6 +86,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
     local playerId = GetPlayerServerId(player)
 
     local status = lib.callback.await('qbx_ambulancejob:server:getPlayerStatus', false, playerId)
+    if not status then return end
     if #status.injuries == 0 then
         exports.qbx_core:Notify(locale('success.healthy_player'), 'success')
         return

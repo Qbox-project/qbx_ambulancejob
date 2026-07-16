@@ -2,7 +2,23 @@ local sharedConfig = require 'config.shared'
 
 ---@alias source number
 
-lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(_, targetSrc)
+local function arePlayersNearby(source, targetSource, maxDistance)
+	if type(source) ~= 'number' or type(targetSource) ~= 'number' then return false end
+
+	local sourcePed = GetPlayerPed(source)
+	local targetPed = GetPlayerPed(targetSource)
+	if sourcePed == 0 or targetPed == 0 then return false end
+
+	return #(GetEntityCoords(sourcePed) - GetEntityCoords(targetPed)) <= maxDistance
+end
+
+lib.callback.register('qbx_ambulancejob:server:getPlayerStatus', function(source, targetSrc)
+	if type(targetSrc) ~= 'number' then return end
+
+	local player = exports.qbx_core:GetPlayer(source)
+	local target = exports.qbx_core:GetPlayer(targetSrc)
+	if not player or player.PlayerData.job.type ~= 'ems' or not target or not arePlayersNearby(source, targetSrc, 3.0) then return end
+
 	return exports.qbx_medical:GetPlayerStatus(targetSrc)
 end)
 
@@ -51,10 +67,12 @@ end)
 ---@param playerId number
 RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	if GetInvokingResource() then return end
+	if type(playerId) ~= 'number' then return end
+
 	local src = source
 	local player = exports.qbx_core:GetPlayer(src)
 	local patient = exports.qbx_core:GetPlayer(playerId)
-	if player.PlayerData.job.type ~= 'ems' or not patient then return end
+	if not player or player.PlayerData.job.type ~= 'ems' or not patient or not arePlayersNearby(src, playerId, 3.0) then return end
 
 	if exports.ox_inventory:RemoveItem(src, 'bandage', 1) then
         TriggerClientEvent('hospital:client:HealInjuries', patient.PlayerData.source, 'full')
@@ -66,9 +84,11 @@ end)
 ---@param playerId number
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId)
 	if GetInvokingResource() then return end
+	if type(playerId) ~= 'number' then return end
+
 	local player = exports.qbx_core:GetPlayer(source)
 	local patient = exports.qbx_core:GetPlayer(playerId)
-	if not patient then return end
+	if not player or not patient or not arePlayersNearby(source, playerId, 3.0) then return end
 
     if player.PlayerData.job.type ~= 'ems' then
         lib.logger(source, 'RevivePlayer', ('"%s" triggered event for "%s" bus was missing the required job'):format(player.PlayerData.citizenid, patient.PlayerData.citizenid or ''))
@@ -85,9 +105,13 @@ end)
 ---@param targetId number
 RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 	if GetInvokingResource() then return end
+	if type(targetId) ~= 'number' then return end
+
 	local src = source
+	local player = exports.qbx_core:GetPlayer(src)
 	local target = exports.qbx_core:GetPlayer(targetId)
-	if not target then return end
+	if not player or not target or not arePlayersNearby(src, targetId, 3.0) then return end
+	if exports.ox_inventory:Search(src, 'count', 'firstaid') < 1 then return end
 
 	local canHelp = lib.callback.await('hospital:client:canHelp', targetId)
 	if not canHelp then
