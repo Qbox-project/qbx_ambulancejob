@@ -1,0 +1,87 @@
+{
+    "error": {
+        "canceled": "Geannuleerd",
+        "impossible": "Actie onmogelijk...",
+        "no_player": "Geen speler in de buurt",
+        "no_firstaid": "Je hebt een EHBO-doos nodig",
+        "no_bandage": "Je hebt een verband nodig",
+        "beds_taken": "Bedden zijn bezet...",
+        "possessions_taken": "Al uw bezittingen zijn meegenomen...",
+        "cant_help": "Je kunt deze persoon niet helpen...",
+        "not_ems": "U bent geen EMS of niet aangemeld"
+    },
+    "success": {
+        "revived": "Je hebt een persoon nieuw leven ingeblazen",
+        "healthy_player": "Speler is gezond",
+        "helped_player": "Je hebt de persoon geholpen",
+        "being_helped": "Je wordt geholpen..."
+    },
+    "info": {
+        "civ_died": "Burger overleden",
+        "civ_down": "Civiel neer",
+        "civ_call": "Civiele oproep",
+        "ems_down": "Dokter%snaar beneden",
+        "respawn_txt": "RESPAWN OVER:~r~%s~s~SECONDEN",
+        "respawn_revive": "HOUD [~r~E~s~] GEDURENDE%sSECONDEN HOUDEN OM TE RESPAWN VOOR $~r~%s~s~",
+        "bleed_out": "JE ZULT UITBLOEDEN BINNEN:~r~%s~s~SECONDEN",
+        "bleed_out_help": "U ZULT UITBLOEDEN BINNEN:~r~%s~s~SECONDEN, U KUNT GEHOLPEN WORDEN",
+        "request_help": "DRUK OP [~r~G~s~] OM HULP TE VRAGEN",
+        "help_requested": "Het EMS-personeel is op de hoogte gebracht",
+        "amb_plate": "AMBU",
+        "heli_plate": "LEVEN",
+        "status": "Statuscontrole",
+        "is_status": "Is%s",
+        "healthy": "Je bent weer helemaal gezond!",
+        "safe": "Ziekenhuis veilig",
+        "ems_alert": "EMS-waarschuwing -%s",
+        "mr": "Dhr.",
+        "mrs": "mevrouw",
+        "dr_needed": "In het Pillbox Hospital is een arts nodig",
+        "dr_alert": "Dokter is al op de hoogte gebracht",
+        "ems_report": "EMS-rapport",
+        "message_sent": "Bericht dat moet worden verzonden",
+        "check_health": "Controleer de gezondheid van een speler",
+        "heal_player": "Genees een speler",
+        "revive_player": "Breng een speler weer tot leven"
+    },
+    "mail": {
+        "sender": "Pillendoos Ziekenhuis",
+        "subject": "Ziekenhuiskosten",
+        "message": "Beste%s%s,<br /><br />Hierbij heeft u een e-mail ontvangen met de kosten van het laatste ziekenhuisbezoek.<br />De uiteindelijke kosten zijn geworden:<strong>$%s</strong><br /><br />Wij wensen u een spoedig herstel!"
+    },
+    "menu": {
+        "amb_vehicles": "Ambulancevoertuigen",
+        "status": "Gezondheidsstatus"
+    },
+    "text": {
+        "pstash_button": "[E] - Persoonlijke voorraad",
+        "pstash": "Persoonlijke voorraad",
+        "onduty_button": "[E] - Ga in dienst",
+        "offduty_button": "[E] - Ga buiten dienst",
+        "duty": "Aan/buiten dienst",
+        "armory_button": "[E] - Arsenaal",
+        "armory": "Arsenaal",
+        "veh_button": "[E] - Voertuig grijpen/opbergen",
+        "elevator_roof": "[E] - Neem de lift naar het dak",
+        "elevator_main": "[E] - Neem de lift naar beneden",
+        "el_roof": "Neem de lift naar het dak",
+        "el_main": "Neem de lift naar de begane grond",
+        "call_doc": "[E] - Bel dokter",
+        "call": "Telefoongesprek",
+        "check_in": "[E] Inchecken",
+        "check": "Inchecken",
+        "lie_bed": "[E] - Om in bed te liggen",
+        "bed": "In bed liggen",
+        "put_bed": "Plaats de burger in bed",
+        "bed_out": "[E] - Om uit bed te komen..",
+        "alert": "Waarschuwing!"
+    },
+    "progress": {
+        "ifaks": "Ifak's nemen...",
+        "bandage": "Verband gebruiken...",
+        "painkillers": "Pijnstillers nemen...",
+        "revive": "Een persoon tot leven wekken...",
+        "healing": "Genezende wonden...",
+        "checking_in": "Inchecken..."
+    }
+}
