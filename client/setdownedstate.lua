@@ -1,3 +1,4 @@
+-- luacheck: globals DEATH_STATE_STATE_BAG
 local config = require 'config.client'
 local sharedConfig = require 'config.shared'
 local doctorCount = 0
@@ -63,12 +64,13 @@ local function handleLastStand()
 end
 
 local deathStateCfg = require("@qbx_medical.config.shared").deathState
-local deathState    = deathStateCfg.ALIVE
+local deathState = LocalPlayer.state[DEATH_STATE_STATE_BAG] or deathStateCfg.ALIVE
 
-local running       = false
+local running = false
 local function stateLoop()
     if running then return end
     running = true
+    doctorCount = getDoctorCount()
     local lastUpdate = GetGameTimer()
     while deathState == deathStateCfg.LAST_STAND or deathState == deathStateCfg.DEAD do
         if deathState == deathStateCfg.LAST_STAND then
@@ -90,6 +92,9 @@ end
 AddStateBagChangeHandler(DEATH_STATE_STATE_BAG, ('player:%s'):format(cache.serverId), function(_, _, value)
     deathState = value
     if (value == deathStateCfg.LAST_STAND) or (value == deathStateCfg.DEAD) then
-        stateLoop()
+        CreateThread(stateLoop)
     end
 end)
+
+-- A resource restart does not replay existing state bags.
+CreateThread(stateLoop)

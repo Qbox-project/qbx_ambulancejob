@@ -21,7 +21,7 @@ shared_scripts {
 
 client_scripts {
 	'@qbx_core/modules/playerdata.lua',
-    '@qbx_medical/shared/main.lua',
+	'@qbx_medical/shared/main.lua',
 	'client/*.lua',
 }
 
