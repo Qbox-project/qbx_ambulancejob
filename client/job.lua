@@ -226,15 +226,17 @@ local function teleportPlayerWithFade(coords)
 end
 
 ---Teleports the player to main elevator
----@param n integer index of the elevator 
+---@param n integer index of the elevator
 local function teleportToMainElevator(n)
-    teleportPlayerWithFade(sharedConfig.locations.main[n])
+    local coords = sharedConfig.locations.main[n or 1]
+    if coords then teleportPlayerWithFade(coords) end
 end
 
 ---Teleports the player to roof elevator
----@param n number index of the eleveator
+---@param n number index of the elevator
 local function teleportToRoofElevator(n)
-    teleportPlayerWithFade(sharedConfig.locations.roof[n])
+    local coords = sharedConfig.locations.roof[n or 1]
+    if coords then teleportPlayerWithFade(coords) end
 end
 
 ---Toggles the on duty status of the player.
@@ -369,11 +371,11 @@ if config.useTarget then
                 })
             end
         end
-        
+
         local roofLocations = {}
         for i = 1, #sharedConfig.locations.roof do
             local coords = sharedConfig.locations.roof[i]
-            
+
             if doCoordsExistInTable(roofLocations, coords) then
                 goto continue_roof
             end
@@ -398,11 +400,11 @@ if config.useTarget then
             table.insert(roofLocations, coords)
             ::continue_roof::
         end
-        
+
         local mainLocations = {}
         for i = 1, #sharedConfig.locations.main do
             local coords = sharedConfig.locations.main[i]
-            
+
             if doCoordsExistInTable(mainLocations, coords) then
                 goto continue_main
             end
@@ -423,7 +425,7 @@ if config.useTarget then
                     }
                 }
             })
-            
+
             table.insert(mainLocations, coords)
             ::continue_main::
         end
@@ -500,40 +502,52 @@ else
             end
         end
 
-        lib.zones.box({
-            coords = sharedConfig.locations.roof[1],
-            size = vec3(1, 1, 2),
-            rotation = -20,
-            debug = config.debugPoly,
-            onEnter = function()
-                local label = QBX.PlayerData.job.onduty and locale('text.elevator_main') or locale('error.not_ems')
-                lib.showTextUI(label)
-            end,
-            onExit = function()
-                local _, text = lib.isTextUIOpen()
-                if text == locale('text.elevator_main') or text == locale('error.not_ems') then lib.hideTextUI() end
-            end,
-            inside = function()
-                OnKeyPress(teleportToMainElevator)
-            end,
-        })
+        local roofLocations = {}
+        for i, coords in ipairs(sharedConfig.locations.roof) do
+            if not doCoordsExistInTable(roofLocations, coords) then
+                lib.zones.box({
+                    coords = coords,
+                    size = vec3(1, 1, 2),
+                    rotation = -20,
+                    debug = config.debugPoly,
+                    onEnter = function()
+                        local label = QBX.PlayerData.job.onduty and locale('text.elevator_main') or locale('error.not_ems')
+                        lib.showTextUI(label)
+                    end,
+                    onExit = function()
+                        local _, text = lib.isTextUIOpen()
+                        if text == locale('text.elevator_main') or text == locale('error.not_ems') then lib.hideTextUI() end
+                    end,
+                    inside = function()
+                        OnKeyPress(function() teleportToMainElevator(i) end)
+                    end,
+                })
+                roofLocations[#roofLocations + 1] = coords
+            end
+        end
 
-        lib.zones.box({
-            coords = sharedConfig.locations.main[1],
-            size = vec3(1, 1, 2),
-            rotation = -20,
-            debug = config.debugPoly,
-            onEnter = function()
-                local label = QBX.PlayerData.job.onduty and locale('text.elevator_roof') or locale('error.not_ems')
-                lib.showTextUI(label)
-            end,
-            onExit = function()
-                local _, text = lib.isTextUIOpen()
-                if text == locale('text.elevator_roof') or text == locale('error.not_ems') then lib.hideTextUI() end
-            end,
-            inside = function()
-                OnKeyPress(teleportToRoofElevator)
-            end,
-        })
+        local mainLocations = {}
+        for i, coords in ipairs(sharedConfig.locations.main) do
+            if not doCoordsExistInTable(mainLocations, coords) then
+                lib.zones.box({
+                    coords = coords,
+                    size = vec3(1, 1, 2),
+                    rotation = -20,
+                    debug = config.debugPoly,
+                    onEnter = function()
+                        local label = QBX.PlayerData.job.onduty and locale('text.elevator_roof') or locale('error.not_ems')
+                        lib.showTextUI(label)
+                    end,
+                    onExit = function()
+                        local _, text = lib.isTextUIOpen()
+                        if text == locale('text.elevator_roof') or text == locale('error.not_ems') then lib.hideTextUI() end
+                    end,
+                    inside = function()
+                        OnKeyPress(function() teleportToRoofElevator(i) end)
+                    end,
+                })
+                mainLocations[#mainLocations + 1] = coords
+            end
+        end
     end)
 end
