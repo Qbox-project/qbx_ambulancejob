@@ -9,6 +9,7 @@ local triggerEventHooks = require '@qbx_core.modules.hooks'
 local doctorCalled = false
 local spawnedVehicles = {}
 local vehiclesSpawning = {}
+local hospitalTreatments = {}
 
 ---@type table<string, table<number, boolean | number>>
 local hospitalBedsTaken = {}
@@ -60,6 +61,7 @@ local function isPlayerInBed(source)
 end
 
 local function clearPlayerBed(source)
+	hospitalTreatments[source] = nil
 	local hospitalName, bedIndex = isPlayerInBed(source)
 	if hospitalName then hospitalBedsTaken[hospitalName][bedIndex] = false end
 end
@@ -68,6 +70,12 @@ local function reserveBed(source, hospitalName, bedIndex)
 	if isPlayerInBed(source) or hospitalBedsTaken[hospitalName][bedIndex] then return false end
 
 	hospitalBedsTaken[hospitalName][bedIndex] = source
+	SetTimeout(15000, function()
+		local _, bed = getHospitalBed(hospitalName, bedIndex)
+		if hospitalBedsTaken[hospitalName][bedIndex] == source and not isPlayerNearCoords(source, bed.coords, 3.0) then
+			clearPlayerBed(source)
+		end
+	end)
 	return true
 end
 
@@ -100,7 +108,7 @@ RegisterNetEvent('qbx_ambulancejob:server:playerLeftBed', function(hospitalName,
 	local _, bed = getHospitalBed(hospitalName, bedIndex)
 	if not bed or hospitalBedsTaken[hospitalName][bedIndex] ~= source then return end
 
-	hospitalBedsTaken[hospitalName][bedIndex] = false
+	clearPlayerBed(source)
 end)
 
 ---@param playerId number
@@ -113,6 +121,7 @@ RegisterNetEvent('hospital:server:putPlayerInBed', function(playerId, hospitalNa
 	local patient = exports.qbx_core:GetPlayer(playerId)
 	local _, bed = getHospitalBed(hospitalName, bedIndex)
 	if not player or player.PlayerData.job.type ~= 'ems' or not player.PlayerData.job.onduty or not patient or not bed then return end
+	if GetPlayerRoutingBucket(src) ~= GetPlayerRoutingBucket(playerId) then return end
 	if not isPlayerNearCoords(src, bed.coords, 5.0) or not isPlayerNearCoords(playerId, bed.coords, 5.0) then return end
 	if not reserveBed(playerId, hospitalName, bedIndex) then return end
 
@@ -124,6 +133,24 @@ lib.callback.register('qbx_ambulancejob:server:isBedTaken', function(_, hospital
 	if not bed then return true end
 
 	return hospitalBedsTaken[hospitalName][bedIndex]
+end)
+
+
+lib.callback.register('qbx_ambulancejob:server:claimBed', function(source, hospitalName, bedIndex)
+    local _, bed = getHospitalBed(hospitalName, bedIndex)
+    if not bed or not exports.qbx_core:GetPlayer(source) or not isPlayerNearCoords(source, bed.coords, 5.0) then return false end
+    return reserveBed(source, hospitalName, bedIndex)
+end)
+
+lib.callback.register('qbx_ambulancejob:server:completeTreatment', function(source)
+    local readyAt = hospitalTreatments[source]
+    if not readyAt or GetGameTimer() < readyAt then return false end
+    local hospitalName, bedIndex = isPlayerInBed(source)
+    local _, bed = getHospitalBed(hospitalName, bedIndex)
+    if not bed or not isPlayerNearCoords(source, bed.coords, 3.0) then return false end
+    hospitalTreatments[source] = nil
+    exports.qbx_medical:Revive(source)
+    return true
 end)
 
 ---@param src number
@@ -167,10 +194,11 @@ lib.callback.register('qbx_ambulancejob:server:spawnVehicle', function(source, v
 	if not vehicleCoords then return end
 
 	vehiclesSpawning[source] = true
-	local netId, veh = qbx.spawnVehicle({ spawnSource = vehicleCoords, model = vehicleName, warp = GetPlayerPed(source)})
+	local success, netId, veh = pcall(qbx.spawnVehicle, { spawnSource = vehicleCoords, model = vehicleName, warp = GetPlayerPed(source)})
 	vehiclesSpawning[source] = nil
+	if not success then lib.print.error(netId) return end
 	if not netId or not veh or veh == 0 then return end
-	if not exports.qbx_core:GetPlayer(source) then
+	if exports.qbx_core:GetPlayer(source) ~= player then
 		DeleteEntity(veh)
 		return
 	end
@@ -199,9 +227,9 @@ local function sendDoctorAlert()
 	end)
 end
 
-local function canCheckIn(source, hospitalName)
+local function canCheckIn(source, hospitalName, skipDistance)
 	local hospital = type(hospitalName) == 'string' and sharedConfig.locations.hospitals[hospitalName]
-	if not hospital or not isPlayerNearCheckIn(source, hospital) then return false end
+	if not hospital or not skipDistance and not isPlayerNearCheckIn(source, hospital) then return false end
 
 	local numDoctors = exports.qbx_core:GetDutyCountType('ems')
 	if numDoctors >= sharedConfig.minForCheckIn then
@@ -215,7 +243,9 @@ local function canCheckIn(source, hospitalName)
 	return true
 end
 
-lib.callback.register('qbx_ambulancejob:server:canCheckIn', canCheckIn)
+lib.callback.register('qbx_ambulancejob:server:canCheckIn', function(source, hospitalName)
+	return canCheckIn(source, hospitalName)
+end)
 
 ---Sends the patient to an open bed within the hospital
 ---@param src number the player doing the checking in
@@ -226,7 +256,7 @@ local function checkIn(src, patientSrc, hospitalName)
 
 	local hospital = type(hospitalName) == 'string' and sharedConfig.locations.hospitals[hospitalName]
 	if not hospital or not exports.qbx_core:GetPlayer(patientSrc) then return false end
-	if src == patientSrc and not canCheckIn(patientSrc, hospitalName) then return false end
+	if src == patientSrc and not canCheckIn(patientSrc, hospitalName, true) then return false end
 
 	local bedIndex = getOpenBed(hospitalName)
 	if not bedIndex then
@@ -236,11 +266,14 @@ local function checkIn(src, patientSrc, hospitalName)
 	if not reserveBed(patientSrc, hospitalName, bedIndex) then return false end
 
 	billPlayer(patientSrc)
+	hospitalTreatments[patientSrc] = GetGameTimer() + clientConfig.aiHealTimer * 1000
 	TriggerClientEvent('qbx_ambulancejob:client:checkedIn', patientSrc, hospitalName, bedIndex)
 	return true
 end
 
 lib.callback.register('qbx_ambulancejob:server:checkIn', function(source, _, hospitalName)
+	local hospital = type(hospitalName) == 'string' and sharedConfig.locations.hospitals[hospitalName]
+	if not hospital or not isPlayerNearCheckIn(source, hospital) then return false end
 	return checkIn(source, source, hospitalName)
 end)
 
@@ -248,6 +281,7 @@ exports('CheckIn', checkIn)
 
 local function respawn(src)
 	local player = exports.qbx_core:GetPlayer(src)
+	if not player then return end
 	local closestHospital
 	if player.PlayerData.metadata.injail > 0 then
 		closestHospital = 'jail'
@@ -273,6 +307,7 @@ local function respawn(src)
 	end
 	if not reserveBed(src, closestHospital, bedIndex) then return end
 	billPlayer(src)
+	hospitalTreatments[src] = GetGameTimer() + clientConfig.aiHealTimer * 1000
 	TriggerClientEvent('qbx_ambulancejob:client:checkedIn', src, closestHospital, bedIndex)
 
 	if config.wipeInvOnRespawn then
@@ -289,4 +324,11 @@ AddEventHandler('playerDropped', function()
 	if vehicle and DoesEntityExist(vehicle) then DeleteEntity(vehicle) end
 	spawnedVehicles[source] = nil
 	vehiclesSpawning[source] = nil
+end)
+
+
+AddEventHandler('entityRemoved', function(entity)
+    for playerId, vehicle in pairs(spawnedVehicles) do
+        if vehicle == entity then spawnedVehicles[playerId] = nil end
+    end
 end)

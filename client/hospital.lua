@@ -47,7 +47,7 @@ end
 local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
     if IsInHospitalBed then return end
     if not skipOpenCheck then
-        if lib.callback.await('qbx_ambulancejob:server:isBedTaken', false, hospitalName, bedIndex) then
+        if not lib.callback.await('qbx_ambulancejob:server:claimBed', false, hospitalName, bedIndex) then
             exports.qbx_core:Notify(locale('error.beds_taken'), 'error')
             return
         end
@@ -66,7 +66,10 @@ local function putPlayerInBed(hospitalName, bedIndex, isRevive, skipOpenCheck)
         if isRevive then
             exports.qbx_core:Notify(locale('success.being_helped'), 'success')
             Wait(config.aiHealTimer * 1000)
-            TriggerEvent('hospital:client:Revive')
+            if lib.callback.await('qbx_ambulancejob:server:completeTreatment') then
+                lib.playAnim(cache.ped, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
+                CanLeaveBed = true
+            end
         else
             CanLeaveBed = true
         end
